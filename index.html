@@ -10,21 +10,16 @@
             --background: #fafaf7;
             --foreground: #000;
             --card: #fff;
-            --card-foreground: #000;
             --muted: #e8e6dd;
             --muted-foreground: #6b6b62;
             --accent: #fe0;
-            --accent-foreground: #000;
             --destructive: #ff2d00;
             --border: #000;
             --primary: #000;
             --primary-foreground: #fff;
             --sprout: #00a859;
-            --tide: #0040ff;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--background);
@@ -35,258 +30,195 @@
             padding: 40px 20px;
             -webkit-font-smoothing: antialiased;
         }
-
-        .app-container {
-            width: 100%;
-            max-width: 480px;
-        }
-
-        /* Header */
-        .header {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
+        .app-container { width: 100%; max-width: 480px; }
+        .header { text-align: center; margin-bottom: 32px; }
         .header h1 {
-            font-size: 28px;
-            font-weight: 900;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 8px;
+            font-size: 28px; font-weight: 900; letter-spacing: 2px;
+            text-transform: uppercase; margin-bottom: 8px;
         }
-
         .header .tagline {
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            color: var(--muted-foreground);
+            font-size: 12px; font-weight: 600; letter-spacing: 1.5px;
+            text-transform: uppercase; color: var(--muted-foreground);
         }
-
-        /* Tabs */
         .tabs {
-            display: flex;
-            background: var(--card);
-            border: 2px solid var(--border);
-            border-radius: 0;
-            padding: 4px;
-            margin-bottom: 24px;
+            display: flex; background: var(--card);
+            border: 2px solid var(--border); padding: 4px; margin-bottom: 24px;
         }
-
         .tab {
-            flex: 1;
-            padding: 10px 16px;
-            text-align: center;
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            border-radius: 0;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            color: var(--muted-foreground);
-            border: none;
-            background: transparent;
+            flex: 1; padding: 10px 16px; text-align: center;
+            font-size: 13px; font-weight: 600; letter-spacing: 0.5px;
+            text-transform: uppercase; cursor: pointer; transition: all 0.15s ease;
+            color: var(--muted-foreground); border: none; background: transparent;
         }
-
-        .tab.active {
-            background: var(--primary);
-            color: var(--primary-foreground);
-        }
-
-        /* Week Selector */
+        .tab.active { background: var(--primary); color: var(--primary-foreground); }
         .week-selector {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-            margin-bottom: 24px;
+            display: flex; align-items: center; justify-content: center;
+            gap: 16px; margin-bottom: 24px;
         }
-
         .week-nav {
-            width: 32px;
-            height: 32px;
-            border: 2px solid var(--border);
-            background: var(--card);
-            color: var(--foreground);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: 600;
-            border-radius: 0;
-            transition: all 0.15s ease;
+            width: 32px; height: 32px; border: 2px solid var(--border);
+            background: var(--card); display: flex; align-items: center;
+            justify-content: center; cursor: pointer; font-size: 18px;
+            font-weight: 600; transition: all 0.15s ease;
         }
-
-        .week-nav:hover {
-            background: var(--primary);
-            color: var(--primary-foreground);
-        }
-
-        .week-label {
-            font-size: 14px;
-            font-weight: 800;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        /* Stats Grid */
+        .week-nav:hover { background: var(--primary); color: var(--primary-foreground); }
+        .week-label { font-size: 14px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
         .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0;
-            margin-bottom: 24px;
-            border: 2px solid var(--border);
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            margin-bottom: 24px; border: 2px solid var(--border);
         }
-
-        .stat-card {
-            padding: 20px 12px;
-            text-align: center;
-            border-right: 2px solid var(--border);
-        }
-
-        .stat-card:last-child {
-            border-right: none;
-        }
-
-        .stat-value {
-            font-size: 28px;
-            font-weight: 900;
-            margin-bottom: 4px;
-        }
-
-        .stat-label {
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--muted-foreground);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Active Program */
+        .stat-card { padding: 20px 12px; text-align: center; border-right: 2px solid var(--border); }
+        .stat-card:last-child { border-right: none; }
+        .stat-value { font-size: 28px; font-weight: 900; margin-bottom: 4px; }
+        .stat-label { font-size: 10px; font-weight: 600; color: var(--muted-foreground); text-transform: uppercase; letter-spacing: 1px; }
         .active-program {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: var(--accent);
-            border: 2px solid var(--border);
-            border-radius: 0;
-            padding: 14px 16px;
-            margin-bottom: 24px;
+            display: flex; align-items: center; gap: 12px;
+            background: var(--accent); border: 2px solid var(--border);
+            padding: 14px 16px; margin-bottom: 24px;
         }
-
         .program-dot {
-            width: 10px;
-            height: 10px;
-            background: var(--primary);
-            animation: pulse 2s infinite;
+            width: 10px; height: 10px; background: var(--primary); animation: pulse 2s infinite;
         }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
         .program-info { flex: 1; }
-
-        .program-name {
-            font-size: 14px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .program-label {
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--muted-foreground);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Action Cards */
-        .action-cards {
-            display: flex;
-            flex-direction: column;
-            gap: 0;
-        }
-
+        .program-name { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        .program-label { font-size: 10px; font-weight: 600; color: var(--muted-foreground); text-transform: uppercase; letter-spacing: 1px; }
+        .action-cards { display: flex; flex-direction: column; }
         .action-card {
-            background: var(--card);
-            border: 2px solid var(--border);
-            border-radius: 0;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            margin-bottom: -2px;
-            position: relative;
-            z-index: 1;
+            background: var(--card); border: 2px solid var(--border);
+            padding: 20px; cursor: pointer; transition: all 0.15s ease;
+            margin-bottom: -2px; position: relative; z-index: 1;
         }
-
-        .action-card:hover {
-            background: var(--accent);
-            z-index: 2;
-            transform: scale(1.01);
-        }
-
-        .action-card-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 8px;
-        }
-
+        .action-card:hover { background: var(--accent); z-index: 2; transform: scale(1.01); }
+        .action-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
         .action-icon {
-            width: 40px;
-            height: 40px;
-            border: 2px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            flex-shrink: 0;
-            background: var(--muted);
+            width: 40px; height: 40px; border: 2px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; flex-shrink: 0; background: var(--muted);
         }
-
-        .action-title {
-            font-size: 14px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .action-desc {
-            font-size: 13px;
-            color: var(--muted-foreground);
-            line-height: 1.5;
-            margin-bottom: 12px;
-            padding-left: 52px;
-        }
-
+        .action-title { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        .action-desc { font-size: 13px; color: var(--muted-foreground); line-height: 1.5; margin-bottom: 12px; padding-left: 52px; }
         .action-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding-left: 52px;
-            transition: gap 0.15s ease;
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 12px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; padding-left: 52px; transition: gap 0.15s ease;
         }
-
-        .action-card:hover .action-link {
-            gap: 10px;
-        }
-
-        /* Responsive */
+        .action-card:hover .action-link { gap: 10px; }
         @media (max-width: 480px) {
             body { padding: 20px 16px; }
             .header h1 { font-size: 24px; }
-            .stats-grid { gap: 0; }
             .stat-card { padding: 16px 8px; }
             .stat-value { font-size: 24px; }
+        }
+
+        /* Modals / Views */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+            display: none; align-items: center; justify-content: center;
+            z-index: 100; padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: var(--background); border: 2px solid var(--border);
+            width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto;
+        }
+        .modal-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px 20px; border-bottom: 2px solid var(--border);
+        }
+        .modal-header h2 { font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        .modal-close {
+            width: 32px; height: 32px; border: 2px solid var(--border);
+            background: var(--card); cursor: pointer; font-size: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; transition: all 0.15s ease;
+        }
+        .modal-close:hover { background: var(--primary); color: var(--primary-foreground); }
+        .modal-body { padding: 20px; }
+
+        /* Routine View */
+        .routine-day { border: 2px solid var(--border); margin-bottom: -2px; }
+        .routine-day-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 16px; cursor: pointer; background: var(--card);
+            font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+            transition: background 0.15s ease;
+        }
+        .routine-day-header:hover { background: var(--accent); }
+        .routine-day-header .arrow { transition: transform 0.15s ease; }
+        .routine-day-header.open .arrow { transform: rotate(90deg); }
+        .routine-day-content { display: none; border-top: 2px solid var(--border); }
+        .routine-day-content.open { display: block; }
+        .exercise-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 16px; border-bottom: 1px solid var(--muted);
+        }
+        .exercise-item:last-child { border-bottom: none; }
+        .exercise-check {
+            width: 20px; height: 20px; border: 2px solid var(--border);
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 12px; flex-shrink: 0; background: var(--card);
+        }
+        .exercise-check.done { background: var(--primary); color: var(--primary-foreground); }
+        .exercise-name { font-size: 13px; font-weight: 600; flex: 1; }
+        .exercise-detail { font-size: 12px; color: var(--muted-foreground); }
+
+        /* Register View */
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block; font-size: 12px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 10px 12px; border: 2px solid var(--border);
+            background: var(--card); font-family: inherit; font-size: 14px;
+            font-weight: 500; outline: none; transition: border-color 0.15s ease;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--accent);
+        }
+        .form-group textarea { resize: vertical; min-height: 60px; }
+        .btn-submit {
+            width: 100%; padding: 12px; border: 2px solid var(--border);
+            background: var(--primary); color: var(--primary-foreground);
+            font-family: inherit; font-size: 13px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .btn-submit:hover { background: var(--accent); color: var(--foreground); }
+        .success-msg {
+            display: none; text-align: center; padding: 24px;
+            font-size: 14px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; background: var(--accent); border: 2px solid var(--border);
+        }
+        .success-msg.show { display: block; }
+
+        /* Progress View */
+        .progress-bar-container { margin-bottom: 20px; }
+        .progress-bar-label {
+            display: flex; justify-content: space-between;
+            font-size: 12px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; margin-bottom: 6px;
+        }
+        .progress-bar-track { height: 16px; border: 2px solid var(--border); background: var(--card); }
+        .progress-bar-fill { height: 100%; background: var(--primary); transition: width 0.3s ease; }
+        .history-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 0; border-bottom: 1px solid var(--muted);
+        }
+        .history-item:last-child { border-bottom: none; }
+        .history-date { font-size: 12px; font-weight: 600; color: var(--muted-foreground); }
+        .history-type { font-size: 13px; font-weight: 700; text-transform: uppercase; }
+        .history-duration { font-size: 12px; font-weight: 600; }
+        .empty-state {
+            text-align: center; padding: 32px 16px;
+            color: var(--muted-foreground); font-size: 13px;
+        }
+        .section-label {
+            font-size: 12px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--muted-foreground);
+            padding-bottom: 8px; margin-bottom: 12px;
+            border-bottom: 2px solid var(--border);
         }
     </style>
 </head>
@@ -296,33 +228,20 @@
             <h1>ENTRENO BRUTAL</h1>
             <p class="tagline">El dolor es temporal, el orgullo es eterno.</p>
         </header>
-
         <div class="tabs">
             <button class="tab active" data-tab="tonificar">Tonificar</button>
             <button class="tab" data-tab="quemar">Quemar Grasa</button>
         </div>
-
         <div class="week-selector">
             <button class="week-nav" id="prev-week">&#8249;</button>
             <span class="week-label">Semana <span id="week-number">1</span></span>
             <button class="week-nav" id="next-week">&#8250;</button>
         </div>
-
         <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-value" id="streak-days">0</div>
-                <div class="stat-label">Días Racha</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="week-count">0</div>
-                <div class="stat-label">Esta Semana</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="total-workouts">0</div>
-                <div class="stat-label">Total</div>
-            </div>
+            <div class="stat-card"><div class="stat-value" id="streak-days">0</div><div class="stat-label">Dias Racha</div></div>
+            <div class="stat-card"><div class="stat-value" id="week-count">0</div><div class="stat-label">Esta Semana</div></div>
+            <div class="stat-card"><div class="stat-value" id="total-workouts">0</div><div class="stat-label">Total</div></div>
         </div>
-
         <div class="active-program">
             <div class="program-dot"></div>
             <div class="program-info">
@@ -330,9 +249,8 @@
                 <div class="program-label">Programa Activo</div>
             </div>
         </div>
-
         <div class="action-cards">
-            <div class="action-card">
+            <div class="action-card" id="btn-routine">
                 <div class="action-card-header">
                     <div class="action-icon">&#128203;</div>
                     <div class="action-title">Rutina Semanal</div>
@@ -340,27 +258,116 @@
                 <p class="action-desc">Revisa tus ejercicios programados para la semana <span class="week-ref">1</span>.</p>
                 <div class="action-link">Ver Rutina <span class="arrow">&#8594;</span></div>
             </div>
-            <div class="action-card">
+            <div class="action-card" id="btn-register">
                 <div class="action-card-header">
                     <div class="action-icon">&#9989;</div>
                     <div class="action-title">Registrar Entreno</div>
                 </div>
-                <p class="action-desc">Completa tu sesión de hoy y mantén tu racha viva.</p>
+                <p class="action-desc">Completa tu sesion de hoy y manten tu racha viva.</p>
                 <div class="action-link">Empezar <span class="arrow">&#8594;</span></div>
             </div>
-            <div class="action-card">
+            <div class="action-card" id="btn-progress">
                 <div class="action-card-header">
                     <div class="action-icon">&#128200;</div>
                     <div class="action-title">Ver Progreso</div>
                 </div>
-                <p class="action-desc">Analiza tu evolución y estadísticas mensuales.</p>
+                <p class="action-desc">Analiza tu evolucion y estadisticas mensuales.</p>
                 <div class="action-link">Revisar <span class="arrow">&#8594;</span></div>
             </div>
         </div>
     </div>
 
+    <!-- MODAL: Rutina -->
+    <div class="modal-overlay" id="modal-routine">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Rutina Semana <span id="routine-week">1</span></h2>
+                <button class="modal-close" data-close="modal-routine">X</button>
+            </div>
+            <div class="modal-body" id="routine-body"></div>
+        </div>
+    </div>
+
+    <!-- MODAL: Registrar -->
+    <div class="modal-overlay" id="modal-register">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Registrar Entreno</h2>
+                <button class="modal-close" data-close="modal-register">X</button>
+            </div>
+            <div class="modal-body" id="register-body">
+                <form id="register-form">
+                    <div class="form-group">
+                        <label>Tipo de entreno</label>
+                        <select id="workout-type" required>
+                            <option value="tonificar">Tonificar</option>
+                            <option value="quemar">Quemar Grasa</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Duracion (minutos)</label>
+                        <input type="number" id="workout-duration" placeholder="45" min="5" max="180" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Intensidad</label>
+                        <select id="workout-intensity">
+                            <option value="baja">Baja</option>
+                            <option value="media" selected>Media</option>
+                            <option value="alta">Alta</option>
+                            <option value="brutal">Brutal</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Notas (opcional)</label>
+                        <textarea id="workout-notes" placeholder="Como fue la sesion..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit">Registrar</button>
+                </form>
+                <div class="success-msg" id="success-msg">
+                    Entreno registrado! La racha continua.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Progreso -->
+    <div class="modal-overlay" id="modal-progress">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Tu Progreso</h2>
+                <button class="modal-close" data-close="modal-progress">X</button>
+            </div>
+            <div class="modal-body" id="progress-body"></div>
+        </div>
+    </div>
+
     <script>
+        // --- State ---
         let currentWeek = 1, currentTab = 'tonificar';
+        let state = loadState();
+
+        function defaultState() {
+            return { streak: 0, weekCount: 0, total: 0, workouts: [], lastDate: null };
+        }
+
+        function loadState() {
+            try {
+                const s = JSON.parse(localStorage.getItem('entreno-brutal'));
+                return s || defaultState();
+            } catch { return defaultState(); }
+        }
+
+        function saveState() {
+            localStorage.setItem('entreno-brutal', JSON.stringify(state));
+        }
+
+        function updateUI() {
+            document.getElementById('streak-days').textContent = state.streak;
+            document.getElementById('week-count').textContent = state.weekCount;
+            document.getElementById('total-workouts').textContent = state.total;
+        }
+
+        // --- Tabs ---
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', () => {
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -369,6 +376,8 @@
                 document.getElementById('program-name').textContent = currentTab === 'tonificar' ? 'Tonificar' : 'Quemar Grasa';
             });
         });
+
+        // --- Week ---
         document.getElementById('prev-week').addEventListener('click', () => {
             if (currentWeek > 1) { currentWeek--; updateWeek(); }
         });
@@ -379,6 +388,179 @@
             document.getElementById('week-number').textContent = currentWeek;
             document.querySelectorAll('.week-ref').forEach(el => el.textContent = currentWeek);
         }
+
+        // --- Routines Data ---
+        const routines = {
+            tonificar: {
+                1: {
+                    Lunes: [
+                        { name: 'Sentadillas', detail: '4x12' },
+                        { name: 'Zancadas', detail: '3x10 cada pierna' },
+                        { name: 'Plancha', detail: '3x30s' },
+                        { name: 'Hip Thrust', detail: '4x15' }
+                    ],
+                    Miercoles: [
+                        { name: 'Flexiones', detail: '4x10' },
+                        { name: 'Remo con banda', detail: '4x12' },
+                        { name: 'Press hombro', detail: '3x12' },
+                        { name: 'Plancha lateral', detail: '3x20s cada lado' }
+                    ],
+                    Viernes: [
+                        { name: 'Peso muerto', detail: '4x10' },
+                        { name: 'Sentadilla bulgara', detail: '3x10 cada pierna' },
+                        { name: 'Curl biceps', detail: '3x12' },
+                        { name: 'Abdominales', detail: '3x20' }
+                    ]
+                }
+            },
+            quemar: {
+                1: {
+                    Lunes: [
+                        { name: 'Burpees', detail: '4x15' },
+                        { name: 'Mountain climbers', detail: '4x30s' },
+                        { name: 'Jumping jacks', detail: '3x45s' },
+                        { name: 'High knees', detail: '3x30s' }
+                    ],
+                    Miercoles: [
+                        { name: 'Sprints en sitio', detail: '6x20s' },
+                        { name: 'Sentadilla con salto', detail: '4x15' },
+                        { name: 'Plancha dinamica', detail: '3x30s' },
+                        { name: 'Skaters', detail: '3x20' }
+                    ],
+                    Viernes: [
+                        { name: 'Circuito completo', detail: '4 rondas' },
+                        { name: 'Flexiones explosivas', detail: '3x10' },
+                        { name: 'Box jumps', detail: '3x12' },
+                        { name: 'Plancha final', detail: '1x60s' }
+                    ]
+                }
+            }
+        };
+
+        function getRoutines() {
+            return routines[currentTab]?.[currentWeek] || routines[currentTab]?.[1] || { Lunes: [] };
+        }
+
+        // --- Modal helpers ---
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        document.querySelectorAll('.modal-close').forEach(btn => {
+            btn.addEventListener('click', () => closeModal(btn.dataset.close));
+        });
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) overlay.classList.remove('active');
+            });
+        });
+
+        // --- Action: Rutina ---
+        document.getElementById('btn-routine').addEventListener('click', () => {
+            document.getElementById('routine-week').textContent = currentWeek;
+            const body = document.getElementById('routine-body');
+            const days = getRoutines();
+            body.innerHTML = Object.entries(days).map(([day, exercises]) => `
+                <div class="routine-day">
+                    <div class="routine-day-header" onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('open')">
+                        <span>${day}</span>
+                        <span class="arrow">&#8250;</span>
+                    </div>
+                    <div class="routine-day-content">
+                        ${exercises.map(ex => `
+                            <div class="exercise-item">
+                                <div class="exercise-check" onclick="this.classList.toggle('done'); this.innerHTML = this.classList.contains('done') ? '&#10003;' : ''"></div>
+                                <span class="exercise-name">${ex.name}</span>
+                                <span class="exercise-detail">${ex.detail}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+            openModal('modal-routine');
+        });
+
+        // --- Action: Registrar ---
+        document.getElementById('btn-register').addEventListener('click', () => {
+            document.getElementById('workout-type').value = currentTab;
+            document.getElementById('register-form').style.display = '';
+            document.getElementById('success-msg').classList.remove('show');
+            document.getElementById('register-form').reset();
+            document.getElementById('workout-type').value = currentTab;
+            openModal('modal-register');
+        });
+
+        document.getElementById('register-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const type = document.getElementById('workout-type').value;
+            const duration = parseInt(document.getElementById('workout-duration').value);
+            const intensity = document.getElementById('workout-intensity').value;
+            const notes = document.getElementById('workout-notes').value;
+            const today = new Date().toISOString().split('T')[0];
+
+            state.total++;
+            state.weekCount++;
+
+            if (state.lastDate !== today) {
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                if (state.lastDate === yesterday.toISOString().split('T')[0]) {
+                    state.streak++;
+                } else if (!state.lastDate) {
+                    state.streak = 1;
+                } else {
+                    state.streak = 1;
+                }
+                state.lastDate = today;
+            }
+
+            state.workouts.push({ date: today, type, duration, intensity, notes });
+            saveState();
+            updateUI();
+
+            document.getElementById('register-form').style.display = 'none';
+            document.getElementById('success-msg').classList.add('show');
+            setTimeout(() => closeModal('modal-register'), 1500);
+        });
+
+        // --- Action: Progreso ---
+        document.getElementById('btn-progress').addEventListener('click', () => {
+            const body = document.getElementById('progress-body');
+            const weekGoal = 4;
+            const pct = Math.min(100, Math.round((state.weekCount / weekGoal) * 100));
+
+            let html = `
+                <div class="section-label">Objetivo semanal</div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-label">
+                        <span>${state.weekCount} / ${weekGoal} entrenos</span>
+                        <span>${pct}%</span>
+                    </div>
+                    <div class="progress-bar-track">
+                        <div class="progress-bar-fill" style="width:${pct}%"></div>
+                    </div>
+                </div>
+                <div class="section-label" style="margin-top:20px">Historial</div>
+            `;
+
+            if (state.workouts.length === 0) {
+                html += '<div class="empty-state">No hay entrenos registrados todavia.</div>';
+            } else {
+                const recent = [...state.workouts].reverse().slice(0, 10);
+                html += recent.map(w => `
+                    <div class="history-item">
+                        <span class="history-date">${w.date}</span>
+                        <span class="history-type">${w.type === 'tonificar' ? 'Tonificar' : 'Quemar'}</span>
+                        <span class="history-duration">${w.duration} min · ${w.intensity}</span>
+                    </div>
+                `).join('');
+            }
+
+            body.innerHTML = html;
+            openModal('modal-progress');
+        });
+
+        // Init
+        updateUI();
     </script>
 </body>
 </html>
