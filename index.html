@@ -186,12 +186,40 @@
             transition: all 0.15s ease;
         }
         .btn-submit:hover { background: var(--accent); color: var(--foreground); }
-        .success-msg {
-            display: none; text-align: center; padding: 24px;
-            font-size: 14px; font-weight: 700; text-transform: uppercase;
-            letter-spacing: 1px; background: var(--accent); border: 2px solid var(--border);
+        .success-area { display: none; }
+        .success-area.show { display: block; }
+        .success-header {
+            text-align: center; padding: 16px;
+            background: var(--accent); border-bottom: 2px solid var(--border);
+            font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
         }
-        .success-msg.show { display: block; }
+        .compare-grid {
+            display: grid; grid-template-columns: 1fr 1fr 1fr;
+            border-bottom: 2px solid var(--border);
+        }
+        .compare-cell {
+            text-align: center; padding: 12px 8px;
+            border-right: 2px solid var(--border);
+        }
+        .compare-cell:last-child { border-right: none; }
+        .compare-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted-foreground); margin-bottom: 4px; }
+        .compare-value { font-size: 18px; font-weight: 900; }
+        .compare-diff { font-size: 11px; font-weight: 600; margin-top: 2px; }
+        .compare-diff.up { color: var(--sprout); }
+        .compare-diff.down { color: var(--destructive); }
+        .compare-diff.same { color: var(--muted-foreground); }
+        .motivation-msg {
+            text-align: center; padding: 20px 16px;
+            font-size: 15px; font-weight: 700; font-style: italic;
+            color: var(--foreground); border-bottom: 2px solid var(--border);
+        }
+        .btn-back {
+            width: 100%; padding: 12px; border: none; background: var(--primary);
+            color: var(--primary-foreground); font-family: inherit; font-size: 13px;
+            font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+            cursor: pointer; transition: all 0.15s ease;
+        }
+        .btn-back:hover { background: var(--accent); color: var(--foreground); }
 
         /* Progress View */
         .progress-bar-container { margin-bottom: 20px; }
@@ -323,8 +351,11 @@
                     </div>
                     <button type="submit" class="btn-submit">Registrar</button>
                 </form>
-                <div class="success-msg" id="success-msg">
-                    Entreno registrado! La racha continua.
+                <div class="success-area" id="success-area">
+                    <div class="success-header">ENTRENO REGISTRADO</div>
+                    <div id="compare-section"></div>
+                    <div class="motivation-msg" id="motivation-msg"></div>
+                    <button class="btn-back" onclick="closeModal('modal-register')">Entendido</button>
                 </div>
             </div>
         </div>
@@ -483,7 +514,7 @@
         document.getElementById('btn-register').addEventListener('click', () => {
             document.getElementById('workout-type').value = currentTab;
             document.getElementById('register-form').style.display = '';
-            document.getElementById('success-msg').classList.remove('show');
+            document.getElementById('success-area').classList.remove('show');
             document.getElementById('register-form').reset();
             document.getElementById('workout-type').value = currentTab;
             openModal('modal-register');
@@ -497,9 +528,22 @@
             const notes = document.getElementById('workout-notes').value;
             const today = new Date().toISOString().split('T')[0];
 
-            state.total++;
-            state.weekCount++;
+            // Compare with previous workout
+            const prev = state.workouts.length > 0 ? state.workouts[state.workouts.length - 1] : null;
+            const intensityOrder = { baja: 1, media: 2, alta: 3, brutal: 4 };
 
+            let durDiff = '', intDiff = '', streakDiff = '';
+            if (prev) {
+                const d = duration - prev.duration;
+                durDiff = d > 0 ? `<span class="compare-diff up">+${d} min</span>` : d < 0 ? `<span class="compare-diff down">${d} min</span>` : `<span class="compare-diff same">igual</span>`;
+                const i = intensityOrder[intensity] - intensityOrder[prev.intensity];
+                intDiff = i > 0 ? `<span class="compare-diff up">+${i} nivel</span>` : i < 0 ? `<span class="compare-diff down">${i} nivel</span>` : `<span class="compare-diff same">igual</span>`;
+            } else {
+                durDiff = `<span class="compare-diff same">Primera sesion!</span>`;
+                intDiff = `<span class="compare-diff same">Primera sesion!</span>`;
+            }
+
+            // Streak
             if (state.lastDate !== today) {
                 const yesterday = new Date();
                 yesterday.setDate(yesterday.getDate() - 1);
@@ -512,14 +556,50 @@
                 }
                 state.lastDate = today;
             }
+            streakDiff = state.streak > 1 ? `<span class="compare-diff up">+${state.streak} dias!</span>` : `<span class="compare-diff same">Sesion 1</span>`;
 
+            state.total++;
+            state.weekCount++;
             state.workouts.push({ date: today, type, duration, intensity, notes });
             saveState();
             updateUI();
 
+            // Build comparison
+            document.getElementById('compare-section').innerHTML = `
+                <div class="compare-grid">
+                    <div class="compare-cell">
+                        <div class="compare-label">Duracion</div>
+                        <div class="compare-value">${duration}m</div>
+                        ${durDiff}
+                    </div>
+                    <div class="compare-cell">
+                        <div class="compare-label">Intensidad</div>
+                        <div class="compare-value">${intensity.charAt(0).toUpperCase() + intensity.slice(1)}</div>
+                        ${intDiff}
+                    </div>
+                    <div class="compare-cell">
+                        <div class="compare-label">Racha</div>
+                        <div class="compare-value">${state.streak}</div>
+                        ${streakDiff}
+                    </div>
+                </div>
+            `;
+
+            // Motivational message
+            const messages = [];
+            if (!prev) messages.push('El primer paso es siempre el mas importante. Ya estas en camino!');
+            if (state.streak >= 7) messages.push('7+ dias seguidos! Eres imparable, maquina.');
+            else if (state.streak >= 3) messages.push(`${state.streak} dias seguidos - la constancia es tu superpoder.`);
+            if (duration > (prev?.duration || 0)) messages.push(`+${duration - prev.duration} minutos respecto a la ultima sesion. Estas subiendo nivel!`);
+            if (intensity === 'brutal') messages.push('INTENSIDAD BRUTAL. Asi se forjan los campeones.');
+            else if (intensity === 'alta') messages.push('Sesion a tope. Tu yo del futuro te lo va a agradecer.');
+            if (messages.length === 0) messages.push('Cada entreno cuenta. A seguir asi.');
+            messages.push('El dolor es temporal, el orgullo es eterno.');
+
+            document.getElementById('motivation-msg').textContent = messages.join(' ');
+
             document.getElementById('register-form').style.display = 'none';
-            document.getElementById('success-msg').classList.add('show');
-            setTimeout(() => closeModal('modal-register'), 1500);
+            document.getElementById('success-area').classList.add('show');
         });
 
         // --- Action: Progreso ---
