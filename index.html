@@ -173,6 +173,13 @@
             width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto;
             box-shadow: var(--shadow-hard);
         }
+        @media (max-width: 480px) {
+            .modal-overlay.fullscreen-mobile { padding: 0; align-items: flex-start; }
+            .modal-overlay.fullscreen-mobile .modal {
+                max-width: 100%; width: 100%; min-height: 100dvh;
+                max-height: 100dvh; border: none; box-shadow: none;
+            }
+        }
         .modal-header {
             display: flex; align-items: center; justify-content: space-between;
             padding: 16px 20px; border-bottom: 2px solid var(--border);
@@ -302,9 +309,8 @@
             cursor: pointer; background: var(--primary); color: var(--primary-foreground);
         }
         @media (max-width: 480px) {
-            .exercise-item { flex-wrap: wrap; }
+            .exercise-item { flex-wrap: nowrap; gap: 6px; }
             .exercise-preview-btn {
-                margin-left: 32px;
                 width: auto;
                 font-size: 9px;
                 padding: 4px 6px;
@@ -312,6 +318,8 @@
             }
             .btn-label-desktop { display: none; }
             .btn-label-mobile { display: inline; }
+            .exercise-weight input { width: 36px; padding: 4px 2px; font-size: 11px; }
+            .exercise-weight span { display: none; }
         }
 
         /* Register View */
@@ -487,7 +495,7 @@
     </div>
 
     <!-- MODAL: Rutina -->
-    <div class="modal-overlay" id="modal-routine">
+    <div class="modal-overlay fullscreen-mobile" id="modal-routine">
         <div class="modal">
             <div class="modal-header">
                 <h2>Rutina Semana <span id="routine-week">1</span></h2>
