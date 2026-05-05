@@ -254,9 +254,64 @@
             margin-top: 14px; font-size: 12px; line-height: 1.5;
             color: var(--muted-foreground); text-align: center;
         }
+        .btn-label-mobile { display: none; }
+        .btn-label-desktop { display: inline; }
+        .day-register-row {
+            display: flex; gap: 8px; align-items: center;
+            padding: 10px 16px; border-top: 2px solid var(--border);
+            background: var(--card);
+        }
+        .day-duration-input {
+            width: 80px; padding: 6px 8px; border: 2px solid var(--border);
+            background: var(--card); font-family: inherit; font-size: 13px;
+            font-weight: 700; text-align: center; color: var(--foreground);
+        }
+        .day-duration-input:focus { outline: none; border-color: var(--primary); }
+        .day-register-btn {
+            flex: 1; padding: 7px 10px; border: 2px solid var(--border);
+            background: var(--primary); color: var(--primary-foreground);
+            font-family: inherit; font-size: 11px; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer;
+        }
+        .day-register-btn:disabled { opacity: 0.6; cursor: default; }
+        .history-item {
+            display: flex; align-items: center; gap: 8px;
+            padding: 10px 0; border-bottom: 1px solid var(--muted); flex-wrap: wrap;
+        }
+        .history-item-actions { margin-left: auto; display: flex; gap: 6px; }
+        .btn-edit-workout, .btn-del-workout {
+            padding: 3px 8px; border: 2px solid var(--border);
+            font-family: inherit; font-size: 10px; font-weight: 800;
+            cursor: pointer; background: var(--card); color: var(--foreground);
+        }
+        .btn-del-workout { border-color: #c00; color: #c00; }
+        .btn-del-workout:hover { background: #c00; color: #fff; }
+        .btn-edit-workout:hover { background: var(--accent); }
+        .history-edit-row {
+            width: 100%; display: flex; gap: 6px; align-items: center;
+            padding-top: 6px; flex-wrap: wrap;
+        }
+        .history-edit-row input {
+            width: 70px; padding: 4px 6px; border: 2px solid var(--border);
+            font-family: inherit; font-size: 12px; font-weight: 700;
+            text-align: center; background: var(--card); color: var(--foreground);
+        }
+        .history-edit-row button {
+            padding: 4px 10px; border: 2px solid var(--border);
+            font-family: inherit; font-size: 11px; font-weight: 800;
+            cursor: pointer; background: var(--primary); color: var(--primary-foreground);
+        }
         @media (max-width: 480px) {
             .exercise-item { flex-wrap: wrap; }
-            .exercise-preview-btn { margin-left: 32px; width: calc(100% - 32px); }
+            .exercise-preview-btn {
+                margin-left: 32px;
+                width: auto;
+                font-size: 9px;
+                padding: 4px 6px;
+                letter-spacing: 0;
+            }
+            .btn-label-desktop { display: none; }
+            .btn-label-mobile { display: inline; }
         }
 
         /* Register View */
@@ -411,16 +466,7 @@
                 <p class="action-desc">Revisa tus ejercicios programados para la semana <span class="week-ref">1</span>.</p>
                 <div class="action-link">Ver Rutina <span class="arrow">&#8594;</span></div>
             </div>
-            <div class="action-card" id="btn-register">
-                <div class="action-card-header">
-                    <div class="action-icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"></path></svg>
-                    </div>
-                    <div class="action-title">Registrar Entreno</div>
-                </div>
-                <p class="action-desc">Completa tu sesion de hoy y manten tu racha viva.</p>
-                <div class="action-link">Empezar <span class="arrow">&#8594;</span></div>
-            </div>
+
             <div class="action-card" id="btn-progress">
                 <div class="action-card-header">
                     <div class="action-icon" aria-hidden="true">
@@ -448,51 +494,6 @@
                 <button class="modal-close" data-close="modal-routine">X</button>
             </div>
             <div class="modal-body" id="routine-body"></div>
-        </div>
-    </div>
-
-    <!-- MODAL: Registrar -->
-    <div class="modal-overlay" id="modal-register">
-        <div class="modal">
-            <div class="modal-header">
-                <h2>Registrar Entreno</h2>
-                <button class="modal-close" data-close="modal-register">X</button>
-            </div>
-            <div class="modal-body" id="register-body">
-                <form id="register-form">
-                    <div class="form-group">
-                        <label>Tipo de entreno</label>
-                        <select id="workout-type" required>
-                            <option value="tonificar">Tonificar</option>
-                            <option value="quemar">Quemar Grasa</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Duracion (minutos)</label>
-                        <input type="number" id="workout-duration" placeholder="45" min="5" max="180" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Intensidad</label>
-                        <select id="workout-intensity">
-                            <option value="baja">Baja</option>
-                            <option value="media" selected>Media</option>
-                            <option value="alta">Alta</option>
-                            <option value="brutal">Brutal</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Notas (opcional)</label>
-                        <textarea id="workout-notes" placeholder="Como fue la sesion..."></textarea>
-                    </div>
-                    <button type="submit" class="btn-submit">Registrar</button>
-                </form>
-                <div class="success-area" id="success-area">
-                    <div class="success-header">ENTRENO REGISTRADO</div>
-                    <div id="compare-section"></div>
-                    <div class="motivation-msg" id="motivation-msg"></div>
-                    <button class="btn-back" onclick="closeModal('modal-register')">Entendido</button>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -839,9 +840,13 @@
                                         onchange="localStorage.setItem('peso:' + this.dataset.exercise, this.value)">
                                     <span>kg</span>
                                 </div>
-                                <button class="exercise-preview-btn" type="button" data-exercise="${escapeHtml(ex.name)}">Ver ejercicio</button>
+                                <button class="exercise-preview-btn" type="button" data-exercise="${escapeHtml(ex.name)}"><span class="btn-label-desktop">Ver ejercicio</span><span class="btn-label-mobile">Ejemplo</span></button>
                             </div>
                         `).join('')}
+                        <div class="day-register-row">
+                            <input type="number" class="day-duration-input" placeholder="Minutos" min="5" max="180" data-day="${day}">
+                            <button class="day-register-btn" data-day="${day}">✓ Registrar entreno</button>
+                        </div>
                     </div>
                 </div>
             `).join('');
@@ -850,102 +855,37 @@
 
         document.getElementById('routine-body').addEventListener('click', (e) => {
             const btn = e.target.closest('.exercise-preview-btn');
-            if (!btn) return;
-            openExercisePreview(btn.dataset.exercise);
-        });
+            if (btn) { openExercisePreview(btn.dataset.exercise); return; }
 
-        // --- Action: Registrar ---
-        document.getElementById('btn-register').addEventListener('click', () => {
-            document.getElementById('workout-type').value = currentTab;
-            document.getElementById('register-form').style.display = '';
-            document.getElementById('success-area').classList.remove('show');
-            document.getElementById('register-form').reset();
-            document.getElementById('workout-type').value = currentTab;
-            openModal('modal-register');
-        });
+            const regBtn = e.target.closest('.day-register-btn');
+            if (regBtn) {
+                const day = regBtn.dataset.day;
+                const input = document.querySelector(`.day-duration-input[data-day="${day}"]`);
+                const duration = parseInt(input.value);
+                if (!duration || duration < 5) { input.focus(); input.style.borderColor = 'red'; return; }
+                input.style.borderColor = '';
 
-        document.getElementById('register-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const type = document.getElementById('workout-type').value;
-            const duration = parseInt(document.getElementById('workout-duration').value);
-            const intensity = document.getElementById('workout-intensity').value;
-            const notes = document.getElementById('workout-notes').value;
-            const today = getLocalDateKey();
-
-            // Compare with previous workout
-            const prev = state.workouts.length > 0 ? state.workouts[state.workouts.length - 1] : null;
-            const intensityOrder = { baja: 1, media: 2, alta: 3, brutal: 4 };
-
-            let durDiff = '', intDiff = '', streakDiff = '';
-            if (prev) {
-                const d = duration - prev.duration;
-                durDiff = d > 0 ? `<span class="compare-diff up">+${d} min</span>` : d < 0 ? `<span class="compare-diff down">${d} min</span>` : `<span class="compare-diff same">igual</span>`;
-                const i = intensityOrder[intensity] - intensityOrder[prev.intensity];
-                intDiff = i > 0 ? `<span class="compare-diff up">+${i} nivel</span>` : i < 0 ? `<span class="compare-diff down">${i} nivel</span>` : `<span class="compare-diff same">igual</span>`;
-            } else {
-                durDiff = `<span class="compare-diff same">Primera sesion!</span>`;
-                intDiff = `<span class="compare-diff same">Primera sesion!</span>`;
-            }
-
-            // Streak
-            if (state.lastDate !== today) {
-                if (state.lastDate === getYesterdayKey()) {
-                    state.streak++;
-                } else if (!state.lastDate) {
-                    state.streak = 1;
-                } else {
-                    state.streak = 1;
+                const today = getLocalDateKey();
+                const prev = state.workouts.length > 0 ? state.workouts[state.workouts.length - 1] : null;
+                if (state.lastDate !== today) {
+                    state.streak = (state.lastDate === getYesterdayKey()) ? state.streak + 1 : 1;
+                    state.lastDate = today;
                 }
-                state.lastDate = today;
+                state.workouts.push({ date: today, type: currentTab, duration, intensity: 'media', notes: day });
+                state.total = state.workouts.length;
+                state.weekCount = getCurrentWeekCount();
+                saveState();
+                updateUI();
+
+                regBtn.textContent = '✓ Registrado!';
+                regBtn.disabled = true;
+                input.disabled = true;
+                setTimeout(() => { regBtn.textContent = '✓ Registrar entreno'; regBtn.disabled = false; input.disabled = false; input.value = ''; }, 3000);
             }
-            streakDiff = state.streak > 1 ? `<span class="compare-diff up">+${state.streak} dias!</span>` : `<span class="compare-diff same">Sesion 1</span>`;
-
-            state.workouts.push({ date: today, type, duration, intensity, notes });
-            state.total = state.workouts.length;
-            state.weekCount = getCurrentWeekCount();
-            saveState();
-            updateUI();
-
-            // Build comparison
-            document.getElementById('compare-section').innerHTML = `
-                <div class="compare-grid">
-                    <div class="compare-cell">
-                        <div class="compare-label">Duracion</div>
-                        <div class="compare-value">${duration}m</div>
-                        ${durDiff}
-                    </div>
-                    <div class="compare-cell">
-                        <div class="compare-label">Intensidad</div>
-                        <div class="compare-value">${intensity.charAt(0).toUpperCase() + intensity.slice(1)}</div>
-                        ${intDiff}
-                    </div>
-                    <div class="compare-cell">
-                        <div class="compare-label">Racha</div>
-                        <div class="compare-value">${state.streak}</div>
-                        ${streakDiff}
-                    </div>
-                </div>
-            `;
-
-            // Motivational message
-            const messages = [];
-            if (!prev) messages.push('El primer paso es siempre el mas importante. Ya estas en camino!');
-            if (state.streak >= 7) messages.push('7+ dias seguidos! Eres imparable, maquina.');
-            else if (state.streak >= 3) messages.push(`${state.streak} dias seguidos - la constancia es tu superpoder.`);
-            if (prev && duration > prev.duration) messages.push(`+${duration - prev.duration} minutos respecto a la ultima sesion. Estas subiendo nivel!`);
-            if (intensity === 'brutal') messages.push('INTENSIDAD BRUTAL. Asi se forjan los campeones.');
-            else if (intensity === 'alta') messages.push('Sesion a tope. Tu yo del futuro te lo va a agradecer.');
-            if (messages.length === 0) messages.push('Cada entreno cuenta. A seguir asi.');
-            messages.push('El dolor es temporal, el orgullo es eterno.');
-
-            document.getElementById('motivation-msg').textContent = messages.join(' ');
-
-            document.getElementById('register-form').style.display = 'none';
-            document.getElementById('success-area').classList.add('show');
         });
 
         // --- Action: Progreso ---
-        document.getElementById('btn-progress').addEventListener('click', () => {
+        function renderProgress() {
             const body = document.getElementById('progress-body');
             const weekGoal = 3;
             const pct = Math.min(100, Math.round((state.weekCount / weekGoal) * 100));
@@ -967,17 +907,60 @@
             if (state.workouts.length === 0) {
                 html += '<div class="empty-state">No hay entrenos registrados todavia.</div>';
             } else {
-                const recent = [...state.workouts].reverse().slice(0, 10);
-                html += recent.map(w => `
-                    <div class="history-item">
+                const allReversed = [...state.workouts].reverse();
+                html += allReversed.map((w, ri) => {
+                    const realIdx = state.workouts.length - 1 - ri;
+                    return `
+                    <div class="history-item" data-idx="${realIdx}">
                         <span class="history-date">${w.date}</span>
                         <span class="history-type">${w.type === 'tonificar' ? 'Tonificar' : 'Quemar'}</span>
                         <span class="history-duration">${w.duration} min · ${w.intensity}</span>
-                    </div>
-                `).join('');
+                        <div class="history-item-actions">
+                            <button class="btn-edit-workout" data-idx="${realIdx}">✏ Editar</button>
+                            <button class="btn-del-workout" data-idx="${realIdx}">✕</button>
+                        </div>
+                        <div class="history-edit-row" id="edit-row-${realIdx}" style="display:none">
+                            <input type="number" id="edit-dur-${realIdx}" value="${w.duration}" min="5" max="180" placeholder="min">
+                            <span style="font-size:12px">min</span>
+                            <button onclick="saveEditWorkout(${realIdx})">Guardar</button>
+                            <button onclick="document.getElementById('edit-row-${realIdx}').style.display='none'" style="background:var(--card);color:var(--foreground)">Cancelar</button>
+                        </div>
+                    </div>`;
+                }).join('');
             }
 
             body.innerHTML = html;
+
+            body.querySelectorAll('.btn-del-workout').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = parseInt(btn.dataset.idx);
+                    if (!confirm('¿Eliminar este entreno?')) return;
+                    state.workouts.splice(idx, 1);
+                    state.total = state.workouts.length;
+                    state.weekCount = getCurrentWeekCount();
+                    saveState(); updateUI(); renderProgress();
+                });
+            });
+
+            body.querySelectorAll('.btn-edit-workout').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = btn.dataset.idx;
+                    const row = document.getElementById(`edit-row-${idx}`);
+                    row.style.display = row.style.display === 'none' ? 'flex' : 'none';
+                });
+            });
+        }
+
+        window.saveEditWorkout = (idx) => {
+            const val = parseInt(document.getElementById(`edit-dur-${idx}`).value);
+            if (!val || val < 5) return;
+            state.workouts[idx].duration = val;
+            state.weekCount = getCurrentWeekCount();
+            saveState(); updateUI(); renderProgress();
+        };
+
+        document.getElementById('btn-progress').addEventListener('click', () => {
+            renderProgress();
             openModal('modal-progress');
         });
 
