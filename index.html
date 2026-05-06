@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ENTRENO BRUTAL</title>
-    <meta name="theme-color" content="#ffee00">
+    <meta name="theme-color" content="#fafaf7">
     <meta name="description" content="App brutalista para registrar rutinas, entrenos y progreso.">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -38,7 +38,14 @@
             -webkit-font-smoothing: antialiased;
         }
         .app-container { width: 100%; max-width: 480px; }
-        .header { text-align: center; margin-bottom: 32px; }
+        .header { text-align: center; margin-bottom: 16px; }
+        .today-banner {
+            text-align: center; padding: 10px 16px; margin-bottom: 20px;
+            background: var(--accent); border: 2px solid var(--border);
+            font-size: 15px; font-weight: 800; letter-spacing: 0.5px;
+            line-height: 1.4;
+        }
+        .today-banner:empty { display: none; }
         .header h1 {
             font-size: 28px; font-weight: 900; letter-spacing: 2px;
             text-transform: uppercase; margin-bottom: 8px;
@@ -415,6 +422,7 @@
             <h1>ENTRENO BRUTAL</h1>
             <p class="tagline">El dolor es temporal, el orgullo es eterno.</p>
         </header>
+        <div class="today-banner" id="today-banner"></div>
         <div class="tabs">
             <button class="tab active" data-tab="tonificar">
                 <span class="tab-icon" aria-hidden="true">
@@ -746,16 +754,16 @@
             tonificar: {
                 1: {
                     Lunes: [
-                        { name: 'Hip Thrust', detail: '4x12' },
-                        { name: 'Peso muerto rumano', detail: '4x10' },
-                        { name: 'Sentadilla', detail: '4x10' },
+                        { name: 'Hip Thrust', detail: '3x12' },
+                        { name: 'Peso muerto rumano', detail: '3x10' },
+                        { name: 'Sentadilla', detail: '3x10' },
                         { name: 'Abducciones en maquina', detail: '3x15' },
                         { name: 'Curl femoral', detail: '3x12' },
                         { name: 'Patada de gluteo', detail: '3x12 cada pierna' }
                     ],
                     Miercoles: [
-                        { name: 'Jalon al pecho', detail: '4x12' },
-                        { name: 'Remo sentado', detail: '4x10' },
+                        { name: 'Jalon al pecho', detail: '3x12' },
+                        { name: 'Remo sentado', detail: '3x10' },
                         { name: 'Pullover en polea', detail: '3x12' },
                         { name: 'Vuelos laterales', detail: '3x15' },
                         { name: 'Press hombro maquina', detail: '3x10' },
@@ -763,7 +771,7 @@
                         { name: 'Plancha', detail: '3x40s' }
                     ],
                     Viernes: [
-                        { name: 'Press pecho maquina', detail: '4x10' },
+                        { name: 'Press pecho maquina', detail: '3x10' },
                         { name: 'Aperturas en peck deck', detail: '3x12' },
                         { name: 'Curl biceps polea', detail: '3x12' },
                         { name: 'Extension triceps polea', detail: '3x12' },
@@ -775,14 +783,14 @@
                 1: {
                     Lunes: [
                         { name: 'Cinta inclinada', detail: '15 min' },
-                        { name: 'Prensa de piernas', detail: '4x15' },
+                        { name: 'Prensa de piernas', detail: '3x15' },
                         { name: 'Curl femoral', detail: '3x15' },
                         { name: 'Abducciones en maquina', detail: '3x20' },
                         { name: 'Bicicleta estatica', detail: '10 min' }
                     ],
                     Miercoles: [
                         { name: 'Eliptica', detail: '12 min' },
-                        { name: 'Jalon al pecho', detail: '4x12' },
+                        { name: 'Jalon al pecho', detail: '3x12' },
                         { name: 'Remo sentado', detail: '3x12' },
                         { name: 'Press pecho maquina', detail: '3x12' },
                         { name: 'Vuelos laterales', detail: '3x15' },
@@ -981,6 +989,18 @@
                 navigator.serviceWorker.register('./sw.js').catch(() => {});
             });
         }
+
+        // Cartel del día
+        (function() {
+            const msgs = {
+                1: 'Hoy toca Piernas!! 🦵🏻',
+                3: 'Hoy toca Brazos y Espalda!! 💪🏼',
+                5: '¡Hoy toca variado! 🏋‍♀️',
+            };
+            const day = new Date().getDay();
+            const banner = document.getElementById('today-banner');
+            if (banner && msgs[day]) banner.textContent = msgs[day];
+        })();
 
         // Init
         updateUI();
