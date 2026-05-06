@@ -1,0 +1,26 @@
+{
+  "name": "ENTRENO BRUTAL",
+  "short_name": "ENTRENO",
+  "description": "App brutalista para registrar rutinas, entrenos y progreso.",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fafaf7",
+  "theme_color": "#ffee00",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["health", "fitness", "sports"],
+  "lang": "es"
+}
