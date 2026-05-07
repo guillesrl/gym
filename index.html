@@ -544,8 +544,19 @@
                     </div>
                     <div class="action-title">Ver Progreso</div>
                 </div>
-                <p class="action-desc">Analiza tu evolucion y estadisticas mensuales.</p>
+                <p class="action-desc">Analiza tu evolucion y records personales.</p>
                 <div class="action-link">Revisar <span class="arrow">&#8594;</span></div>
+            </div>
+
+            <div class="action-card" id="btn-historial">
+                <div class="action-card-header">
+                    <div class="action-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M12 7v5l4 2"></path></svg>
+                    </div>
+                    <div class="action-title">Historial</div>
+                </div>
+                <p class="action-desc">Revisa, edita o elimina tus entrenos registrados.</p>
+                <div class="action-link">Ver todo <span class="arrow">&#8594;</span></div>
             </div>
         </div>
         <div class="export-area">
@@ -564,6 +575,17 @@
                 <button class="modal-close" data-close="modal-routine">X</button>
             </div>
             <div class="modal-body" id="routine-body"></div>
+        </div>
+    </div>
+
+    <!-- MODAL: Historial -->
+    <div class="modal-overlay fullscreen-mobile" id="modal-historial">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Historial</h2>
+                <button class="modal-close" data-close="modal-historial">X</button>
+            </div>
+            <div class="modal-body" id="history-body"></div>
         </div>
     </div>
 
@@ -1098,34 +1120,36 @@
                 html += '</div>';
             }
 
-            html += `<div class="section-label" style="margin-top:${prs.length > 0 ? 0 : 20}px">Historial</div>`;
-
-            if (state.workouts.length === 0) {
-                html += '<div class="empty-state">No hay entrenos registrados todavia.</div>';
-            } else {
-                const allReversed = [...state.workouts].reverse();
-                html += allReversed.map((w, ri) => {
-                    const realIdx = state.workouts.length - 1 - ri;
-                    return `
-                    <div class="history-item" data-idx="${realIdx}">
-                        <span class="history-date">${w.date}</span>
-                        <span class="history-type">${w.type === 'tonificar' ? 'Tonificar' : 'Quemar'}</span>
-                        <span class="history-duration">${w.duration} min · ${w.intensity}</span>
-                        <div class="history-item-actions">
-                            <button class="btn-edit-workout" data-idx="${realIdx}">✏ Editar</button>
-                            <button class="btn-del-workout" data-idx="${realIdx}">✕</button>
-                        </div>
-                        <div class="history-edit-row" id="edit-row-${realIdx}" style="display:none">
-                            <input type="number" id="edit-dur-${realIdx}" value="${w.duration}" min="5" max="180" placeholder="min">
-                            <span style="font-size:12px">min</span>
-                            <button onclick="saveEditWorkout(${realIdx})">Guardar</button>
-                            <button onclick="document.getElementById('edit-row-${realIdx}').style.display='none'" style="background:var(--card);color:var(--foreground)">Cancelar</button>
-                        </div>
-                    </div>`;
-                }).join('');
-            }
-
             body.innerHTML = html;
+        }
+
+        function renderHistory() {
+            const body = document.getElementById('history-body');
+            if (!body) return;
+            if (state.workouts.length === 0) {
+                body.innerHTML = '<div class="empty-state">No hay entrenos registrados todavia.</div>';
+                return;
+            }
+            const allReversed = [...state.workouts].reverse();
+            body.innerHTML = allReversed.map((w, ri) => {
+                const realIdx = state.workouts.length - 1 - ri;
+                return `
+                <div class="history-item" data-idx="${realIdx}">
+                    <span class="history-date">${w.date}</span>
+                    <span class="history-type">${w.type === 'tonificar' ? 'Tonificar' : 'Quemar'}</span>
+                    <span class="history-duration">${w.duration} min · ${escapeHtml(w.notes || w.intensity)}</span>
+                    <div class="history-item-actions">
+                        <button class="btn-edit-workout" data-idx="${realIdx}">✏ Editar</button>
+                        <button class="btn-del-workout" data-idx="${realIdx}">✕</button>
+                    </div>
+                    <div class="history-edit-row" id="edit-row-${realIdx}" style="display:none">
+                        <input type="number" id="edit-dur-${realIdx}" value="${w.duration}" min="5" max="180" placeholder="min">
+                        <span style="font-size:12px">min</span>
+                        <button onclick="saveEditWorkout(${realIdx})">Guardar</button>
+                        <button onclick="document.getElementById('edit-row-${realIdx}').style.display='none'" style="background:var(--card);color:var(--foreground)">Cancelar</button>
+                    </div>
+                </div>`;
+            }).join('');
 
             body.querySelectorAll('.btn-del-workout').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -1134,7 +1158,7 @@
                     state.workouts.splice(idx, 1);
                     state.total = state.workouts.length;
                     state.weekCount = getCurrentWeekCount();
-                    saveState(); updateUI(); renderProgress();
+                    saveState(); updateUI(); renderHistory();
                 });
             });
 
@@ -1152,12 +1176,17 @@
             if (!val || val < 5) return;
             state.workouts[idx].duration = val;
             state.weekCount = getCurrentWeekCount();
-            saveState(); updateUI(); renderProgress();
+            saveState(); updateUI(); renderHistory();
         };
 
         document.getElementById('btn-progress').addEventListener('click', () => {
             renderProgress();
             openModal('modal-progress');
+        });
+
+        document.getElementById('btn-historial').addEventListener('click', () => {
+            renderHistory();
+            openModal('modal-historial');
         });
 
         document.getElementById('btn-export-history').addEventListener('click', downloadHistory);
