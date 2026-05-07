@@ -1,7 +1,6 @@
-const CACHE_NAME = 'entreno-brutal-v4';
+const CACHE_NAME = 'entreno-brutal-v5';
 const APP_ASSETS = [
   './',
-  './index.html',
   './manifest.webmanifest',
   './icon.svg',
   // Imágenes animadas de ejercicios (CDN externo)
