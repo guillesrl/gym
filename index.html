@@ -1,501 +1,1270 @@
-     1|<!DOCTYPE html>
-     2|<html lang="es">
-     3|<head>
-     4|    <meta charset="UTF-8">
-     5|    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     6|    <title>ENTRENO BRUTAL</title>
-     7|    <meta name="theme-color" content="#fafaf7">
-     8|    <meta name="description" content="App brutalista para registrar rutinas, entrenos y progreso.">
-     9|    <link rel="manifest" href="manifest.webmanifest">
-    10|    <link rel="icon" href="icon.svg" type="image/svg+xml">
-    11|    <link rel="apple-touch-icon" href="icon.svg">
-    12|    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    13|    <style>
-    14|        :root {
-    15|            --background: #fafaf7;
-    16|            --foreground: #000;
-    17|            --card: #fff;
-    18|            --muted: #e8e6dd;
-    19|            --muted-foreground: #6b6b62;
-    20|            --accent: #f9c4d2;
-    21|            --destructive: #ff2d00;
-    22|            --border: #000;
-    23|            --primary: #000;
-    24|            --primary-foreground: #fff;
-    25|            --sprout: #00a859;
-    26|            --shadow-hard: 8px 8px 0 #000;
-    27|            --shadow-small: 5px 5px 0 #000;
-    28|        }
-    29|        * { margin: 0; padding: 0; box-sizing: border-box; }
-    30|        body {
-    31|            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    32|            background: var(--background);
-    33|            color: var(--foreground);
-    34|            min-height: 100vh;
-    35|            display: flex;
-    36|            justify-content: center;
-    37|            padding: 40px 20px;
-    38|            -webkit-font-smoothing: antialiased;
-    39|        }
-    40|        .app-container { width: 100%; max-width: 480px; }
-    41|        .header { text-align: center; margin-bottom: 16px; }
-    42|        .today-banner {
-    43|            text-align: center; padding: 10px 16px; margin-bottom: 20px;
-    44|            background: var(--accent); border: 2px solid var(--border);
-    45|            font-size: 15px; font-weight: 800; letter-spacing: 0.5px;
-    46|            line-height: 1.4;
-    47|        }
-    48|        .today-banner:empty { display: none; }
-    49|        .header h1 {
-    50|            font-size: 28px; font-weight: 900; letter-spacing: 2px;
-    51|            text-transform: uppercase; margin-bottom: 8px;
-    52|        }
-    53|        .header .tagline {
-    54|            font-size: 12px; font-weight: 600; letter-spacing: 1.5px;
-    55|            text-transform: uppercase; color: var(--muted-foreground);
-    56|        }
-    57|        .tabs {
-    58|            display: flex; background: var(--card);
-    59|            border: 2px solid var(--border); padding: 4px; margin-bottom: 24px;
-    60|            box-shadow: var(--shadow-small);
-    61|        }
-    62|        .tab {
-    63|            flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    64|            padding: 10px 12px; text-align: center;
-    65|            font-size: 13px; font-weight: 600; letter-spacing: 0.5px;
-    66|            text-transform: uppercase; cursor: pointer; transition: all 0.15s ease;
-    67|            color: var(--muted-foreground); border: none; background: transparent;
-    68|        }
-    69|        .tab:hover { color: var(--foreground); }
-    70|        .tab.active { background: var(--primary); color: var(--primary-foreground); }
-    71|        .tab-icon, .stat-icon, .program-dot, .action-icon { color: currentColor; }
-    72|        .tab-icon svg, .stat-icon svg, .program-dot svg, .action-icon svg {
-    73|            display: block; width: 1em; height: 1em;
-    74|            fill: none; stroke: currentColor; stroke-width: 2;
-    75|            stroke-linecap: round; stroke-linejoin: round;
-    76|        }
-    77|        .week-selector {
-    78|            display: flex; align-items: center; justify-content: center;
-    79|            gap: 16px; margin-bottom: 24px;
-    80|        }
-    81|        .week-nav {
-    82|            width: 32px; height: 32px; border: 2px solid var(--border);
-    83|            background: var(--card); display: flex; align-items: center;
-    84|            justify-content: center; cursor: pointer; font-size: 18px;
-    85|            font-weight: 600; transition: all 0.15s ease;
-    86|        }
-    87|        .week-nav:hover { background: var(--primary); color: var(--primary-foreground); }
-    88|        .week-label {
-    89|            background: var(--accent); border: 2px solid var(--border);
-    90|            padding: 8px 14px; font-size: 14px; font-weight: 800;
-    91|            letter-spacing: 1px; text-transform: uppercase; box-shadow: var(--shadow-small);
-    92|        }
-    93|        .stats-grid {
-    94|            display: grid; grid-template-columns: repeat(3, 1fr);
-    95|            margin-bottom: 24px; border: 2px solid var(--border);
-    96|            box-shadow: var(--shadow-hard); background: var(--card);
-    97|        }
-    98|        .stat-card {
-    99|            min-height: auto; padding: 18px 10px; text-align: center;
-   100|            border-right: 2px solid var(--border);
-   101|        }
-   102|        .stat-card:last-child { border-right: none; }
-   103|        .stat-icon {
-   104|            display: inline-flex; align-items: center; justify-content: center;
-   105|            font-size: 24px; line-height: 1; margin-bottom: 10px;
-   106|        }
-   107|        .stat-value { font-size: 28px; font-weight: 900; margin-bottom: 4px; }
-   108|        .stat-label { font-size: 10px; font-weight: 600; color: var(--muted-foreground); text-transform: uppercase; letter-spacing: 1px; }
-   109|        .active-program {
-   110|            display: flex; align-items: center; gap: 12px;
-   111|            background: var(--accent); border: 2px solid var(--border);
-   112|            padding: 14px 16px; margin-bottom: 24px; box-shadow: var(--shadow-hard);
-   113|        }
-   114|        .program-dot {
-   115|            width: 26px; height: 26px; background: none; animation: pulse 2s infinite;
-   116|            display: flex; align-items: center; justify-content: center;
-   117|            font-size: 24px; line-height: 1;
-   118|        }
-   119|        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-   120|        .program-info { flex: 1; }
-   121|        .program-name {
-   122|            display: block; min-width: 0; padding: 0; background: transparent; color: var(--foreground);
-   123|            border: none; font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
-   124|        }
-   125|        .program-label { margin-top: 0; font-size: 10px; font-weight: 600; color: var(--muted-foreground); text-transform: uppercase; letter-spacing: 1px; }
-   126|        .action-cards { display: flex; flex-direction: column; }
-   127|        .action-card {
-   128|            background: var(--card); border: 2px solid var(--border);
-   129|            padding: 20px; cursor: pointer; transition: all 0.15s ease;
-   130|            margin-bottom: 14px;
-   131|            position: relative; z-index: 1; box-shadow: var(--shadow-hard);
-   132|        }
-   133|        .action-card:hover { background: var(--accent); z-index: 2; transform: translate(-3px, -3px); box-shadow: 11px 11px 0 #000; }
-   134|        .action-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-   135|        .action-icon {
-   136|            width: 40px; height: 40px; border: 2px solid var(--border);
-   137|            display: flex; align-items: center; justify-content: center;
-   138|            font-size: 22px; flex-shrink: 0; background: var(--muted);
-   139|        }
-   140|        .action-title { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
-   141|        .action-desc { font-size: 13px; color: var(--muted-foreground); line-height: 1.5; margin-bottom: 12px; padding-left: 52px; }
-   142|        .action-link {
-   143|            display: inline-flex; align-items: center; gap: 6px;
-   144|            font-size: 12px; font-weight: 700; text-transform: uppercase;
-   145|            letter-spacing: 1px; padding: 0 0 0 52px; border: none;
-   146|            transition: gap 0.15s ease; background: transparent;
-   147|        }
-   148|        .action-card:nth-child(2) .action-link { background: transparent; color: var(--foreground); }
-   149|        .action-card:hover .action-link { gap: 10px; }
-   150|        .export-area { margin-top: 10px; padding-bottom: 10px; }
-   151|        .btn-export {
-   152|            width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
-   153|            padding: 14px 16px; border: 2px solid var(--border);
-   154|            background: var(--card); color: var(--foreground);
-   155|            font-family: inherit; font-size: 13px; font-weight: 800;
-   156|            text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
-   157|            box-shadow: var(--shadow-hard); transition: all 0.15s ease;
-   158|        }
-   159|        .btn-export:hover { background: var(--accent); transform: translate(-3px, -3px); box-shadow: 11px 11px 0 #000; }
-   160|        .btn-export svg {
-   161|            width: 20px; height: 20px; fill: none; stroke: currentColor;
-   162|            stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
-   163|        }
-   164|        @media (max-width: 480px) {
-   165|            body { padding: 20px 16px; }
-   166|            .header h1 { font-size: 24px; }
-   167|            .stat-card { padding: 16px 8px; }
-   168|            .stat-value { font-size: 24px; }
-   169|        }
-   170|
-   171|        /* Modals / Views */
-   172|        .modal-overlay {
-   173|            position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-   174|            display: none; align-items: center; justify-content: center;
-   175|            z-index: 100; padding: 20px;
-   176|        }
-   177|        .modal-overlay.active { display: flex; }
-   178|        .modal {
-   179|            background: var(--background); border: 2px solid var(--border);
-   180|            width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto;
-   181|            box-shadow: var(--shadow-hard);
-   182|        }
-   183|        @media (max-width: 480px) {
-   184|            .modal-overlay.fullscreen-mobile { padding: 0; align-items: flex-start; }
-   185|            .modal-overlay.fullscreen-mobile .modal {
-   186|                max-width: 100%; width: 100%; min-height: 100dvh;
-   187|                max-height: 100dvh; border: none; box-shadow: none;
-   188|            }
-   189|        }
-   190|        .modal-header {
-   191|            display: flex; align-items: center; justify-content: space-between;
-   192|            padding: 16px 20px; border-bottom: 2px solid var(--border);
-   193|        }
-   194|        .modal-header h2 { font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-   195|        .modal-close {
-   196|            width: 32px; height: 32px; border: 2px solid var(--border);
-   197|            background: var(--card); cursor: pointer; font-size: 16px;
-   198|            display: flex; align-items: center; justify-content: center;
-   199|            font-weight: 700; transition: all 0.15s ease;
-   200|        }
-   201|        .modal-close:hover { background: var(--primary); color: var(--primary-foreground); }
-   202|        .modal-body { padding: 20px; }
-   203|
-   204|        /* Routine View */
-   205|        .routine-day { border: 2px solid var(--border); margin-bottom: 14px; box-shadow: var(--shadow-small); background: var(--card); }
-   206|        .routine-day-header {
-   207|            display: flex; align-items: center; justify-content: space-between;
-   208|            padding: 12px 16px; cursor: pointer; background: var(--card);
-   209|            font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
-   210|            transition: background 0.15s ease;
-   211|        }
-   212|        .routine-day-header:hover { background: var(--accent); }
-   213|        .routine-day-header .arrow { transition: transform 0.15s ease; }
-   214|        .routine-day-header.open .arrow { transform: rotate(90deg); }
-   215|        .routine-day-content { display: none; border-top: 2px solid var(--border); }
-   216|        .routine-day-content.open { display: block; }
-   217|        .exercise-item {
-   218|            display: flex; align-items: center; gap: 12px;
-   219|            padding: 10px 16px; border-bottom: 1px solid var(--muted);
-   220|        }
-   221|        .exercise-item:last-child { border-bottom: none; }
-   222|        .exercise-check {
-   223|            width: 20px; height: 20px; border: 2px solid var(--border);
-   224|            cursor: pointer; display: flex; align-items: center; justify-content: center;
-   225|            font-size: 12px; flex-shrink: 0; background: var(--card);
-   226|        }
-   227|        .exercise-check.done { background: var(--primary); color: var(--primary-foreground); }
-   228|        .exercise-name { font-size: 13px; font-weight: 600; flex: 1; }
-   229|        .exercise-detail { font-size: 12px; color: var(--muted-foreground); }
-   230|        .exercise-weight {
-   231|            display: flex; align-items: center; gap: 4px; flex-shrink: 0;
-   232|        }
-   233|        .exercise-weight input {
-   234|            width: 52px; padding: 4px 6px; border: 2px solid var(--border);
-   235|            background: var(--card); font-family: inherit; font-size: 12px;
-   236|            font-weight: 700; text-align: center; color: var(--foreground);
-   237|        }
-   238|        .exercise-weight input:focus { outline: none; border-color: var(--primary); }
-   239|        .exercise-weight span { font-size: 11px; color: var(--muted-foreground); font-weight: 600; }
-   240|        .exercise-preview-btn {
-   241|            padding: 6px 8px; border: 2px solid var(--border);
-   242|            background: var(--card); color: var(--foreground);
-   243|            font-family: inherit; font-size: 10px; font-weight: 800;
-   244|            text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer;
-   245|            transition: all 0.15s ease; flex-shrink: 0;
-   246|        }
-   247|        .exercise-preview-btn:hover { background: var(--primary); color: var(--primary-foreground); }
-   248|        .exercise-preview-media {
-   249|            border: 2px solid var(--border); background: var(--card);
-   250|            box-shadow: var(--shadow-small); overflow: hidden;
-   251|        }
-   252|        .exercise-preview-labels {
-   253|            border-bottom: 2px solid var(--border); background: var(--accent);
-   254|        }
-   255|        .exercise-preview-labels span {
-   256|            display: block; padding: 8px 10px; text-align: center;
-   257|            font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;
-   258|        }
-   259|        .exercise-preview-images {
-   260|            display: flex; justify-content: center; align-items: center;
-   261|            background: #000; min-height: 280px;
-   262|        }
-   263|        .exercise-preview-images img {
-   264|            display: block; width: 100%; max-width: 360px;
-   265|            height: auto; object-fit: contain;
-   266|        }
-   267|        .exercise-preview-note {
-   268|            margin-top: 14px; font-size: 12px; line-height: 1.5;
-   269|            color: var(--muted-foreground); text-align: center;
-   270|        }
-   271|        .btn-label-mobile { display: none; }
-   272|        .btn-label-desktop { display: inline; }
-   273|        .day-register-row {
-   274|            display: flex; gap: 8px; align-items: center;
-   275|            padding: 10px 16px; border-top: 2px solid var(--border);
-   276|            background: var(--card);
-   277|        }
-   278|        .day-duration-input {
-   279|            width: 80px; padding: 6px 8px; border: 2px solid var(--border);
-   280|            background: var(--card); font-family: inherit; font-size: 13px;
-   281|            font-weight: 700; text-align: center; color: var(--foreground);
-   282|        }
-   283|        .day-duration-input:focus { outline: none; border-color: var(--primary); }
-   284|        .day-register-btn {
-   285|            flex: 1; padding: 7px 10px; border: 2px solid var(--border);
-   286|            background: var(--primary); color: var(--primary-foreground);
-   287|            font-family: inherit; font-size: 11px; font-weight: 900;
-   288|            text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer;
-   289|        }
-   290|        .day-register-btn:disabled { opacity: 0.6; cursor: default; }
-   291|        .day-register-btn.done { background: var(--muted); color: var(--muted-foreground); border-color: var(--muted); cursor: default; opacity: 1; }
-   292|        .history-item {
-   293|            display: flex; align-items: center; gap: 8px;
-   294|            padding: 10px 0; border-bottom: 1px solid var(--muted); flex-wrap: wrap;
-   295|        }
-   296|        .history-item-actions { margin-left: auto; display: flex; gap: 6px; }
-   297|        .btn-edit-workout, .btn-del-workout {
-   298|            padding: 3px 8px; border: 2px solid var(--border);
-   299|            font-family: inherit; font-size: 10px; font-weight: 800;
-   300|            cursor: pointer; background: var(--card); color: var(--foreground);
-   301|        }
-   302|        .btn-del-workout { border-color: #c00; color: #c00; }
-   303|        .btn-del-workout:hover { background: #c00; color: #fff; }
-   304|        .btn-edit-workout:hover { background: var(--accent); }
-   305|        .history-edit-row {
-   306|            width: 100%; display: flex; gap: 6px; align-items: center;
-   307|            padding-top: 6px; flex-wrap: wrap;
-   308|        }
-   309|        .history-edit-row input {
-   310|            width: 70px; padding: 4px 6px; border: 2px solid var(--border);
-   311|            font-family: inherit; font-size: 12px; font-weight: 700;
-   312|            text-align: center; background: var(--card); color: var(--foreground);
-   313|        }
-   314|        .history-edit-row button {
-   315|            padding: 4px 10px; border: 2px solid var(--border);
-   316|            font-family: inherit; font-size: 11px; font-weight: 800;
-   317|            cursor: pointer; background: var(--primary); color: var(--primary-foreground);
-   318|        }
-   319|        @media (max-width: 480px) {
-   320|            .exercise-item { flex-wrap: nowrap; gap: 6px; }
-   321|            .exercise-preview-btn {
-   322|                width: auto;
-   323|                font-size: 9px;
-   324|                padding: 4px 6px;
-   325|                letter-spacing: 0;
-   326|            }
-   327|            .btn-label-desktop { display: none; }
-   328|            .btn-label-mobile { display: inline; }
-   329|            .exercise-weight input { width: 36px; padding: 4px 2px; font-size: 11px; }
-   330|            .exercise-weight span { display: none; }
-   331|        }
-   332|
-   333|        /* Register View */
-   334|        .form-group { margin-bottom: 16px; }
-   335|        .form-group label {
-   336|            display: block; font-size: 12px; font-weight: 700;
-   337|            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
-   338|        }
-   339|        .form-group input, .form-group select, .form-group textarea {
-   340|            width: 100%; padding: 10px 12px; border: 2px solid var(--border);
-   341|            background: var(--card); font-family: inherit; font-size: 14px;
-   342|            font-weight: 500; outline: none; transition: border-color 0.15s ease;
-   343|        }
-   344|        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-   345|            border-color: var(--accent);
-   346|        }
-   347|        .form-group textarea { resize: vertical; min-height: 60px; }
-   348|        .btn-submit {
-   349|            width: 100%; padding: 12px; border: 2px solid var(--border);
-   350|            background: var(--primary); color: var(--primary-foreground);
-   351|            font-family: inherit; font-size: 13px; font-weight: 700;
-   352|            text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
-   353|            transition: all 0.15s ease;
-   354|        }
-   355|        .btn-submit:hover { background: var(--accent); color: var(--foreground); }
-   356|        .success-area { display: none; }
-   357|        .success-area.show { display: block; }
-   358|        .success-header {
-   359|            text-align: center; padding: 16px;
-   360|            background: var(--accent); border-bottom: 2px solid var(--border);
-   361|            font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
-   362|        }
-   363|        .compare-grid {
-   364|            display: grid; grid-template-columns: 1fr 1fr 1fr;
-   365|            border-bottom: 2px solid var(--border);
-   366|        }
-   367|        .compare-cell {
-   368|            text-align: center; padding: 12px 8px;
-   369|            border-right: 2px solid var(--border);
-   370|        }
-   371|        .compare-cell:last-child { border-right: none; }
-   372|        .compare-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted-foreground); margin-bottom: 4px; }
-   373|        .compare-value { font-size: 18px; font-weight: 900; }
-   374|        .compare-diff { font-size: 11px; font-weight: 600; margin-top: 2px; }
-   375|        .compare-diff.up { color: var(--sprout); }
-   376|        .compare-diff.down { color: var(--destructive); }
-   377|        .compare-diff.same { color: var(--muted-foreground); }
-   378|        .motivation-msg {
-   379|            text-align: center; padding: 20px 16px;
-   380|            font-size: 15px; font-weight: 700; font-style: italic;
-   381|            color: var(--foreground); border-bottom: 2px solid var(--border);
-   382|        }
-   383|        .btn-back {
-   384|            width: 100%; padding: 12px; border: none; background: var(--primary);
-   385|            color: var(--primary-foreground); font-family: inherit; font-size: 13px;
-   386|            font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
-   387|            cursor: pointer; transition: all 0.15s ease;
-   388|        }
-   389|        .btn-back:hover { background: var(--accent); color: var(--foreground); }
-   390|
-   391|        /* Progress View */
-   392|        .progress-bar-container { margin-bottom: 20px; }
-   393|        .progress-bar-label {
-   394|            display: flex; justify-content: space-between;
-   395|            font-size: 12px; font-weight: 700; text-transform: uppercase;
-   396|            letter-spacing: 1px; margin-bottom: 6px;
-   397|        }
-   398|        .progress-bar-track { height: 16px; border: 2px solid var(--border); background: var(--card); }
-   399|        .progress-bar-fill { height: 100%; background: var(--primary); transition: width 0.3s ease; }
-   400|        .history-item {
-   401|            display: flex; align-items: center; justify-content: space-between;
-   402|            padding: 10px 0; border-bottom: 1px solid var(--muted);
-   403|        }
-   404|        .history-item:last-child { border-bottom: none; }
-   405|        .history-date { font-size: 12px; font-weight: 600; color: var(--muted-foreground); }
-   406|        .history-type { font-size: 13px; font-weight: 700; text-transform: uppercase; }
-   407|        .history-duration { font-size: 12px; font-weight: 600; }
-   408|        .empty-state {
-   409|            text-align: center; padding: 32px 16px;
-   410|            color: var(--muted-foreground); font-size: 13px;
-   411|        }
-   412|        .section-label {
-   413|            font-size: 12px; font-weight: 700; text-transform: uppercase;
-   414|            letter-spacing: 1px; color: var(--muted-foreground);
-   415|            padding-bottom: 8px; margin-bottom: 12px;
-   416|            border-bottom: 2px solid var(--border);
-   417|        }
-   418|
-   419|        /* Shake + Explosion */
-   420|        @keyframes shake {
-   421|            0%,100% { transform: translate(0,0) rotate(0deg); }
-   422|            10%      { transform: translate(-9px,-4px) rotate(-1.5deg); }
-   423|            20%      { transform: translate(9px, 5px) rotate(1.5deg); }
-   424|            30%      { transform: translate(-9px, 5px) rotate(-1deg); }
-   425|            40%      { transform: translate(9px,-5px) rotate(1deg); }
-   426|            50%      { transform: translate(-5px, 9px) rotate(-0.5deg); }
-   427|            60%      { transform: translate(5px,-9px) rotate(0.5deg); }
-   428|            70%      { transform: translate(-9px,-4px) rotate(-1deg); }
-   429|            80%      { transform: translate(9px, 4px) rotate(1deg); }
-   430|            90%      { transform: translate(-4px, 4px) rotate(-0.5deg); }
-   431|        }
-   432|        .shake { animation: shake 0.65s cubic-bezier(.36,.07,.19,.97) both; }
-   433|
-   434|        @keyframes flashBurst {
-   435|            0%   { opacity: 0.65; transform: scale(0.6); }
-   436|            40%  { opacity: 0.9; }
-   437|            100% { opacity: 0; transform: scale(2.2); }
-   438|        }
-   439|        .flash-burst {
-   440|            position: fixed; inset: 0; pointer-events: none; z-index: 999;
-   441|            background: radial-gradient(circle at 50% 60%, var(--accent) 0%, transparent 65%);
-   442|            animation: flashBurst 0.55s ease-out forwards;
-   443|        }
-   444|
-   445|        @keyframes confettiPop {
-   446|            0%   { transform: translate(0,0) scale(1.2) rotate(0deg); opacity: 1; }
-   447|            100% { transform: translate(var(--dx), var(--dy)) scale(0) rotate(var(--rot)); opacity: 0; }
-   448|        }
-   449|        .confetti-particle {
-   450|            position: fixed; pointer-events: none; z-index: 1000;
-   451|            width: 11px; height: 11px;
-   452|            animation: confettiPop 0.85s cubic-bezier(.17,.67,.35,.96) forwards;
-   453|        }
-   454|
-   455|        /* Personal Records */
-   456|        .pr-badge {
-   457|            font-size: 10px; font-weight: 900; color: var(--sprout);
-   458|            text-transform: uppercase; letter-spacing: 0.5px;
-   459|            white-space: nowrap; flex-shrink: 0;
-   460|        }
-   461|        .pr-badge.pr-new { animation: prFlash 0.4s ease 5; color: var(--destructive); }
-   462|        @keyframes prFlash { 0%,100%{opacity:1} 50%{opacity:0} }
-   463|        .pr-item {
-   464|            display: flex; align-items: center; gap: 12px;
-   465|            padding: 10px 0; border-bottom: 1px solid var(--muted);
-   466|        }
-   467|        .pr-item:last-child { border-bottom: none; }
-   468|        .pr-item-name { font-size: 13px; font-weight: 700; flex: 1; }
-   469|        .pr-item-weight { font-size: 18px; font-weight: 900; color: var(--sprout); min-width: 60px; text-align: right; }
-   470|        .pr-item-date { font-size: 11px; color: var(--muted-foreground); font-weight: 600; }
-   471|    </style>
-   472|</head>
-   473|<body>
-   474|    <div class="app-container">
-   475|        <header class="header">
-   476|            <h1>ENTRENO BRUTAL</h1>
-   477|            <p class="tagline">El dolor es temporal, el orgullo es eterno.</p>
-   478|        </header>
-   479|        <div class="today-banner" id="today-banner"></div>
-   480|        <div class="tabs">
-   481|            <button class="tab active" data-tab="tonificar">
-   482|                <span class="tab-icon" aria-hidden="true">
-   483|                    <svg viewBox="0 0 24 24"><path d="M14.4 14.4 9.6 9.6"></path><path d="M18.657 21.485a2 2 0 1 1-2.829-2.828l-1.767 1.768a2 2 0 1 1-2.829-2.829l6.364-6.364a2 2 0 1 1 2.829 2.829l-1.768 1.767a2 2 0 1 1 2.828 2.829z"></path><path d="m21.5 21.5-1.4-1.4"></path><path d="M3.9 3.9 2.5 2.5"></path><path d="M6.404 12.768a2 2 0 1 1-2.829-2.829l1.768-1.767a2 2 0 1 1-2.828-2.829l2.828-2.828a2 2 0 1 1 2.829 2.828l1.767-1.768a2 2 0 1 1 2.829 2.829z"></path></svg>
-   484|                </span>
-   485|                Tonificar
-   486|            </button>
-   487|            <button class="tab" data-tab="quemar">
-   488|                <span class="tab-icon" aria-hidden="true">
-   489|                    <svg viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
-   490|                </span>
-   491|                Quemar Grasa
-   492|            </button>
-   493|        </div>
-   494|        <div class="week-selector">
-   495|            <button class="week-nav" id="prev-week">&#8249;</button>
-   496|            <span class="week-label">Semana <span id="week-number">1</span></span>
-   497|            <button class="week-nav" id="next-week">&#8250;</button>
-   498|        </div>
-   499|        <div class="stats-grid">
-   500|            <div class="stat-card">
-   501|
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENTRENO BRUTAL</title>
+    <meta name="theme-color" content="#fafaf7">
+    <meta name="description" content="App brutalista para registrar rutinas, entrenos y progreso.">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background: #fafaf7;
+            --foreground: #000;
+            --card: #fff;
+            --muted: #e8e6dd;
+            --muted-foreground: #6b6b62;
+            --accent: #f9c4d2;
+            --destructive: #ff2d00;
+            --border: #000;
+            --primary: #000;
+            --primary-foreground: #fff;
+            --sprout: #00a859;
+            --shadow-hard: 8px 8px 0 #000;
+            --shadow-small: 5px 5px 0 #000;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--background);
+            color: var(--foreground);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            -webkit-font-smoothing: antialiased;
+        }
+        .app-container { width: 100%; max-width: 480px; }
+        .header { text-align: center; margin-bottom: 16px; }
+        .today-banner {
+            text-align: center; padding: 10px 16px; margin-bottom: 20px;
+            background: var(--accent); border: 2px solid var(--border);
+            font-size: 15px; font-weight: 800; letter-spacing: 0.5px;
+            line-height: 1.4;
+        }
+        .today-banner:empty { display: none; }
+        .header h1 {
+            font-size: 28px; font-weight: 900; letter-spacing: 2px;
+            text-transform: uppercase; margin-bottom: 8px;
+        }
+        .header .tagline {
+            font-size: 12px; font-weight: 600; letter-spacing: 1.5px;
+            text-transform: uppercase; color: var(--muted-foreground);
+        }
+        .tabs {
+            display: flex; background: var(--card);
+            border: 2px solid var(--border); padding: 4px; margin-bottom: 24px;
+            box-shadow: var(--shadow-small);
+        }
+        .tab {
+            flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 10px 12px; text-align: center;
+            font-size: 13px; font-weight: 600; letter-spacing: 0.5px;
+            text-transform: uppercase; cursor: pointer; transition: all 0.15s ease;
+            color: var(--muted-foreground); border: none; background: transparent;
+        }
+        .tab:hover { color: var(--foreground); }
+        .tab.active { background: var(--primary); color: var(--primary-foreground); }
+        .tab-icon, .stat-icon, .program-dot, .action-icon { color: currentColor; }
+        .tab-icon svg, .stat-icon svg, .program-dot svg, .action-icon svg {
+            display: block; width: 1em; height: 1em;
+            fill: none; stroke: currentColor; stroke-width: 2;
+            stroke-linecap: round; stroke-linejoin: round;
+        }
+        .week-selector {
+            display: flex; align-items: center; justify-content: center;
+            gap: 16px; margin-bottom: 24px;
+        }
+        .week-nav {
+            width: 32px; height: 32px; border: 2px solid var(--border);
+            background: var(--card); display: flex; align-items: center;
+            justify-content: center; cursor: pointer; font-size: 18px;
+            font-weight: 600; transition: all 0.15s ease;
+        }
+        .week-nav:hover { background: var(--primary); color: var(--primary-foreground); }
+        .week-label {
+            background: var(--accent); border: 2px solid var(--border);
+            padding: 8px 14px; font-size: 14px; font-weight: 800;
+            letter-spacing: 1px; text-transform: uppercase; box-shadow: var(--shadow-small);
+        }
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            margin-bottom: 24px; border: 2px solid var(--border);
+            box-shadow: var(--shadow-hard); background: var(--card);
+        }
+        .stat-card {
+            min-height: auto; padding: 18px 10px; text-align: center;
+            border-right: 2px solid var(--border);
+        }
+        .stat-card:last-child { border-right: none; }
+        .stat-icon {
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 24px; line-height: 1; margin-bottom: 10px;
+        }
+        .stat-value { font-size: 28px; font-weight: 900; margin-bottom: 4px; }
+        .stat-label { font-size: 10px; font-weight: 600; color: var(--muted-foreground); text-transform: uppercase; letter-spacing: 1px; }
+        .active-program {
+            display: flex; align-items: center; gap: 12px;
+            background: var(--accent); border: 2px solid var(--border);
+            padding: 14px 16px; margin-bottom: 24px; box-shadow: var(--shadow-hard);
+        }
+        .program-dot {
+            width: 26px; height: 26px; background: none; animation: pulse 2s infinite;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; line-height: 1;
+        }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+        .program-info { flex: 1; }
+        .program-name {
+            display: block; min-width: 0; padding: 0; background: transparent; color: var(--foreground);
+            border: none; font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .program-label { margin-top: 0; font-size: 10px; font-weight: 600; color: var(--muted-foreground); text-transform: uppercase; letter-spacing: 1px; }
+        .action-cards { display: flex; flex-direction: column; }
+        .action-card {
+            background: var(--card); border: 2px solid var(--border);
+            padding: 20px; cursor: pointer; transition: all 0.15s ease;
+            margin-bottom: 14px;
+            position: relative; z-index: 1; box-shadow: var(--shadow-hard);
+        }
+        .action-card:hover { background: var(--accent); z-index: 2; transform: translate(-3px, -3px); box-shadow: 11px 11px 0 #000; }
+        .action-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+        .action-icon {
+            width: 40px; height: 40px; border: 2px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; flex-shrink: 0; background: var(--muted);
+        }
+        .action-title { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        .action-desc { font-size: 13px; color: var(--muted-foreground); line-height: 1.5; margin-bottom: 12px; padding-left: 52px; }
+        .action-link {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 12px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; padding: 0 0 0 52px; border: none;
+            transition: gap 0.15s ease; background: transparent;
+        }
+        .action-card:nth-child(2) .action-link { background: transparent; color: var(--foreground); }
+        .action-card:hover .action-link { gap: 10px; }
+        .export-area { margin-top: 10px; padding-bottom: 10px; }
+        .btn-export {
+            width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 14px 16px; border: 2px solid var(--border);
+            background: var(--card); color: var(--foreground);
+            font-family: inherit; font-size: 13px; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
+            box-shadow: var(--shadow-hard); transition: all 0.15s ease;
+        }
+        .btn-export:hover { background: var(--accent); transform: translate(-3px, -3px); box-shadow: 11px 11px 0 #000; }
+        .btn-export svg {
+            width: 20px; height: 20px; fill: none; stroke: currentColor;
+            stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+        }
+        @media (max-width: 480px) {
+            body { padding: 20px 16px; }
+            .header h1 { font-size: 24px; }
+            .stat-card { padding: 16px 8px; }
+            .stat-value { font-size: 24px; }
+        }
+
+        /* Modals / Views */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+            display: none; align-items: center; justify-content: center;
+            z-index: 100; padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: var(--background); border: 2px solid var(--border);
+            width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto;
+            box-shadow: var(--shadow-hard);
+        }
+        @media (max-width: 480px) {
+            .modal-overlay.fullscreen-mobile { padding: 0; align-items: flex-start; }
+            .modal-overlay.fullscreen-mobile .modal {
+                max-width: 100%; width: 100%; min-height: 100dvh;
+                max-height: 100dvh; border: none; box-shadow: none;
+            }
+        }
+        .modal-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px 20px; border-bottom: 2px solid var(--border);
+        }
+        .modal-header h2 { font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        .modal-close {
+            width: 32px; height: 32px; border: 2px solid var(--border);
+            background: var(--card); cursor: pointer; font-size: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; transition: all 0.15s ease;
+        }
+        .modal-close:hover { background: var(--primary); color: var(--primary-foreground); }
+        .modal-body { padding: 20px; }
+
+        /* Routine View */
+        .routine-day { border: 2px solid var(--border); margin-bottom: 14px; box-shadow: var(--shadow-small); background: var(--card); }
+        .routine-day-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 16px; cursor: pointer; background: var(--card);
+            font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+            transition: background 0.15s ease;
+        }
+        .routine-day-header:hover { background: var(--accent); }
+        .routine-day-header .arrow { transition: transform 0.15s ease; }
+        .routine-day-header.open .arrow { transform: rotate(90deg); }
+        .routine-day-content { display: none; border-top: 2px solid var(--border); }
+        .routine-day-content.open { display: block; }
+        .exercise-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 16px; border-bottom: 1px solid var(--muted);
+        }
+        .exercise-item:last-child { border-bottom: none; }
+        .exercise-check {
+            width: 20px; height: 20px; border: 2px solid var(--border);
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 12px; flex-shrink: 0; background: var(--card);
+        }
+        .exercise-check.done { background: var(--primary); color: var(--primary-foreground); }
+        .exercise-name { font-size: 13px; font-weight: 600; flex: 1; }
+        .exercise-detail { font-size: 12px; color: var(--muted-foreground); }
+        .exercise-weight {
+            display: flex; align-items: center; gap: 4px; flex-shrink: 0;
+        }
+        .exercise-weight input {
+            width: 52px; padding: 4px 6px; border: 2px solid var(--border);
+            background: var(--card); font-family: inherit; font-size: 12px;
+            font-weight: 700; text-align: center; color: var(--foreground);
+        }
+        .exercise-weight input:focus { outline: none; border-color: var(--primary); }
+        .exercise-weight span { font-size: 11px; color: var(--muted-foreground); font-weight: 600; }
+        .exercise-preview-btn {
+            padding: 6px 8px; border: 2px solid var(--border);
+            background: var(--card); color: var(--foreground);
+            font-family: inherit; font-size: 10px; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer;
+            transition: all 0.15s ease; flex-shrink: 0;
+        }
+        .exercise-preview-btn:hover { background: var(--primary); color: var(--primary-foreground); }
+        .exercise-preview-media {
+            border: 2px solid var(--border); background: var(--card);
+            box-shadow: var(--shadow-small); overflow: hidden;
+        }
+        .exercise-preview-labels {
+            border-bottom: 2px solid var(--border); background: var(--accent);
+        }
+        .exercise-preview-labels span {
+            display: block; padding: 8px 10px; text-align: center;
+            font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .exercise-preview-images {
+            display: flex; justify-content: center; align-items: center;
+            background: #000; min-height: 280px;
+        }
+        .exercise-preview-images img {
+            display: block; width: 100%; max-width: 360px;
+            height: auto; object-fit: contain;
+        }
+        .exercise-preview-note {
+            margin-top: 14px; font-size: 12px; line-height: 1.5;
+            color: var(--muted-foreground); text-align: center;
+        }
+        .btn-label-mobile { display: none; }
+        .btn-label-desktop { display: inline; }
+        .day-register-row {
+            display: flex; gap: 8px; align-items: center;
+            padding: 10px 16px; border-top: 2px solid var(--border);
+            background: var(--card);
+        }
+        .day-duration-input {
+            width: 80px; padding: 6px 8px; border: 2px solid var(--border);
+            background: var(--card); font-family: inherit; font-size: 13px;
+            font-weight: 700; text-align: center; color: var(--foreground);
+        }
+        .day-duration-input:focus { outline: none; border-color: var(--primary); }
+        .day-register-btn {
+            flex: 1; padding: 7px 10px; border: 2px solid var(--border);
+            background: var(--primary); color: var(--primary-foreground);
+            font-family: inherit; font-size: 11px; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer;
+        }
+        .day-register-btn:disabled { opacity: 0.6; cursor: default; }
+        .day-register-btn.done { background: var(--muted); color: var(--muted-foreground); border-color: var(--muted); cursor: default; opacity: 1; }
+        .history-item {
+            display: flex; align-items: center; gap: 8px;
+            padding: 10px 0; border-bottom: 1px solid var(--muted); flex-wrap: wrap;
+        }
+        .history-item-actions { margin-left: auto; display: flex; gap: 6px; }
+        .btn-edit-workout, .btn-del-workout {
+            padding: 3px 8px; border: 2px solid var(--border);
+            font-family: inherit; font-size: 10px; font-weight: 800;
+            cursor: pointer; background: var(--card); color: var(--foreground);
+        }
+        .btn-del-workout { border-color: #c00; color: #c00; }
+        .btn-del-workout:hover { background: #c00; color: #fff; }
+        .btn-edit-workout:hover { background: var(--accent); }
+        .history-edit-row {
+            width: 100%; display: flex; gap: 6px; align-items: center;
+            padding-top: 6px; flex-wrap: wrap;
+        }
+        .history-edit-row input {
+            width: 70px; padding: 4px 6px; border: 2px solid var(--border);
+            font-family: inherit; font-size: 12px; font-weight: 700;
+            text-align: center; background: var(--card); color: var(--foreground);
+        }
+        .history-edit-row button {
+            padding: 4px 10px; border: 2px solid var(--border);
+            font-family: inherit; font-size: 11px; font-weight: 800;
+            cursor: pointer; background: var(--primary); color: var(--primary-foreground);
+        }
+        @media (max-width: 480px) {
+            .exercise-item { flex-wrap: nowrap; gap: 6px; }
+            .exercise-preview-btn {
+                width: auto;
+                font-size: 9px;
+                padding: 4px 6px;
+                letter-spacing: 0;
+            }
+            .btn-label-desktop { display: none; }
+            .btn-label-mobile { display: inline; }
+            .exercise-weight input { width: 36px; padding: 4px 2px; font-size: 11px; }
+            .exercise-weight span { display: none; }
+        }
+
+        /* Register View */
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block; font-size: 12px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 10px 12px; border: 2px solid var(--border);
+            background: var(--card); font-family: inherit; font-size: 14px;
+            font-weight: 500; outline: none; transition: border-color 0.15s ease;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--accent);
+        }
+        .form-group textarea { resize: vertical; min-height: 60px; }
+        .btn-submit {
+            width: 100%; padding: 12px; border: 2px solid var(--border);
+            background: var(--primary); color: var(--primary-foreground);
+            font-family: inherit; font-size: 13px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .btn-submit:hover { background: var(--accent); color: var(--foreground); }
+        .success-area { display: none; }
+        .success-area.show { display: block; }
+        .success-header {
+            text-align: center; padding: 16px;
+            background: var(--accent); border-bottom: 2px solid var(--border);
+            font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .compare-grid {
+            display: grid; grid-template-columns: 1fr 1fr 1fr;
+            border-bottom: 2px solid var(--border);
+        }
+        .compare-cell {
+            text-align: center; padding: 12px 8px;
+            border-right: 2px solid var(--border);
+        }
+        .compare-cell:last-child { border-right: none; }
+        .compare-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted-foreground); margin-bottom: 4px; }
+        .compare-value { font-size: 18px; font-weight: 900; }
+        .compare-diff { font-size: 11px; font-weight: 600; margin-top: 2px; }
+        .compare-diff.up { color: var(--sprout); }
+        .compare-diff.down { color: var(--destructive); }
+        .compare-diff.same { color: var(--muted-foreground); }
+        .motivation-msg {
+            text-align: center; padding: 20px 16px;
+            font-size: 15px; font-weight: 700; font-style: italic;
+            color: var(--foreground); border-bottom: 2px solid var(--border);
+        }
+        .btn-back {
+            width: 100%; padding: 12px; border: none; background: var(--primary);
+            color: var(--primary-foreground); font-family: inherit; font-size: 13px;
+            font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+            cursor: pointer; transition: all 0.15s ease;
+        }
+        .btn-back:hover { background: var(--accent); color: var(--foreground); }
+
+        /* Progress View */
+        .progress-bar-container { margin-bottom: 20px; }
+        .progress-bar-label {
+            display: flex; justify-content: space-between;
+            font-size: 12px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; margin-bottom: 6px;
+        }
+        .progress-bar-track { height: 16px; border: 2px solid var(--border); background: var(--card); }
+        .progress-bar-fill { height: 100%; background: var(--primary); transition: width 0.3s ease; }
+        .history-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 0; border-bottom: 1px solid var(--muted);
+        }
+        .history-item:last-child { border-bottom: none; }
+        .history-date { font-size: 12px; font-weight: 600; color: var(--muted-foreground); }
+        .history-type { font-size: 13px; font-weight: 700; text-transform: uppercase; }
+        .history-duration { font-size: 12px; font-weight: 600; }
+        .empty-state {
+            text-align: center; padding: 32px 16px;
+            color: var(--muted-foreground); font-size: 13px;
+        }
+        .section-label {
+            font-size: 12px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--muted-foreground);
+            padding-bottom: 8px; margin-bottom: 12px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        /* Shake + Explosion */
+        @keyframes shake {
+            0%,100% { transform: translate(0,0) rotate(0deg); }
+            10%      { transform: translate(-9px,-4px) rotate(-1.5deg); }
+            20%      { transform: translate(9px, 5px) rotate(1.5deg); }
+            30%      { transform: translate(-9px, 5px) rotate(-1deg); }
+            40%      { transform: translate(9px,-5px) rotate(1deg); }
+            50%      { transform: translate(-5px, 9px) rotate(-0.5deg); }
+            60%      { transform: translate(5px,-9px) rotate(0.5deg); }
+            70%      { transform: translate(-9px,-4px) rotate(-1deg); }
+            80%      { transform: translate(9px, 4px) rotate(1deg); }
+            90%      { transform: translate(-4px, 4px) rotate(-0.5deg); }
+        }
+        .shake { animation: shake 0.65s cubic-bezier(.36,.07,.19,.97) both; }
+
+        @keyframes flashBurst {
+            0%   { opacity: 0.65; transform: scale(0.6); }
+            40%  { opacity: 0.9; }
+            100% { opacity: 0; transform: scale(2.2); }
+        }
+        .flash-burst {
+            position: fixed; inset: 0; pointer-events: none; z-index: 999;
+            background: radial-gradient(circle at 50% 60%, var(--accent) 0%, transparent 65%);
+            animation: flashBurst 0.55s ease-out forwards;
+        }
+
+        @keyframes confettiPop {
+            0%   { transform: translate(0,0) scale(1.2) rotate(0deg); opacity: 1; }
+            100% { transform: translate(var(--dx), var(--dy)) scale(0) rotate(var(--rot)); opacity: 0; }
+        }
+        .confetti-particle {
+            position: fixed; pointer-events: none; z-index: 1000;
+            width: 11px; height: 11px;
+            animation: confettiPop 0.85s cubic-bezier(.17,.67,.35,.96) forwards;
+        }
+
+        /* Personal Records */
+        .pr-badge {
+            font-size: 10px; font-weight: 900; color: var(--sprout);
+            text-transform: uppercase; letter-spacing: 0.5px;
+            white-space: nowrap; flex-shrink: 0;
+        }
+        .pr-badge.pr-new { animation: prFlash 0.4s ease 5; color: var(--destructive); }
+        @keyframes prFlash { 0%,100%{opacity:1} 50%{opacity:0} }
+        .pr-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 0; border-bottom: 1px solid var(--muted);
+        }
+        .pr-item:last-child { border-bottom: none; }
+        .pr-item-name { font-size: 13px; font-weight: 700; flex: 1; }
+        .pr-item-weight { font-size: 18px; font-weight: 900; color: var(--sprout); min-width: 60px; text-align: right; }
+        .pr-item-date { font-size: 11px; color: var(--muted-foreground); font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <h1>ENTRENO BRUTAL</h1>
+            <p class="tagline">El dolor es temporal, el orgullo es eterno.</p>
+        </header>
+        <div class="today-banner" id="today-banner"></div>
+        <div class="tabs">
+            <button class="tab active" data-tab="tonificar">
+                <span class="tab-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M14.4 14.4 9.6 9.6"></path><path d="M18.657 21.485a2 2 0 1 1-2.829-2.828l-1.767 1.768a2 2 0 1 1-2.829-2.829l6.364-6.364a2 2 0 1 1 2.829 2.829l-1.768 1.767a2 2 0 1 1 2.828 2.829z"></path><path d="m21.5 21.5-1.4-1.4"></path><path d="M3.9 3.9 2.5 2.5"></path><path d="M6.404 12.768a2 2 0 1 1-2.829-2.829l1.768-1.767a2 2 0 1 1-2.828-2.829l2.828-2.828a2 2 0 1 1 2.829 2.828l1.767-1.768a2 2 0 1 1 2.829 2.829z"></path></svg>
+                </span>
+                Tonificar
+            </button>
+            <button class="tab" data-tab="quemar">
+                <span class="tab-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+                </span>
+                Quemar Grasa
+            </button>
+        </div>
+        <div class="week-selector">
+            <button class="week-nav" id="prev-week">&#8249;</button>
+            <span class="week-label">Semana <span id="week-number">1</span></span>
+            <button class="week-nav" id="next-week">&#8250;</button>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>
+                </span>
+                <div class="stat-value" id="streak-days">0</div><div class="stat-label">Dias Racha</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+                </span>
+                <div class="stat-value" id="week-count">0</div><div class="stat-label">Esta Semana</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M14.4 14.4 9.6 9.6"></path><path d="M18.657 21.485a2 2 0 1 1-2.829-2.828l-1.767 1.768a2 2 0 1 1-2.829-2.829l6.364-6.364a2 2 0 1 1 2.829 2.829l-1.768 1.767a2 2 0 1 1 2.828 2.829z"></path><path d="m21.5 21.5-1.4-1.4"></path><path d="M3.9 3.9 2.5 2.5"></path><path d="M6.404 12.768a2 2 0 1 1-2.829-2.829l1.768-1.767a2 2 0 1 1-2.828-2.829l2.828-2.828a2 2 0 1 1 2.829 2.828l1.767-1.768a2 2 0 1 1 2.829 2.829z"></path></svg>
+                </span>
+                <div class="stat-value" id="total-workouts">0</div><div class="stat-label">Total</div>
+            </div>
+        </div>
+        <div class="active-program">
+            <div class="program-dot" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+            </div>
+            <div class="program-info">
+                <div class="program-name" id="program-name">Tonificar</div>
+                <div class="program-label">Programa Activo</div>
+            </div>
+        </div>
+        <div class="action-cards">
+            <div class="action-card" id="btn-routine">
+                <div class="action-card-header">
+                    <div class="action-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><path d="M8 11h8"></path><path d="M8 16h5"></path></svg>
+                    </div>
+                    <div class="action-title">Rutina Semanal</div>
+                </div>
+                <p class="action-desc">Revisa tus ejercicios programados para la semana <span class="week-ref">1</span>.</p>
+                <div class="action-link">Ver Rutina <span class="arrow">&#8594;</span></div>
+            </div>
+
+            <div class="action-card" id="btn-progress">
+                <div class="action-card-header">
+                    <div class="action-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M3 3v18h18"></path><path d="m19 9-5 5-4-4-3 3"></path></svg>
+                    </div>
+                    <div class="action-title">Ver Progreso</div>
+                </div>
+                <p class="action-desc">Analiza tu evolucion y records personales.</p>
+                <div class="action-link">Revisar <span class="arrow">&#8594;</span></div>
+            </div>
+
+            <div class="action-card" id="btn-historial">
+                <div class="action-card-header">
+                    <div class="action-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M12 7v5l4 2"></path></svg>
+                    </div>
+                    <div class="action-title">Historial</div>
+                </div>
+                <p class="action-desc">Revisa, edita o elimina tus entrenos registrados.</p>
+                <div class="action-link">Ver todo <span class="arrow">&#8594;</span></div>
+            </div>
+        </div>
+        <div class="export-area">
+            <button class="btn-export" id="btn-export-history">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="M7 10l5 5 5-5"></path><path d="M12 15V3"></path></svg>
+                Descargar historial
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL: Rutina -->
+    <div class="modal-overlay fullscreen-mobile" id="modal-routine">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Rutina Semana <span id="routine-week">1</span></h2>
+                <button class="modal-close" data-close="modal-routine">X</button>
+            </div>
+            <div class="modal-body" id="routine-body"></div>
+        </div>
+    </div>
+
+    <!-- MODAL: Historial -->
+    <div class="modal-overlay fullscreen-mobile" id="modal-historial">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Historial</h2>
+                <button class="modal-close" data-close="modal-historial">X</button>
+            </div>
+            <div class="modal-body" id="history-body"></div>
+        </div>
+    </div>
+
+    <!-- MODAL: Progreso -->
+    <div class="modal-overlay" id="modal-progress">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Tu Progreso</h2>
+                <button class="modal-close" data-close="modal-progress">X</button>
+            </div>
+            <div class="modal-body" id="progress-body"></div>
+        </div>
+    </div>
+
+    <!-- MODAL: Ver ejercicio -->
+    <div class="modal-overlay" id="modal-exercise">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="exercise-modal-title">Ver Ejercicio</h2>
+                <button class="modal-close" data-close="modal-exercise">X</button>
+            </div>
+            <div class="modal-body">
+                <div class="exercise-preview-media">
+                    <div class="exercise-preview-labels">
+                        <span>Animación del ejercicio</span>
+                    </div>
+                    <div class="exercise-preview-images">
+                        <img id="exercise-anim" src="" alt="Animación del ejercicio">
+                    </div>
+                </div>
+                <p class="exercise-preview-note">Referencia visual del movimiento. Ajusta peso, rango y tecnica segun tu nivel.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- State ---
+        let currentWeek = 1, currentTab = 'tonificar';
+        let state = loadState();
+
+        const GIF_CDN = 'https://static.exercisedb.dev/media/';
+        const exerciseImageMap = {
+            'Hip Thrust':                'SNFfUff',  // barbell lying lifting (on hip)
+            'Peso muerto rumano':        'ila4NZS',  // barbell deadlift
+            'Sentadilla':                'qXTaZnJ',  // barbell full squat
+            'Abducciones en maquina':    'CHpahtl',  // lever seated hip abduction
+            'Curl femoral':              'Zg3XY7P',  // lever seated leg curl
+            'Patada de gluteo':          'Kpajagk',  // cable standing hip extension
+            'Jalon al pecho':            'eYnzaCm',  // cable bar lateral pulldown
+            'Remo sentado':              'fUBheHs',  // cable seated row
+            'Pullover en polea':         'PskORrA',  // cable pushdown straight arm
+            'Vuelos laterales':          'DsgkuIt',  // dumbbell lateral raise
+            'Press hombro maquina':      'CggQhII',  // lever military press
+            'Plancha':                   'VBAWRPG',  // weighted front plank
+            'Press pecho maquina':       'T0yTjgW',  // lever chest press
+            'Aperturas en peck deck':    'xLYSdtg',  // cable middle fly
+            'Curl biceps polea':         'G08RZcQ',  // cable curl
+            'Extension triceps polea':   '3ZflifB',  // cable pushdown
+            'Abdominales en maquina':    'Wgaz7pm',  // lever seated crunch
+            'Cinta inclinada':           'rjiM4L3',  // walking on incline treadmill
+            'Cinta suave':               'rjiM4L3',  // walking on incline treadmill
+            'Prensa de piernas':         'V07qpXy',  // lever alternate leg press
+            'Bicicleta estatica':        'H1PESYI',  // stationary bike run
+            'Eliptica':                  'rjtuP6X',  // walk elliptical cross trainer
+            'Curl biceps mancuernas':    'NbVPDMW',  // dumbbell biceps curl
+        };
+
+        function defaultState() {
+            return { streak: 0, weekCount: 0, total: 0, workouts: [] };
+        }
+
+        function getLocalDateKey(date = new Date()) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function getWeekStartKey(date = new Date()) {
+            const weekStart = new Date(date);
+            const day = weekStart.getDay() || 7;
+            weekStart.setDate(weekStart.getDate() - day + 1);
+            return getLocalDateKey(weekStart);
+        }
+
+        function getYesterdayKey() {
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            return getLocalDateKey(yesterday);
+        }
+
+        function getDownloadDateLabel(date = new Date()) {
+            return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function normalizeState(saved) {
+            const base = defaultState();
+            const next = { ...base, ...(saved || {}) };
+            next.workouts = Array.isArray(next.workouts) ? next.workouts : [];
+            next.total = next.workouts.length;
+            next.weekCount = getCurrentWeekCount(next.workouts);
+            // Recalcular streak desde historial real
+            next.streak = calculateStreak(next.workouts);
+            return next;
+        }
+
+        function calculateStreak(workouts) {
+            if (workouts.length === 0) return 0;
+            const dates = [...new Set(workouts.map(w => w.date))].sort().reverse();
+            const today = getLocalDateKey();
+            const yesterday = getYesterdayKey();
+            if (dates[0] !== today && dates[0] !== yesterday) return 0;
+            let streak = 1;
+            for (let i = 0; i < dates.length - 1; i++) {
+                const curr = new Date(`${dates[i]}T12:00:00`);
+                const prev = new Date(`${dates[i + 1]}T12:00:00`);
+                const diff = (curr - prev) / (1000 * 60 * 60 * 24);
+                if (diff === 1) streak++;
+                else break;
+            }
+            return streak;
+        }
+
+        function getCurrentWeekCount(workouts = state.workouts) {
+            const currentWeekStart = getWeekStartKey();
+            return workouts.filter(workout => getWeekStartKey(new Date(`${workout.date}T12:00:00`)) === currentWeekStart).length;
+        }
+
+        function loadState() {
+            try {
+                const s = JSON.parse(localStorage.getItem('entreno-brutal'));
+                return normalizeState(s);
+            } catch { return defaultState(); }
+        }
+
+        function saveState() {
+            localStorage.setItem('entreno-brutal', JSON.stringify(state));
+        }
+
+        function updateUI() {
+            state.total = state.workouts.length;
+            state.weekCount = getCurrentWeekCount();
+            document.getElementById('streak-days').textContent = state.streak;
+            document.getElementById('week-count').textContent = state.weekCount;
+            document.getElementById('total-workouts').textContent = state.total;
+        }
+
+        function buildHistoryHtml() {
+            const downloadDate = getDownloadDateLabel();
+            const workouts = [...state.workouts].reverse();
+            const rows = workouts.length
+                ? workouts.map((w, index) => `
+                    <tr>
+                        <td>${workouts.length - index}</td>
+                        <td>${escapeHtml(w.date)}</td>
+                        <td>${w.type === 'tonificar' ? 'Tonificar' : 'Quemar Grasa'}</td>
+                        <td>${escapeHtml(w.duration)} min</td>
+                        <td>${escapeHtml(w.intensity)}</td>
+                        <td>${escapeHtml(w.notes || '-')}</td>
+                    </tr>
+                `).join('')
+                : '<tr><td colspan="6" class="empty">No hay entrenos registrados todavia.</td></tr>';
+
+            return `<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial ${downloadDate}</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 32px 18px; background: #fafaf7; color: #000; font-family: Inter, Arial, sans-serif; }
+        main { max-width: 920px; margin: 0 auto; }
+        header { border-bottom: 4px solid #000; padding-bottom: 18px; margin-bottom: 24px; }
+        h1 { margin: 0 0 8px; font-size: 30px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
+        .date { color: #6b6b62; font-size: 13px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+        .summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px; }
+        .card { background: #fff; border: 2px solid #000; box-shadow: 6px 6px 0 #000; padding: 16px; }
+        .value { font-size: 30px; font-weight: 900; }
+        .label { font-size: 11px; font-weight: 800; color: #6b6b62; letter-spacing: 1px; text-transform: uppercase; }
+        table { width: 100%; border-collapse: collapse; background: #fff; border: 2px solid #000; box-shadow: 6px 6px 0 #000; }
+        th, td { border-bottom: 1px solid #d8d6cc; padding: 12px; text-align: left; vertical-align: top; font-size: 14px; }
+        th { background: #ffee00; border-bottom: 2px solid #000; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+        tr:last-child td { border-bottom: none; }
+        .empty { text-align: center; color: #6b6b62; padding: 28px; }
+        @media (max-width: 720px) {
+            .summary { grid-template-columns: 1fr; }
+            table { display: block; overflow-x: auto; white-space: nowrap; }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <header>
+            <h1>Historial de Entrenamiento</h1>
+            <div class="date">Descargado el ${downloadDate}</div>
+        </header>
+        <section class="summary">
+            <div class="card"><div class="value">${state.streak}</div><div class="label">Dias racha</div></div>
+            <div class="card"><div class="value">${state.weekCount}</div><div class="label">Esta semana</div></div>
+            <div class="card"><div class="value">${state.total}</div><div class="label">Total entrenos</div></div>
+        </section>
+        <table>
+            <thead>
+                <tr><th>#</th><th>Fecha</th><th>Tipo</th><th>Duracion</th><th>Intensidad</th><th>Notas</th></tr>
+            </thead>
+            <tbody>${rows}</tbody>
+        </table>
+    </main>
+</body>
+</html>`;
+        }
+
+        function downloadHistory() {
+            updateUI();
+            const html = buildHistoryHtml();
+            const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `Historial-${getDownloadDateLabel()}.html`;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+        }
+
+        // --- Utils ---
+        function hasTodayWorkout() {
+            const today = getLocalDateKey();
+            return state.workouts.some(w => w.date === today);
+        }
+
+        function getExplosionRoot() {
+            let r = document.getElementById('explosion-root');
+            if (!r) {
+                r = document.createElement('div');
+                r.id = 'explosion-root';
+                r.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:99999;';
+                document.body.appendChild(r);
+            }
+            return r;
+        }
+
+        // --- Haptics & Explosion ---
+        window.toggleCheck = function(el) {
+            el.classList.toggle('done');
+            el.innerHTML = el.classList.contains('done') ? '&#10003;' : '';
+            if (navigator.vibrate) navigator.vibrate([50]);
+        };
+
+        function triggerWorkoutExplosion(originEl) {
+            if (navigator.vibrate) navigator.vibrate([80, 40, 120, 40, 80]);
+
+            const container = document.querySelector('.app-container');
+            container.classList.remove('shake');
+            void container.offsetWidth;
+            container.classList.add('shake');
+            container.addEventListener('animationend', () => container.classList.remove('shake'), { once: true });
+
+            const root = getExplosionRoot();
+
+            const flash = document.createElement('div');
+            flash.className = 'flash-burst';
+            flash.style.position = 'absolute';
+            root.appendChild(flash);
+            flash.addEventListener('animationend', () => flash.remove());
+
+            const colors = ['#ffd700','#ff2d00','#f9c4d2','#00a859','#000','#fff','#ffd700','#ff2d00'];
+            const rect = originEl ? originEl.getBoundingClientRect() : { left: window.innerWidth/2, top: window.innerHeight/2, width: 0, height: 0 };
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            for (let i = 0; i < 20; i++) {
+                const p = document.createElement('div');
+                p.className = 'confetti-particle';
+                p.style.position = 'absolute';
+                const angle = (i / 20) * Math.PI * 2 + Math.random() * 0.4;
+                const dist = 70 + Math.random() * 110;
+                p.style.cssText += `left:${cx}px;top:${cy}px;background:${colors[i % colors.length]};border-radius:${Math.random()>.5?'50%':'2px'};`;
+                p.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+                p.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+                p.style.setProperty('--rot', (Math.random() * 720 - 360) + 'deg');
+                p.style.animationDelay = (Math.random() * 60) + 'ms';
+                root.appendChild(p);
+                p.addEventListener('animationend', () => p.remove());
+            }
+        }
+
+        // --- Personal Records ---
+        function getPR(name) {
+            const val = parseFloat(localStorage.getItem('pr:' + name));
+            return isNaN(val) ? null : val;
+        }
+        function getPRDate(name) { return localStorage.getItem('pr-date:' + name) || ''; }
+        function checkAndSetPR(name, weight) {
+            weight = parseFloat(weight);
+            if (!weight || weight <= 0) return false;
+            const current = getPR(name);
+            if (current === null || weight > current) {
+                localStorage.setItem('pr:' + name, weight);
+                localStorage.setItem('pr-date:' + name, getLocalDateKey());
+                return true;
+            }
+            return false;
+        }
+        window.handleWeightChange = function(input) {
+            const name = input.dataset.exercise;
+            const weight = parseFloat(input.value);
+            localStorage.setItem('peso:' + name, input.value);
+            const isNewPR = checkAndSetPR(name, weight);
+            const badge = input.closest('.exercise-weight').querySelector('.pr-badge');
+            if (!badge) return;
+            const pr = getPR(name);
+            if (pr !== null) {
+                badge.style.display = '';
+                badge.textContent = isNewPR ? '🏆 NUEVO PR!' : 'PR: ' + pr + 'kg';
+                if (isNewPR) {
+                    badge.classList.add('pr-new');
+                    setTimeout(() => { badge.classList.remove('pr-new'); badge.textContent = 'PR: ' + pr + 'kg'; }, 2500);
+                }
+            }
+        };
+        function getAllExerciseNames() {
+            const names = new Set();
+            Object.values(routines).forEach(prog => Object.values(prog).forEach(week =>
+                Object.values(week).forEach(exs => exs.forEach(ex => names.add(ex.name)))
+            ));
+            return [...names];
+        }
+
+        // --- Tabs ---
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentTab = tab.dataset.tab;
+                document.getElementById('program-name').textContent = currentTab === 'tonificar' ? 'Tonificar' : 'Quemar Grasa';
+            });
+        });
+
+        // --- Week ---
+        document.getElementById('prev-week').addEventListener('click', () => {
+            if (currentWeek > 1) { currentWeek--; updateWeek(); }
+        });
+        document.getElementById('next-week').addEventListener('click', () => {
+            currentWeek++; updateWeek();
+        });
+        function updateWeek() {
+            document.getElementById('week-number').textContent = currentWeek;
+            document.querySelectorAll('.week-ref').forEach(el => el.textContent = currentWeek);
+        }
+
+        // --- Routines Data ---
+        const routines = {
+            tonificar: {
+                1: {
+                    Lunes: [
+                        { name: 'Hip Thrust', detail: '3x12' },
+                        { name: 'Peso muerto rumano', detail: '3x10' },
+                        { name: 'Sentadilla', detail: '3x10' },
+                        { name: 'Abducciones en maquina', detail: '3x15' },
+                        { name: 'Curl femoral', detail: '3x12' },
+                        { name: 'Patada de gluteo', detail: '3x12 cada pierna' }
+                    ],
+                    Miercoles: [
+                        { name: 'Jalon al pecho', detail: '3x12' },
+                        { name: 'Remo sentado', detail: '3x10' },
+                        { name: 'Pullover en polea', detail: '3x12' },
+                        { name: 'Vuelos laterales', detail: '3x15' },
+                        { name: 'Press hombro maquina', detail: '3x10' },
+                        { name: 'Curl biceps mancuernas', detail: '3x12' },
+                        { name: 'Plancha', detail: '3x40s' }
+                    ],
+                    Viernes: [
+                        { name: 'Press pecho maquina', detail: '3x10' },
+                        { name: 'Aperturas en peck deck', detail: '3x12' },
+                        { name: 'Curl biceps polea', detail: '3x12' },
+                        { name: 'Extension triceps polea', detail: '3x12' },
+                        { name: 'Abdominales en maquina', detail: '3x15' }
+                    ]
+                }
+            },
+            quemar: {
+                1: {
+                    Lunes: [
+                        { name: 'Cinta inclinada', detail: '15 min' },
+                        { name: 'Prensa de piernas', detail: '3x15' },
+                        { name: 'Curl femoral', detail: '3x15' },
+                        { name: 'Abducciones en maquina', detail: '3x20' },
+                        { name: 'Bicicleta estatica', detail: '10 min' }
+                    ],
+                    Miercoles: [
+                        { name: 'Eliptica', detail: '12 min' },
+                        { name: 'Jalon al pecho', detail: '3x12' },
+                        { name: 'Remo sentado', detail: '3x12' },
+                        { name: 'Press pecho maquina', detail: '3x12' },
+                        { name: 'Vuelos laterales', detail: '3x15' },
+                        { name: 'Curl biceps mancuernas', detail: '3x12' },
+                        { name: 'Plancha', detail: '3x40s' }
+                    ],
+                    Viernes: [
+                        { name: 'Hip Thrust', detail: '3x15' },
+                        { name: 'Peso muerto rumano', detail: '3x12' },
+                        { name: 'Curl biceps mancuernas', detail: '3x12' },
+                        { name: 'Extension triceps polea', detail: '3x12' },
+                        { name: 'Cinta suave', detail: '10 min' }
+                    ]
+                }
+            }
+        };
+
+        function getRoutines() {
+            return routines[currentTab]?.[currentWeek] || routines[currentTab]?.[1] || { Lunes: [] };
+        }
+
+        // --- Modal helpers ---
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        function openExercisePreview(name) {
+            const hash = exerciseImageMap[name];
+            const anim = document.getElementById('exercise-anim');
+            document.getElementById('exercise-modal-title').textContent = name;
+            anim.alt = `Animación de ${name}`;
+            if (hash) {
+                anim.src = `${GIF_CDN}${hash}.gif`;
+                anim.style.display = '';
+            } else {
+                anim.style.display = 'none';
+            }
+            openModal('modal-exercise');
+        }
+
+        document.querySelectorAll('.modal-close').forEach(btn => {
+            btn.addEventListener('click', () => closeModal(btn.dataset.close));
+        });
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) overlay.classList.remove('active');
+            });
+        });
+
+        // --- Action: Rutina ---
+        document.getElementById('btn-routine').addEventListener('click', () => {
+            document.getElementById('routine-week').textContent = currentWeek;
+            const body = document.getElementById('routine-body');
+            const days = getRoutines();
+            const alreadyDone = hasTodayWorkout();
+            body.innerHTML = Object.entries(days).map(([day, exercises]) => `
+                <div class="routine-day">
+                    <div class="routine-day-header" data-toggle="routine-day">
+                        <span>${day}</span>
+                        <span class="arrow">&#8250;</span>
+                    </div>
+                    <div class="routine-day-content">
+                        ${exercises.map(ex => `
+                            <div class="exercise-item">
+                                <div class="exercise-check" data-toggle="exercise-check"></div>
+                                <span class="exercise-name">${ex.name}</span>
+                                <span class="exercise-detail">${ex.detail}</span>
+                                <div class="exercise-weight">
+                                    <input type="number" min="0" step="0.5" placeholder="0" title="Peso en kg"
+                                        data-exercise="${escapeHtml(ex.name)}"
+                                        value="${localStorage.getItem('peso:' + ex.name) || ''}"
+                                        onchange="handleWeightChange(this)">
+                                    <span>kg</span>
+                                    <span class="pr-badge" data-pr-exercise="${escapeHtml(ex.name)}"></span>
+                                </div>
+                                <button class="exercise-preview-btn" type="button" data-exercise="${escapeHtml(ex.name)}"><span class="btn-label-desktop">Ver ejercicio</span><span class="btn-label-mobile">Ejemplo</span></button>
+                            </div>
+                        `).join('')}
+                        <div class="day-register-row">
+                            <input type="number" class="day-duration-input" placeholder="Minutos" min="5" max="180" data-day="${day}"${alreadyDone ? ' disabled' : ''}>
+                            <button class="day-register-btn${alreadyDone ? ' done' : ''}" data-day="${day}"${alreadyDone ? ' disabled' : ''}>${alreadyDone ? '&#10003; Entrenado hoy' : '&#10003; Registrar entreno'}</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            openModal('modal-routine');
+            // Inicializar badges PR con cache
+            document.querySelectorAll('.pr-badge[data-pr-exercise]').forEach(badge => {
+                const name = badge.dataset.prExercise;
+                const pr = getPR(name);
+                if (pr !== null) {
+                    badge.style.display = '';
+                    badge.textContent = 'PR: ' + pr + 'kg';
+                } else {
+                    badge.style.display = 'none';
+                }
+            });
+        });
+
+        document.getElementById('routine-body').addEventListener('click', (e) => {
+            // Toggle day accordion
+            const dayHeader = e.target.closest('.routine-day-header[data-toggle="routine-day"]');
+            if (dayHeader) {
+                dayHeader.classList.toggle('open');
+                dayHeader.nextElementSibling.classList.toggle('open');
+                return;
+            }
+            // Toggle exercise check
+            const exerciseCheck = e.target.closest('.exercise-check[data-toggle="exercise-check"]');
+            if (exerciseCheck) { toggleCheck(exerciseCheck); return; }
+            // Exercise preview
+            const btn = e.target.closest('.exercise-preview-btn');
+            if (btn) { openExercisePreview(btn.dataset.exercise); return; }
+
+            const regBtn = e.target.closest('.day-register-btn');
+            if (regBtn) {
+                const day = regBtn.dataset.day;
+                const input = document.querySelector(`.day-duration-input[data-day="${day}"]`);
+                const duration = parseInt(input.value);
+                if (!duration || duration < 5) { input.focus(); input.style.borderColor = 'red'; return; }
+                input.style.borderColor = '';
+
+                const today = getLocalDateKey();
+                if (hasTodayWorkout()) return;
+                state.workouts.push({ date: today, type: currentTab, duration, intensity: 'media', notes: day });
+                state.streak = calculateStreak(state.workouts);
+                state.lastDate = today;
+                state.total = state.workouts.length;
+                state.weekCount = getCurrentWeekCount();
+                saveState();
+                updateUI();
+                triggerWorkoutExplosion(regBtn);
+
+                regBtn.textContent = '✓ Registrado!';
+                regBtn.disabled = true;
+                input.disabled = true;
+                setTimeout(() => {
+                    document.querySelectorAll('.day-register-btn').forEach(b => {
+                        b.textContent = '✓ Entrenado hoy'; b.disabled = true; b.classList.add('done');
+                    });
+                    document.querySelectorAll('.day-duration-input').forEach(i => { i.disabled = true; i.value = ''; });
+                }, 1200);
+            }
+        });
+
+        // --- Action: Progreso ---
+        function renderProgress() {
+            const body = document.getElementById('progress-body');
+            const weekGoal = 3;
+            const pct = Math.min(100, Math.round((state.weekCount / weekGoal) * 100));
+            const prs = getAllExerciseNames()
+                .map(name => ({ name, weight: getPR(name), date: getPRDate(name) }))
+                .filter(e => e.weight !== null)
+                .sort((a, b) => b.weight - a.weight);
+
+            let html = `
+                <div class="section-label">Objetivo semanal</div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-label">
+                        <span>${state.weekCount} / ${weekGoal} entrenos</span>
+                        <span>${pct}%</span>
+                    </div>
+                    <div class="progress-bar-track">
+                        <div class="progress-bar-fill" style="width:${pct}%"></div>
+                    </div>
+                </div>
+            `;
+
+            if (prs.length > 0) {
+                html += `<div class="section-label" style="margin-top:20px">🏆 Récords Personales</div><div style="margin-bottom:20px">`;
+                prs.forEach(pr => {
+                    html += `<div class="pr-item"><span class="pr-item-name">${escapeHtml(pr.name)}</span><span class="pr-item-weight">${pr.weight} kg</span><span class="pr-item-date">${pr.date}</span></div>`;
+                });
+                html += '</div>';
+            }
+
+            body.innerHTML = html;
+        }
+
+        function renderHistory() {
+            const body = document.getElementById('history-body');
+            if (!body) return;
+            if (state.workouts.length === 0) {
+                body.innerHTML = '<div class="empty-state">No hay entrenos registrados todavia.</div>';
+                return;
+            }
+            const allReversed = [...state.workouts].reverse();
+            body.innerHTML = allReversed.map((w, ri) => {
+                const realIdx = state.workouts.length - 1 - ri;
+                return `
+                <div class="history-item" data-idx="${realIdx}">
+                    <span class="history-date">${w.date}</span>
+                    <span class="history-type">${w.type === 'tonificar' ? 'Tonificar' : 'Quemar'}</span>
+                    <span class="history-duration">${w.duration} min · ${escapeHtml(w.notes || w.intensity)}</span>
+                    <div class="history-item-actions">
+                        <button class="btn-edit-workout" data-idx="${realIdx}">✏ Editar</button>
+                        <button class="btn-del-workout" data-idx="${realIdx}">✕</button>
+                    </div>
+                    <div class="history-edit-row" id="edit-row-${realIdx}" style="display:none">
+                        <input type="number" id="edit-dur-${realIdx}" value="${w.duration}" min="5" max="180" placeholder="min">
+                        <span style="font-size:12px">min</span>
+                        <button onclick="saveEditWorkout(${realIdx})">Guardar</button>
+                        <button onclick="document.getElementById('edit-row-${realIdx}').style.display='none'" style="background:var(--card);color:var(--foreground)">Cancelar</button>
+                    </div>
+                </div>`;
+            }).join('');
+
+            body.querySelectorAll('.btn-del-workout').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = parseInt(btn.dataset.idx);
+                    if (!confirm('¿Eliminar este entreno?')) return;
+                    state.workouts.splice(idx, 1);
+                    state.total = state.workouts.length;
+                    state.weekCount = getCurrentWeekCount();
+                    state.streak = calculateStreak(state.workouts);
+                    saveState(); updateUI(); renderHistory();
+                });
+            });
+
+            body.querySelectorAll('.btn-edit-workout').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = btn.dataset.idx;
+                    const row = document.getElementById(`edit-row-${idx}`);
+                    row.style.display = row.style.display === 'none' ? 'flex' : 'none';
+                });
+            });
+        }
+
+        window.saveEditWorkout = (idx) => {
+            const val = parseInt(document.getElementById(`edit-dur-${idx}`).value);
+            if (!val || val < 5) return;
+            state.workouts[idx].duration = val;
+            state.weekCount = getCurrentWeekCount();
+            saveState(); updateUI(); renderHistory();
+        };
+
+        document.getElementById('btn-progress').addEventListener('click', () => {
+            renderProgress();
+            openModal('modal-progress');
+        });
+
+        document.getElementById('btn-historial').addEventListener('click', () => {
+            renderHistory();
+            openModal('modal-historial');
+        });
+
+        document.getElementById('btn-export-history').addEventListener('click', downloadHistory);
+
+        if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location.protocol)) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(() => {});
+            });
+        }
+
+        // Cartel del día (hora Andorra, UTC+2)
+        (function() {
+            const andorraStr = new Date().toLocaleString('en-US', { timeZone: 'Europe/Andorra' });
+            const andorraDay = new Date(andorraStr).getDay();
+            const programMsgs = {
+                tonificar: {
+                    1: 'Hoy toca Piernas!! 🦵🏻',
+                    3: 'Hoy toca Brazos y Espalda!! 💪🏼',
+                    5: '¡Hoy toca variado! 🏋\u200d♀️',
+                },
+                quemar: {
+                    1: 'Cardio + Piernas!! 🔥',
+                    3: 'Tren superior + Plancha!! 💪🏼',
+                    5: 'Glúteos + Cardio suave!! 🏃\u200d♀️',
+                }
+            };
+            const banner = document.getElementById('today-banner');
+            const msg = programMsgs[currentTab]?.[andorraDay];
+            if (banner && msg) banner.textContent = msg;
+        })();
+
+        // Init
+        updateUI();
+    </script>
+</body>
+</html>
