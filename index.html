@@ -415,6 +415,42 @@
             border-bottom: 2px solid var(--border);
         }
 
+        /* Shake + Explosion */
+        @keyframes shake {
+            0%,100% { transform: translate(0,0) rotate(0deg); }
+            10%      { transform: translate(-9px,-4px) rotate(-1.5deg); }
+            20%      { transform: translate(9px, 5px) rotate(1.5deg); }
+            30%      { transform: translate(-9px, 5px) rotate(-1deg); }
+            40%      { transform: translate(9px,-5px) rotate(1deg); }
+            50%      { transform: translate(-5px, 9px) rotate(-0.5deg); }
+            60%      { transform: translate(5px,-9px) rotate(0.5deg); }
+            70%      { transform: translate(-9px,-4px) rotate(-1deg); }
+            80%      { transform: translate(9px, 4px) rotate(1deg); }
+            90%      { transform: translate(-4px, 4px) rotate(-0.5deg); }
+        }
+        .shake { animation: shake 0.65s cubic-bezier(.36,.07,.19,.97) both; }
+
+        @keyframes flashBurst {
+            0%   { opacity: 0.65; transform: scale(0.6); }
+            40%  { opacity: 0.9; }
+            100% { opacity: 0; transform: scale(2.2); }
+        }
+        .flash-burst {
+            position: fixed; inset: 0; pointer-events: none; z-index: 999;
+            background: radial-gradient(circle at 50% 60%, var(--accent) 0%, transparent 65%);
+            animation: flashBurst 0.55s ease-out forwards;
+        }
+
+        @keyframes confettiPop {
+            0%   { transform: translate(0,0) scale(1.2) rotate(0deg); opacity: 1; }
+            100% { transform: translate(var(--dx), var(--dy)) scale(0) rotate(var(--rot)); opacity: 0; }
+        }
+        .confetti-particle {
+            position: fixed; pointer-events: none; z-index: 1000;
+            width: 11px; height: 11px;
+            animation: confettiPop 0.85s cubic-bezier(.17,.67,.35,.96) forwards;
+        }
+
         /* Personal Records */
         .pr-badge {
             font-size: 10px; font-weight: 900; color: var(--sprout);
@@ -744,6 +780,46 @@
             URL.revokeObjectURL(url);
         }
 
+        // --- Haptics & Explosion ---
+        window.toggleCheck = function(el) {
+            el.classList.toggle('done');
+            el.innerHTML = el.classList.contains('done') ? '&#10003;' : '';
+            if (navigator.vibrate) navigator.vibrate([50]);
+        };
+
+        function triggerWorkoutExplosion(originEl) {
+            if (navigator.vibrate) navigator.vibrate([80, 40, 120, 40, 80]);
+
+            const container = document.querySelector('.app-container');
+            container.classList.remove('shake');
+            void container.offsetWidth;
+            container.classList.add('shake');
+            container.addEventListener('animationend', () => container.classList.remove('shake'), { once: true });
+
+            const flash = document.createElement('div');
+            flash.className = 'flash-burst';
+            document.body.appendChild(flash);
+            flash.addEventListener('animationend', () => flash.remove());
+
+            const colors = ['#ffd700','#ff2d00','#f9c4d2','#00a859','#000','#fff','#ffd700','#ff2d00'];
+            const rect = originEl ? originEl.getBoundingClientRect() : { left: window.innerWidth/2, top: window.innerHeight/2, width: 0, height: 0 };
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            for (let i = 0; i < 20; i++) {
+                const p = document.createElement('div');
+                p.className = 'confetti-particle';
+                const angle = (i / 20) * Math.PI * 2 + Math.random() * 0.4;
+                const dist = 70 + Math.random() * 110;
+                p.style.cssText = `left:${cx}px;top:${cy}px;background:${colors[i % colors.length]};border-radius:${Math.random()>.5?'50%':'2px'};`;
+                p.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+                p.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+                p.style.setProperty('--rot', (Math.random() * 720 - 360) + 'deg');
+                p.style.animationDelay = (Math.random() * 60) + 'ms';
+                document.body.appendChild(p);
+                p.addEventListener('animationend', () => p.remove());
+            }
+        }
+
         // --- Personal Records ---
         function getPR(name) {
             const val = parseFloat(localStorage.getItem('pr:' + name));
@@ -907,7 +983,7 @@
                     <div class="routine-day-content">
                         ${exercises.map(ex => `
                             <div class="exercise-item">
-                                <div class="exercise-check" onclick="this.classList.toggle('done'); this.innerHTML = this.classList.contains('done') ? '&#10003;' : ''"></div>
+                                <div class="exercise-check" onclick="toggleCheck(this)"></div>
                                 <span class="exercise-name">${ex.name}</span>
                                 <span class="exercise-detail">${ex.detail}</span>
                                 <div class="exercise-weight">
@@ -954,6 +1030,7 @@
                 state.weekCount = getCurrentWeekCount();
                 saveState();
                 updateUI();
+                triggerWorkoutExplosion(regBtn);
 
                 regBtn.textContent = '✓ Registrado!';
                 regBtn.disabled = true;
