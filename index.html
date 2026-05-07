@@ -825,7 +825,10 @@
         // --- Utils ---
         function hasTodayWorkout() {
             const today = getLocalDateKey();
-            return state.workouts.some(w => w.date === today);
+            try {
+                const s = JSON.parse(localStorage.getItem('entreno-brutal') || '{}');
+                return Array.isArray(s.workouts) && s.workouts.some(w => w.date === today);
+            } catch { return false; }
         }
 
         function getExplosionRoot() {
@@ -1204,6 +1207,8 @@
                     state.weekCount = getCurrentWeekCount();
                     state.streak = calculateStreak(state.workouts);
                     saveState(); updateUI(); renderHistory();
+                    // Re-sync state from disk to avoid memory/disk mismatch
+                    state = normalizeState(JSON.parse(localStorage.getItem('entreno-brutal')));
                 });
             });
 
