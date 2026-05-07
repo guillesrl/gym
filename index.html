@@ -414,6 +414,23 @@
             padding-bottom: 8px; margin-bottom: 12px;
             border-bottom: 2px solid var(--border);
         }
+
+        /* Personal Records */
+        .pr-badge {
+            font-size: 10px; font-weight: 900; color: var(--sprout);
+            text-transform: uppercase; letter-spacing: 0.5px;
+            white-space: nowrap; flex-shrink: 0;
+        }
+        .pr-badge.pr-new { animation: prFlash 0.4s ease 5; color: var(--destructive); }
+        @keyframes prFlash { 0%,100%{opacity:1} 50%{opacity:0} }
+        .pr-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 0; border-bottom: 1px solid var(--muted);
+        }
+        .pr-item:last-child { border-bottom: none; }
+        .pr-item-name { font-size: 13px; font-weight: 700; flex: 1; }
+        .pr-item-weight { font-size: 18px; font-weight: 900; color: var(--sprout); min-width: 60px; text-align: right; }
+        .pr-item-date { font-size: 11px; color: var(--muted-foreground); font-weight: 600; }
     </style>
 </head>
 <body>
@@ -727,6 +744,48 @@
             URL.revokeObjectURL(url);
         }
 
+        // --- Personal Records ---
+        function getPR(name) {
+            const val = parseFloat(localStorage.getItem('pr:' + name));
+            return isNaN(val) ? null : val;
+        }
+        function getPRDate(name) { return localStorage.getItem('pr-date:' + name) || ''; }
+        function checkAndSetPR(name, weight) {
+            weight = parseFloat(weight);
+            if (!weight || weight <= 0) return false;
+            const current = getPR(name);
+            if (current === null || weight > current) {
+                localStorage.setItem('pr:' + name, weight);
+                localStorage.setItem('pr-date:' + name, getLocalDateKey());
+                return true;
+            }
+            return false;
+        }
+        window.handleWeightChange = function(input) {
+            const name = input.dataset.exercise;
+            const weight = parseFloat(input.value);
+            localStorage.setItem('peso:' + name, input.value);
+            const isNewPR = checkAndSetPR(name, weight);
+            const badge = input.closest('.exercise-weight').querySelector('.pr-badge');
+            if (!badge) return;
+            const pr = getPR(name);
+            if (pr !== null) {
+                badge.style.display = '';
+                badge.textContent = isNewPR ? '🏆 NUEVO PR!' : 'PR: ' + pr + 'kg';
+                if (isNewPR) {
+                    badge.classList.add('pr-new');
+                    setTimeout(() => { badge.classList.remove('pr-new'); badge.textContent = 'PR: ' + pr + 'kg'; }, 2500);
+                }
+            }
+        };
+        function getAllExerciseNames() {
+            const names = new Set();
+            Object.values(routines).forEach(prog => Object.values(prog).forEach(week =>
+                Object.values(week).forEach(exs => exs.forEach(ex => names.add(ex.name)))
+            ));
+            return [...names];
+        }
+
         // --- Tabs ---
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', () => {
@@ -855,8 +914,9 @@
                                     <input type="number" min="0" step="0.5" placeholder="0" title="Peso en kg"
                                         data-exercise="${escapeHtml(ex.name)}"
                                         value="${localStorage.getItem('peso:' + ex.name) || ''}"
-                                        onchange="localStorage.setItem('peso:' + this.dataset.exercise, this.value)">
+                                        onchange="handleWeightChange(this)">
                                     <span>kg</span>
+                                    <span class="pr-badge"${getPR(ex.name) === null ? ' style="display:none"' : ''}>${getPR(ex.name) !== null ? 'PR: ' + getPR(ex.name) + 'kg' : ''}</span>
                                 </div>
                                 <button class="exercise-preview-btn" type="button" data-exercise="${escapeHtml(ex.name)}"><span class="btn-label-desktop">Ver ejercicio</span><span class="btn-label-mobile">Ejemplo</span></button>
                             </div>
@@ -907,6 +967,10 @@
             const body = document.getElementById('progress-body');
             const weekGoal = 3;
             const pct = Math.min(100, Math.round((state.weekCount / weekGoal) * 100));
+            const prs = getAllExerciseNames()
+                .map(name => ({ name, weight: getPR(name), date: getPRDate(name) }))
+                .filter(e => e.weight !== null)
+                .sort((a, b) => b.weight - a.weight);
 
             let html = `
                 <div class="section-label">Objetivo semanal</div>
@@ -919,8 +983,17 @@
                         <div class="progress-bar-fill" style="width:${pct}%"></div>
                     </div>
                 </div>
-                <div class="section-label" style="margin-top:20px">Historial</div>
             `;
+
+            if (prs.length > 0) {
+                html += `<div class="section-label" style="margin-top:20px">🏆 Récords Personales</div><div style="margin-bottom:20px">`;
+                prs.forEach(pr => {
+                    html += `<div class="pr-item"><span class="pr-item-name">${escapeHtml(pr.name)}</span><span class="pr-item-weight">${pr.weight} kg</span><span class="pr-item-date">${pr.date}</span></div>`;
+                });
+                html += '</div>';
+            }
+
+            html += `<div class="section-label" style="margin-top:${prs.length > 0 ? 0 : 20}px">Historial</div>`;
 
             if (state.workouts.length === 0) {
                 html += '<div class="empty-state">No hay entrenos registrados todavia.</div>';
