@@ -290,10 +290,11 @@
         .day-register-btn:disabled { opacity: 0.6; cursor: default; }
         .day-register-btn.done { background: var(--muted); color: var(--muted-foreground); border-color: var(--muted); cursor: default; opacity: 1; }
         .history-item {
-            display: flex; align-items: center; gap: 8px;
-            padding: 10px 0; border-bottom: 1px solid var(--muted); flex-wrap: wrap;
+            display: grid; grid-template-columns: 80px 1fr auto auto;
+            align-items: center; gap: 10px;
+            padding: 10px 0; border-bottom: 1px solid var(--muted);
         }
-        .history-item-actions { margin-left: auto; display: flex; gap: 6px; }
+        .history-item-actions { display: flex; gap: 6px; justify-content: flex-end; }
         .btn-edit-workout, .btn-del-workout {
             padding: 3px 8px; border: 2px solid var(--border);
             font-family: inherit; font-size: 10px; font-weight: 800;
@@ -328,6 +329,10 @@
             .btn-label-mobile { display: inline; }
             .exercise-weight input { width: 36px; padding: 4px 2px; font-size: 11px; }
             .exercise-weight span { display: none; }
+            .history-item { grid-template-columns: 65px auto; row-gap: 4px; }
+            .history-type { grid-column: 2; }
+            .history-duration { grid-column: 1 / 3; font-size: 11px; }
+            .history-item-actions { grid-column: 1 / 3; justify-content: flex-start; }
         }
 
         /* Register View */
@@ -1118,17 +1123,9 @@
                 state.weekCount = getCurrentWeekCount();
                 saveState();
                 updateUI();
-                triggerWorkoutExplosion(regBtn);
 
-                regBtn.textContent = '✓ Registrado!';
-                regBtn.disabled = true;
-                input.disabled = true;
-                setTimeout(() => {
-                    document.querySelectorAll('.day-register-btn').forEach(b => {
-                        b.textContent = '✓ Entrenado hoy'; b.disabled = true; b.classList.add('done');
-                    });
-                    document.querySelectorAll('.day-duration-input').forEach(i => { i.disabled = true; i.value = ''; });
-                }, 1200);
+                closeModal('modal-routine');
+                triggerWorkoutExplosion(null);
             }
         });
 
