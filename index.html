@@ -288,6 +288,7 @@
             text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer;
         }
         .day-register-btn:disabled { opacity: 0.6; cursor: default; }
+        .day-register-btn.done { background: var(--muted); color: var(--muted-foreground); border-color: var(--muted); cursor: default; opacity: 1; }
         .history-item {
             display: flex; align-items: center; gap: 8px;
             padding: 10px 0; border-bottom: 1px solid var(--muted); flex-wrap: wrap;
@@ -780,6 +781,23 @@
             URL.revokeObjectURL(url);
         }
 
+        // --- Utils ---
+        function hasTodayWorkout() {
+            const today = getLocalDateKey();
+            return state.workouts.some(w => w.date === today);
+        }
+
+        function getExplosionRoot() {
+            let r = document.getElementById('explosion-root');
+            if (!r) {
+                r = document.createElement('div');
+                r.id = 'explosion-root';
+                r.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:99999;';
+                document.body.appendChild(r);
+            }
+            return r;
+        }
+
         // --- Haptics & Explosion ---
         window.toggleCheck = function(el) {
             el.classList.toggle('done');
@@ -796,9 +814,12 @@
             container.classList.add('shake');
             container.addEventListener('animationend', () => container.classList.remove('shake'), { once: true });
 
+            const root = getExplosionRoot();
+
             const flash = document.createElement('div');
             flash.className = 'flash-burst';
-            document.body.appendChild(flash);
+            flash.style.position = 'absolute';
+            root.appendChild(flash);
             flash.addEventListener('animationend', () => flash.remove());
 
             const colors = ['#ffd700','#ff2d00','#f9c4d2','#00a859','#000','#fff','#ffd700','#ff2d00'];
@@ -808,14 +829,15 @@
             for (let i = 0; i < 20; i++) {
                 const p = document.createElement('div');
                 p.className = 'confetti-particle';
+                p.style.position = 'absolute';
                 const angle = (i / 20) * Math.PI * 2 + Math.random() * 0.4;
                 const dist = 70 + Math.random() * 110;
-                p.style.cssText = `left:${cx}px;top:${cy}px;background:${colors[i % colors.length]};border-radius:${Math.random()>.5?'50%':'2px'};`;
+                p.style.cssText += `left:${cx}px;top:${cy}px;background:${colors[i % colors.length]};border-radius:${Math.random()>.5?'50%':'2px'};`;
                 p.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
                 p.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
                 p.style.setProperty('--rot', (Math.random() * 720 - 360) + 'deg');
                 p.style.animationDelay = (Math.random() * 60) + 'ms';
-                document.body.appendChild(p);
+                root.appendChild(p);
                 p.addEventListener('animationend', () => p.remove());
             }
         }
@@ -974,6 +996,7 @@
             document.getElementById('routine-week').textContent = currentWeek;
             const body = document.getElementById('routine-body');
             const days = getRoutines();
+            const alreadyDone = hasTodayWorkout();
             body.innerHTML = Object.entries(days).map(([day, exercises]) => `
                 <div class="routine-day">
                     <div class="routine-day-header" onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('open')">
@@ -998,8 +1021,8 @@
                             </div>
                         `).join('')}
                         <div class="day-register-row">
-                            <input type="number" class="day-duration-input" placeholder="Minutos" min="5" max="180" data-day="${day}">
-                            <button class="day-register-btn" data-day="${day}">✓ Registrar entreno</button>
+                            <input type="number" class="day-duration-input" placeholder="Minutos" min="5" max="180" data-day="${day}"${alreadyDone ? ' disabled' : ''}>
+                            <button class="day-register-btn${alreadyDone ? ' done' : ''}" data-day="${day}"${alreadyDone ? ' disabled' : ''}>${alreadyDone ? '&#10003; Entrenado hoy' : '&#10003; Registrar entreno'}</button>
                         </div>
                     </div>
                 </div>
@@ -1035,7 +1058,12 @@
                 regBtn.textContent = '✓ Registrado!';
                 regBtn.disabled = true;
                 input.disabled = true;
-                setTimeout(() => { regBtn.textContent = '✓ Registrar entreno'; regBtn.disabled = false; input.disabled = false; input.value = ''; }, 3000);
+                setTimeout(() => {
+                    document.querySelectorAll('.day-register-btn').forEach(b => {
+                        b.textContent = '✓ Entrenado hoy'; b.disabled = true; b.classList.add('done');
+                    });
+                    document.querySelectorAll('.day-duration-input').forEach(i => { i.disabled = true; i.value = ''; });
+                }, 1200);
             }
         });
 
