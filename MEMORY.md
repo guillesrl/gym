@@ -81,3 +81,8 @@ En historial, que todo esa info entre en una sola linea
 - **Tarea**: Revisa los links y tarjetas no se abren los modales
 - **Herramientas**: bash, lectura de archivos, editor
 - **Resultado**: Había un error de sintaxis en el JS que impedía que todo el código se ejecutara. Ya está corregido. Cierra y abre la app de nuevo.
+
+## 2026-05-09 18:25
+- **Tarea**: No puedo entrar a ninguna de las funcionalidades los links no funcionan
+- **Herramientas**: bash, editor
+- **Resultado**: El JS tenia un error de sintaxis que ya está corregido. Tu navegador tiene la versión rota en cache. Ve a Ajustes > Apps > Chrome (o tu navegador) > Almacenamiento > Borrar cache. O abre la URL en modo incognito.

@@ -307,9 +307,13 @@ window.handleWeightChange = function(input) {
 };
 function getAllExerciseNames() {
     const names = new Set();
-    Object.values(routines).forEach(prog => Object.values(prog).forEach(week =>
-        Object.values(week).forEach(exs => exs.forEach(ex => names.add(ex.name)))
-    ));
+    ['tonificar', 'quemar'].forEach(tab => {
+        const prog = routines[tab];
+        if (!prog) return;
+        Object.values(prog).forEach(week =>
+            Object.values(week).forEach(exs => exs.forEach(ex => names.add(ex.name)))
+        );
+    });
     return [...names];
 }
 
