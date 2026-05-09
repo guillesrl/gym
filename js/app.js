@@ -111,6 +111,19 @@ function updateUI() {
     document.getElementById('streak-days').textContent = state.streak;
     document.getElementById('week-count').textContent = state.weekCount;
     document.getElementById('total-workouts').textContent = state.total;
+    updateWeekProgress();
+}
+
+function updateWeekProgress() {
+    const el = document.getElementById('week-progress');
+    if (!el) return;
+    const totalDays = 3;
+    const done = Math.min(state.weekCount, totalDays);
+    let dots = '';
+    for (let i = 0; i < totalDays; i++) {
+        dots += `<div class="week-dot${i < done ? ' filled' : ''}"></div>`;
+    }
+    el.innerHTML = `<span class="week-progress-label">${done}/${totalDays}</span><div class="week-dots">${dots}</div>`;
 }
 
 function buildHistoryHtml() {
@@ -213,7 +226,11 @@ function getExplosionRoot() {
 // --- Haptics & Explosion ---
 window.toggleCheck = function(el) {
     el.classList.toggle('done');
-    el.innerHTML = el.classList.contains('done') ? '&#10003;' : '';
+    if (el.classList.contains('done')) {
+        el.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+    } else {
+        el.innerHTML = '';
+    }
     if (navigator.vibrate) navigator.vibrate([50]);
 };
 
