@@ -66,3 +66,8 @@ En historial, que todo esa info entre en una sola linea
 - **Tarea**: No funciona los ñinks
 - **Herramientas**: lectura de archivos, editor, bash
 - **Resultado**: Cierra y abre la app. Los modales inactivos ya no bloquean los clicks.
+
+## 2026-05-09 18:14
+- **Tarea**: No puedo entrar a ninguna de las 3 tarjetas. Revisa el codigo
+- **Herramientas**: búsqueda de contenido, editor, bash
+- **Resultado**: Subido. El overlay de los modales bloqueaba los clicks porque estaba siempre visible. Cierra y abre la app.

@@ -747,8 +747,8 @@ document.getElementById('backup-file-input').addEventListener('change', (e) => {
 });
 
 if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location.protocol)) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(() => {});
+    navigator.serviceWorker.getRegistrations().then(regs => {
+        regs.forEach(r => r.unregister());
     });
 }
 
