@@ -71,3 +71,8 @@ En historial, que todo esa info entre en una sola linea
 - **Tarea**: No puedo entrar a ninguna de las 3 tarjetas. Revisa el codigo
 - **Herramientas**: búsqueda de contenido, editor, bash
 - **Resultado**: Subido. El overlay de los modales bloqueaba los clicks porque estaba siempre visible. Cierra y abre la app.
+
+## 2026-05-09 18:17
+- **Tarea**: Sigue sin funcionar, revisa el codigo
+- **Herramientas**: lectura de archivos, editor, bash
+- **Resultado**: Cierra completamente el navegador y vuelve a abrir. Se elimino el service worker que cacheaba versiones viejas del JS.

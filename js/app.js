@@ -420,7 +420,8 @@ document.getElementById('btn-routine').addEventListener('click', () => {
                 </div>
             </div>
         </div>
-    `).join('');
+    `;
+    }).join('');
     openModal('modal-routine');
 });
 
