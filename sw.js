@@ -1,7 +1,5 @@
-const CACHE_NAME = 'entreno-brutal-v8';
+const CACHE_NAME = 'entreno-brutal-v9';
 const APP_ASSETS = [
-  './',
-  './index.html',
   './css/style.css',
   './js/app.js',
   './manifest.webmanifest',
@@ -29,6 +27,11 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
+
+  if (event.request.headers.get('accept')?.includes('text/html')) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then(cached => {

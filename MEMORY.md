@@ -31,3 +31,13 @@ En historial, que todo esa info entre en una sola linea
 - **Tarea**: No veo el boton
 - **Herramientas**: lectura de archivos, editor, bash
 - **Resultado**: Subido. Recarga la página (Ctrl+Shift+R o hard refresh) para que el nuevo service worker actualice el cache.
+
+## 2026-05-09 17:42
+- **Tarea**: Ya lo hice. El botón no se ve
+- **Herramientas**: búsqueda de contenido, editor, bash
+- **Resultado**: Subido. Ahora están en una sección con borde punteado llamada "Backup y Restauración" arriba de "Descargar historial". Cierra y abre la app de nuevo.
+
+## 2026-05-09 17:45
+- **Tarea**: Lo has subido a la rama main?
+- **Herramientas**: bash
+- **Resultado**: Hecho. `main` está actualizado con todos los cambios.
