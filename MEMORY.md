@@ -41,3 +41,8 @@ En historial, que todo esa info entre en una sola linea
 - **Tarea**: Lo has subido a la rama main?
 - **Herramientas**: bash
 - **Resultado**: Hecho. `main` está actualizado con todos los cambios.
+
+## 2026-05-09 17:50
+- **Tarea**: Sigo sin ver el boton de backup
+- **Herramientas**: lectura de archivos, editor, bash
+- **Resultado**: Subido. Ahora el HTML nunca se cachea, siempre carga la versión más nueva del servidor. Cierra y abre la app de nuevo.
