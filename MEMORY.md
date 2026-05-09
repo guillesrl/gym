@@ -56,3 +56,8 @@ En historial, que todo esa info entre en una sola linea
 - **Tarea**: Veo la nueva funcionalidades y el efecto al cargar los datos pero no funciona ningún botón ni tarjeta al hacer click
 - **Herramientas**: editor, bash
 - **Resultado**: Cierra el navegador completamente y vuelve a abrir. El JS y CSS ahora siempre se cargan de red, nunca del cache.
+
+## 2026-05-09 18:09
+- **Tarea**: Los botones no funcionan
+- **Herramientas**: lectura de archivos, editor, bash
+- **Resultado**: Cierra y abre la app de nuevo. Los archivos ahora tienen version forzada.

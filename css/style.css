@@ -218,10 +218,10 @@ body.dark .dark-toggle .icon-moon { display: none; }
     position: fixed; inset: 0; background: rgba(0,0,0,0.5);
     display: flex; align-items: center; justify-content: center;
     z-index: 100; padding: 20px;
-    opacity: 0; visibility: hidden;
+    opacity: 0; visibility: hidden; pointer-events: none;
     transition: opacity 0.2s ease, visibility 0.2s ease;
 }
-.modal-overlay.active { opacity: 1; visibility: visible; }
+.modal-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
 .modal {
     background: var(--background); border: 2px solid var(--border);
     width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto;
