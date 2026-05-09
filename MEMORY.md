@@ -51,3 +51,8 @@ En historial, que todo esa info entre en una sola linea
 - **Tarea**: Pero las tarjetas no funcionan, hago click y no pasa nada no se abren
 - **Herramientas**: búsqueda de contenido, editor, bash, lectura de archivos
 - **Resultado**: Cierra completamente el navegador (no solo la pestaña, mata la app) y vuelve a abrir. Si sigue sin funcionar, prueba en modo incognito para confirmar que es tema de cache.
+
+## 2026-05-09 18:07
+- **Tarea**: Veo la nueva funcionalidades y el efecto al cargar los datos pero no funciona ningún botón ni tarjeta al hacer click
+- **Herramientas**: editor, bash
+- **Resultado**: Cierra el navegador completamente y vuelve a abrir. El JS y CSS ahora siempre se cargan de red, nunca del cache.
