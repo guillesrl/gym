@@ -2,6 +2,15 @@
 let currentWeek = 1, currentTab = 'tonificar';
 let state = loadState();
 
+function getAutoWeek() {
+    const startDate = localStorage.getItem('program-start-date');
+    if (!startDate) return 1;
+    const start = new Date(startDate + 'T12:00:00');
+    const now = new Date();
+    const diffDays = Math.floor((now - start) / (1000 * 60 * 60 * 24));
+    return Math.max(1, Math.min(4, Math.floor(diffDays / 7) + 1));
+}
+
 const GIF_CDN = 'https://static.exercisedb.dev/media/';
 const exerciseImageMap = {
     'Hip Thrust':                'SNFfUff',
@@ -319,6 +328,11 @@ async function loadRoutines() {
     } catch (e) {
         console.warn('No se pudo cargar routines.json', e);
     }
+    if (!localStorage.getItem('program-start-date')) {
+        localStorage.setItem('program-start-date', getLocalDateKey());
+    }
+    currentWeek = getAutoWeek();
+    updateWeek();
     updateUI();
     updateTodayBanner();
 }
@@ -355,14 +369,18 @@ document.getElementById('btn-routine').addEventListener('click', () => {
     document.getElementById('routine-week').textContent = currentWeek;
     const body = document.getElementById('routine-body');
     const days = getRoutines();
+    const dayMap = { 1: 'Lunes', 2: 'Martes', 3: 'Miercoles', 4: 'Jueves', 5: 'Viernes', 6: 'Sabado', 0: 'Domingo' };
+    const todayName = dayMap[new Date().getDay()];
     const alreadyDone = hasTodayWorkout();
-    body.innerHTML = Object.entries(days).map(([day, exercises]) => `
+    body.innerHTML = Object.entries(days).map(([day, exercises]) => {
+        const isToday = day === todayName;
+        return `
         <div class="routine-day">
-            <div class="routine-day-header" onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('open')">
-                <span>${day}</span>
+            <div class="routine-day-header${isToday ? ' open' : ''}" onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('open')">
+                <span>${day}${isToday ? ' (Hoy)' : ''}</span>
                 <span class="arrow">&#8250;</span>
             </div>
-            <div class="routine-day-content">
+            <div class="routine-day-content${isToday ? ' open' : ''}">
                 ${exercises.map(ex => `
                     <div class="exercise-item">
                         <div class="exercise-check" onclick="toggleCheck(this)"></div>
@@ -407,6 +425,15 @@ document.getElementById('routine-body').addEventListener('click', (e) => {
             state.streak = (state.lastDate === getYesterdayKey()) ? state.streak + 1 : 1;
             state.lastDate = today;
         }
+        document.querySelectorAll('.exercise-weight input').forEach(inp => {
+            const name = inp.dataset.exercise;
+            const weight = parseFloat(inp.value);
+            if (weight && weight > 0) {
+                let history = JSON.parse(localStorage.getItem('peso-history:' + name) || '[]');
+                history.push({ date: today, weight });
+                localStorage.setItem('peso-history:' + name, JSON.stringify(history));
+            }
+        });
         state.workouts.push({ date: today, type: currentTab, duration, intensity: 'media', notes: day });
         state.total = state.workouts.length;
         state.weekCount = getCurrentWeekCount();
@@ -450,14 +477,123 @@ function renderProgress() {
     `;
 
     if (prs.length > 0) {
-        html += `<div class="section-label" style="margin-top:20px">🏆 Récords Personales</div><div style="margin-bottom:20px">`;
+        html += `<div class="section-label" style="margin-top:20px">Records Personales</div><div style="margin-bottom:20px">`;
         prs.forEach(pr => {
             html += `<div class="pr-item"><span class="pr-item-name">${escapeHtml(pr.name)}</span><span class="pr-item-weight">${pr.weight} kg</span><span class="pr-item-date">${pr.date}</span></div>`;
         });
         html += '</div>';
     }
 
+    const allExercises = getAllExerciseNames();
+    const exercisesWithHistory = allExercises.filter(name => {
+        const history = JSON.parse(localStorage.getItem('peso-history:' + name) || '[]');
+        return history.length > 0;
+    });
+
+    if (exercisesWithHistory.length > 0) {
+        html += `<div class="section-label" style="margin-top:20px">Evolucion de Peso</div><div class="weight-chart-section">`;
+        exercisesWithHistory.forEach((name, i) => {
+            html += `
+            <div class="weight-chart-exercise">
+                <div class="weight-chart-header" onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('open')">
+                    <span>${escapeHtml(name)}</span>
+                    <span class="arrow">&#8250;</span>
+                </div>
+                <div class="weight-chart-body">
+                    <canvas class="weight-chart-canvas" id="chart-${i}" data-exercise="${escapeHtml(name)}"></canvas>
+                    <div class="weight-chart-stats" id="chart-stats-${i}"></div>
+                </div>
+            </div>`;
+        });
+        html += '</div>';
+    }
+
     body.innerHTML = html;
+
+    exercisesWithHistory.forEach((name, i) => {
+        drawWeightChart(i, name);
+    });
+}
+
+function drawWeightChart(index, exerciseName) {
+    const canvas = document.getElementById('chart-' + index);
+    if (!canvas) return;
+    const history = JSON.parse(localStorage.getItem('peso-history:' + exerciseName) || '[]');
+    if (history.length < 2) {
+        const stats = document.getElementById('chart-stats-' + index);
+        if (stats) stats.textContent = 'Registra al menos 2 sesiones para ver la evolucion.';
+        return;
+    }
+
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+
+    const w = rect.width, h = rect.height;
+    const padding = { top: 10, right: 10, bottom: 24, left: 36 };
+    const chartW = w - padding.left - padding.right;
+    const chartH = h - padding.top - padding.bottom;
+
+    const weights = history.map(h => h.weight);
+    const minW = Math.min(...weights) - 1;
+    const maxW = Math.max(...weights) + 1;
+    const range = maxW - minW || 1;
+
+    const isDark = document.body.classList.contains('dark');
+    const gridColor = isDark ? '#3a3a3a' : '#e8e6dd';
+    const textColor = isDark ? '#9a9a92' : '#6b6b62';
+    const lineColor = isDark ? '#f9c4d2' : '#000';
+    const dotColor = isDark ? '#00d470' : '#00a859';
+
+    ctx.clearRect(0, 0, w, h);
+
+    for (let i = 0; i <= 4; i++) {
+        const y = padding.top + (chartH / 4) * i;
+        const val = maxW - (range / 4) * i;
+        ctx.strokeStyle = gridColor;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(w - padding.right, y);
+        ctx.stroke();
+        ctx.fillStyle = textColor;
+        ctx.font = '10px Inter, sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText(val.toFixed(1), padding.left - 4, y + 3);
+    }
+
+    const points = history.map((h, i) => ({
+        x: padding.left + (chartW / (history.length - 1)) * i,
+        y: padding.top + chartH - ((h.weight - minW) / range) * chartH
+    }));
+
+    ctx.strokeStyle = lineColor;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    points.forEach((p, i) => {
+        if (i === 0) ctx.moveTo(p.x, p.y);
+        else ctx.lineTo(p.x, p.y);
+    });
+    ctx.stroke();
+
+    points.forEach(p => {
+        ctx.fillStyle = dotColor;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+    });
+
+    const firstDate = history[0].date.slice(5);
+    const lastDate = history[history.length - 1].date.slice(5);
+    const diff = weights[weights.length - 1] - weights[0];
+    const diffStr = diff > 0 ? `+${diff.toFixed(1)} kg` : `${diff.toFixed(1)} kg`;
+    const statsEl = document.getElementById('chart-stats-' + index);
+    if (statsEl) {
+        statsEl.innerHTML = `<span>${firstDate} - ${lastDate}</span><span>${history.length} registros</span><span style="color:${diff >= 0 ? 'var(--sprout)' : 'var(--destructive)'}">${diffStr}</span>`;
+    }
 }
 
 function renderHistory() {
@@ -548,3 +684,17 @@ function updateTodayBanner() {
 
 // Init
 updateUI();
+
+(function initDark() {
+    const saved = localStorage.getItem('dark-mode');
+    if (saved === '1' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.body.classList.add('dark');
+    }
+    const btn = document.getElementById('dark-toggle');
+    if (btn) {
+        btn.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+            localStorage.setItem('dark-mode', document.body.classList.contains('dark') ? '1' : '0');
+        });
+    }
+})();
