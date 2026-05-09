@@ -1,4 +1,4 @@
-const CACHE_NAME = 'entreno-brutal-v7';
+const CACHE_NAME = 'entreno-brutal-v8';
 const APP_ASSETS = [
   './',
   './index.html',

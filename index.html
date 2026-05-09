@@ -106,20 +106,23 @@
                 <div class="action-link">Ver todo <span class="arrow">&#8594;</span></div>
             </div>
         </div>
+        <div class="backup-area">
+            <div class="backup-title">Backup y Restauración</div>
+            <button class="btn-backup" id="btn-backup-export">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="M7 10l5 5 5-5"></path><path d="M12 15V3"></path></svg>
+                Exportar backup
+            </button>
+            <button class="btn-backup" id="btn-backup-import">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="M12 10l-5-5 5-5"></path><path d="M16 5H3"></path><path d="M21 15V3"></path></svg>
+                Importar backup
+            </button>
+            <input type="file" id="backup-file-input" accept=".json" style="display:none">
+        </div>
         <div class="export-area">
             <button class="btn-export" id="btn-export-history">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="M7 10l5 5 5-5"></path><path d="M12 15V3"></path></svg>
                 Descargar historial
             </button>
-            <button class="btn-export" id="btn-backup-export" style="margin-top:10px">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="M7 10l5 5 5-5"></path><path d="M12 15V3"></path></svg>
-                Exportar backup
-            </button>
-            <button class="btn-export" id="btn-backup-import" style="margin-top:10px">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="M12 10l-5-5 5-5"></path><path d="M16 5H3"></path><path d="M21 15V3"></path></svg>
-                Importar backup
-            </button>
-            <input type="file" id="backup-file-input" accept=".json" style="display:none">
         </div>
     </div>
 

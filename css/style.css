@@ -179,6 +179,19 @@ body.dark .dark-toggle .icon-moon { display: none; }
 }
 .action-card:nth-child(2) .action-link { background: transparent; color: var(--foreground); }
 .action-card:hover .action-link { gap: 10px; }
+.backup-area { margin-top: 14px; padding: 14px; border: 2px dashed var(--border); background: var(--card); }
+.backup-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--muted-foreground); margin-bottom: 10px; text-align: center; }
+.btn-backup {
+    width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px 14px; border: 2px solid var(--border);
+    background: var(--card); color: var(--foreground);
+    font-family: inherit; font-size: 12px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
+    box-shadow: var(--shadow-small); transition: all 0.15s ease;
+}
+.btn-backup + .btn-backup { margin-top: 8px; }
+.btn-backup:hover { background: var(--accent); transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--border); }
+.btn-backup svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .export-area { margin-top: 10px; padding-bottom: 10px; }
 .btn-export {
     width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;

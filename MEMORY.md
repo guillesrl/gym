@@ -26,3 +26,8 @@ En historial, que todo esa info entre en una sola linea
 - **Tarea**: Implementa un backup/export para poder exportar importar el progreso personal
 - **Herramientas**: lectura de archivos, editor, bash
 - **Resultado**: Subido.
+
+## 2026-05-09 17:37
+- **Tarea**: No veo el boton
+- **Herramientas**: lectura de archivos, editor, bash
+- **Resultado**: Subido. Recarga la página (Ctrl+Shift+R o hard refresh) para que el nuevo service worker actualice el cache.
