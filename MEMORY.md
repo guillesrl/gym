@@ -13,3 +13,11 @@
 - **Tarea**: Me gusta. Implementa todo eso
 - **Herramientas**: lectura de archivos, editor, bash
 - **Resultado**: Subido.
+
+## 2026-05-09 13:22
+- **Tarea**: 2026-05-09Tonificar90 min · baja
+✏ Editar
+
+En historial, que todo esa info entre en una sola linea
+- **Herramientas**: editor, bash
+- **Resultado**: Subido.

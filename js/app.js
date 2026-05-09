@@ -681,6 +681,71 @@ document.getElementById('btn-historial').addEventListener('click', () => {
 
 document.getElementById('btn-export-history').addEventListener('click', downloadHistory);
 
+document.getElementById('btn-backup-export').addEventListener('click', () => {
+    const backup = {
+        version: 1,
+        date: getLocalDateKey(),
+        state: state,
+        prs: {},
+        prDates: {},
+        pesoHistory: {},
+        pesoCurrent: {},
+        programStartDate: localStorage.getItem('program-start-date'),
+        darkMode: localStorage.getItem('dark-mode')
+    };
+    getAllExerciseNames().forEach(name => {
+        const pr = localStorage.getItem('pr:' + name);
+        if (pr) backup.prs[name] = pr;
+        const prd = localStorage.getItem('pr-date:' + name);
+        if (prd) backup.prDates[name] = prd;
+        const ph = localStorage.getItem('peso-history:' + name);
+        if (ph) backup.pesoHistory[name] = ph;
+        const pc = localStorage.getItem('peso:' + name);
+        if (pc) backup.pesoCurrent[name] = pc;
+    });
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `entreno-brutal-backup-${getLocalDateKey()}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+});
+
+document.getElementById('btn-backup-import').addEventListener('click', () => {
+    document.getElementById('backup-file-input').click();
+});
+
+document.getElementById('backup-file-input').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+        try {
+            const backup = JSON.parse(ev.target.result);
+            if (!backup.state || !backup.state.workouts) throw new Error('Invalid backup');
+            if (!confirm('Esto reemplazara todos tus datos actuales. ¿Continuar?')) return;
+            localStorage.setItem('entreno-brutal', JSON.stringify(backup.state));
+            state = loadState();
+            updateUI();
+            if (backup.programStartDate) localStorage.setItem('program-start-date', backup.programStartDate);
+            if (backup.darkMode !== null) localStorage.setItem('dark-mode', backup.darkMode);
+            Object.entries(backup.prs || {}).forEach(([name, val]) => localStorage.setItem('pr:' + name, val));
+            Object.entries(backup.prDates || {}).forEach(([name, val]) => localStorage.setItem('pr-date:' + name, val));
+            Object.entries(backup.pesoHistory || {}).forEach(([name, val]) => localStorage.setItem('peso-history:' + name, val));
+            Object.entries(backup.pesoCurrent || {}).forEach(([name, val]) => localStorage.setItem('peso:' + name, val));
+            alert('Backup restaurado correctamente.');
+            location.reload();
+        } catch (err) {
+            alert('Error: archivo de backup invalido.');
+        }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+});
+
 if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location.protocol)) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').catch(() => {});
