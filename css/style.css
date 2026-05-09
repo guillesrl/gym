@@ -332,10 +332,15 @@ body.dark .dark-toggle .icon-moon { display: none; }
 .day-register-btn:disabled { opacity: 0.6; cursor: default; }
 .day-register-btn.done { background: var(--muted); color: var(--muted-foreground); border-color: var(--muted); cursor: default; opacity: 1; }
 .history-item {
-    display: flex; align-items: center; gap: 8px;
-    padding: 10px 0; border-bottom: 1px solid var(--muted); flex-wrap: wrap;
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 0; border-bottom: 1px solid var(--muted); flex-wrap: nowrap;
+    font-size: 12px;
 }
-.history-item-actions { margin-left: auto; display: flex; gap: 6px; }
+.history-item:last-child { border-bottom: none; }
+.history-date { font-size: 11px; font-weight: 600; color: var(--muted-foreground); flex-shrink: 0; }
+.history-type { font-size: 11px; font-weight: 700; text-transform: uppercase; flex-shrink: 0; }
+.history-duration { font-size: 11px; font-weight: 600; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.history-item-actions { margin-left: auto; display: flex; gap: 4px; flex-shrink: 0; }
 .btn-edit-workout, .btn-del-workout {
     padding: 3px 8px; border: 2px solid var(--border);
     font-family: inherit; font-size: 10px; font-weight: 800;
@@ -439,14 +444,9 @@ body.dark .dark-toggle .icon-moon { display: none; }
 }
 .progress-bar-track { height: 16px; border: 2px solid var(--border); background: var(--card); }
 .progress-bar-fill { height: 100%; background: var(--primary); transition: width 0.3s ease; }
-.history-item {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 0; border-bottom: 1px solid var(--muted);
-}
-.history-item:last-child { border-bottom: none; }
-.history-date { font-size: 12px; font-weight: 600; color: var(--muted-foreground); }
-.history-type { font-size: 13px; font-weight: 700; text-transform: uppercase; }
-.history-duration { font-size: 12px; font-weight: 600; }
+.history-date { font-size: 11px; font-weight: 600; color: var(--muted-foreground); }
+.history-type { font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.history-duration { font-size: 11px; font-weight: 600; }
 .empty-state {
     text-align: center; padding: 32px 16px;
     color: var(--muted-foreground); font-size: 13px;

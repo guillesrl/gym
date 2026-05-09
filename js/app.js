@@ -626,8 +626,8 @@ function renderHistory() {
         return `
         <div class="history-item" data-idx="${realIdx}">
             <span class="history-date">${w.date}</span>
-            <span class="history-type">${w.type === 'tonificar' ? 'Tonificar' : 'Quemar'}</span>
-            <span class="history-duration">${w.duration} min · ${escapeHtml(w.notes || w.intensity)}</span>
+            <span class="history-type">${w.type === 'tonificar' ? 'Tonif.' : 'Quemar'}</span>
+            <span class="history-duration">${w.duration}min · ${escapeHtml(w.intensity)}${w.notes ? ' · ' + escapeHtml(w.notes) : ''}</span>
             <div class="history-item-actions">
                 <button class="btn-edit-workout" data-idx="${realIdx}">✏ Editar</button>
                 <button class="btn-del-workout" data-idx="${realIdx}">✕</button>
