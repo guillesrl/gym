@@ -76,3 +76,8 @@ En historial, que todo esa info entre en una sola linea
 - **Tarea**: Sigue sin funcionar, revisa el codigo
 - **Herramientas**: lectura de archivos, editor, bash
 - **Resultado**: Cierra completamente el navegador y vuelve a abrir. Se elimino el service worker que cacheaba versiones viejas del JS.
+
+## 2026-05-09 18:23
+- **Tarea**: Revisa los links y tarjetas no se abren los modales
+- **Herramientas**: bash, lectura de archivos, editor
+- **Resultado**: Había un error de sintaxis en el JS que impedía que todo el código se ejecutara. Ya está corregido. Cierra y abre la app de nuevo.
