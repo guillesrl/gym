@@ -21,3 +21,8 @@
 En historial, que todo esa info entre en una sola linea
 - **Herramientas**: editor, bash
 - **Resultado**: Subido.
+
+## 2026-05-09 15:37
+- **Tarea**: Implementa un backup/export para poder exportar importar el progreso personal
+- **Herramientas**: lectura de archivos, editor, bash
+- **Resultado**: Subido.
