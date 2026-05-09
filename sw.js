@@ -1,4 +1,4 @@
-const CACHE_NAME = 'entreno-brutal-v12';
+const CACHE_NAME = 'entreno-brutal-v13';
 const APP_ASSETS = [
   './manifest.webmanifest',
   './icon.svg',
@@ -26,7 +26,8 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
 
-  if (event.request.headers.get('accept')?.includes('text/html')) {
+  const url = new URL(event.request.url);
+  if (url.pathname.endsWith('.html') || url.pathname.endsWith('.css') || url.pathname.endsWith('.js')) {
     event.respondWith(fetch(event.request));
     return;
   }

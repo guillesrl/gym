@@ -46,3 +46,8 @@ En historial, que todo esa info entre en una sola linea
 - **Tarea**: Sigo sin ver el boton de backup
 - **Herramientas**: lectura de archivos, editor, bash
 - **Resultado**: Subido. Ahora el HTML nunca se cachea, siempre carga la versión más nueva del servidor. Cierra y abre la app de nuevo.
+
+## 2026-05-09 17:55
+- **Tarea**: Pero las tarjetas no funcionan, hago click y no pasa nada no se abren
+- **Herramientas**: búsqueda de contenido, editor, bash, lectura de archivos
+- **Resultado**: Cierra completamente el navegador (no solo la pestaña, mata la app) y vuelve a abrir. Si sigue sin funcionar, prueba en modo incognito para confirmar que es tema de cache.
