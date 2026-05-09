@@ -61,3 +61,8 @@ En historial, que todo esa info entre en una sola linea
 - **Tarea**: Los botones no funcionan
 - **Herramientas**: lectura de archivos, editor, bash
 - **Resultado**: Cierra y abre la app de nuevo. Los archivos ahora tienen version forzada.
+
+## 2026-05-09 18:12
+- **Tarea**: No funciona los ñinks
+- **Herramientas**: lectura de archivos, editor, bash
+- **Resultado**: Cierra y abre la app. Los modales inactivos ya no bloquean los clicks.
