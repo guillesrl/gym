@@ -317,6 +317,23 @@ function getAllExerciseNames() {
     return [...names];
 }
 
+function getAllExerciseImageUrls() {
+    const urls = {};
+    getAllExerciseNames().forEach(name => {
+        const hash = exerciseImageMap[name];
+        if (hash) urls[name] = `${GIF_CDN}${hash}.gif`;
+    });
+    return urls;
+}
+
+function prefetchExerciseImages() {
+    const urls = getAllExerciseImageUrls();
+    Object.values(urls).forEach(url => {
+        const img = new Image();
+        img.src = url;
+    });
+}
+
 // --- Tabs ---
 document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
@@ -356,6 +373,7 @@ async function loadRoutines() {
     updateWeek();
     updateUI();
     updateTodayBanner();
+    prefetchExerciseImages();
 }
 loadRoutines();
 
@@ -371,7 +389,13 @@ function openExercisePreview(name) {
     const hash = exerciseImageMap[name];
     const anim = document.getElementById('exercise-anim');
     document.getElementById('exercise-modal-title').textContent = name;
-    anim.src = hash ? `${GIF_CDN}${hash}.gif` : 'assets/exercise-demo.webp';
+    if (hash) {
+        anim.src = `${GIF_CDN}${hash}.gif`;
+        anim.style.display = '';
+    } else {
+        anim.src = '';
+        anim.style.display = 'none';
+    }
     anim.alt = `Animación de ${name}`;
     openModal('modal-exercise');
 }
