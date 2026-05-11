@@ -1,14 +1,13 @@
-const CACHE_NAME = 'entreno-brutal-v13';
-const APP_ASSETS = [
+const CACHE_NAME = 'entreno-brutal-v14';
+const STATIC_ASSETS = [
   './manifest.webmanifest',
-  './icon.svg',
-  './data/routines.json'
+  './icon.svg'
 ];
 
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache =>
-      Promise.allSettled(APP_ASSETS.map(url => cache.add(url)))
+      Promise.allSettled(STATIC_ASSETS.map(url => cache.add(url)))
     )
   );
   self.skipWaiting();
@@ -27,11 +26,17 @@ self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
 
   const url = new URL(event.request.url);
-  if (url.pathname.endsWith('.html') || url.pathname.endsWith('.css') || url.pathname.endsWith('.js')) {
+
+  // App shell y datos: siempre red para recibir actualizaciones al instante
+  if (url.pathname.endsWith('.html') ||
+      url.pathname.endsWith('.css') ||
+      url.pathname.endsWith('.js') ||
+      url.pathname.endsWith('.json')) {
     event.respondWith(fetch(event.request));
     return;
   }
 
+  // Imágenes y assets estáticos: cache-first (GIFs de ejercicios, iconos)
   event.respondWith(
     caches.match(event.request).then(cached => {
       if (cached) return cached;
