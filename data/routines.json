@@ -1,68 +1,221 @@
 {
   "labels": {
     "tonificar": {
-      "Lunes":     "Piernas y Glúteos 🦵",
-      "Miercoles": "Espalda y Hombros 💪",
-      "Viernes":   "Pecho y Brazos 🏋"
+      "Día 1": "Piernas y Glúteos 🦵",
+      "Día 2": "Espalda y Hombros 💪",
+      "Día 3": "Pecho y Brazos 🏋"
     },
     "quemar": {
-      "Lunes":     "Cardio + Piernas 🔥",
-      "Miercoles": "Cardio + Tren Superior 🔥",
-      "Viernes":   "Glúteos y Brazos 🔥"
+      "Día 1": "Cardio + Piernas 🔥",
+      "Día 2": "Cardio + Tren Superior 🔥",
+      "Día 3": "Glúteos y Brazos 🔥"
     }
   },
   "tonificar": {
     "1": {
-      "Lunes": [
-        { "name": "Hip Thrust", "detail": "3x12" },
-        { "name": "Peso muerto rumano", "detail": "3x10" },
-        { "name": "Sentadilla", "detail": "3x10" },
-        { "name": "Abducciones en maquina", "detail": "3x15" },
-        { "name": "Curl femoral", "detail": "3x12" },
-        { "name": "Patada de gluteo", "detail": "3x12 cada pierna" }
+      "Día 1": [
+        { "name": "Hip Thrust",             "detail": "3x12" },
+        { "name": "Peso muerto rumano",      "detail": "3x10" },
+        { "name": "Sentadilla",              "detail": "3x10" },
+        { "name": "Abducciones en maquina",  "detail": "3x15" },
+        { "name": "Curl femoral",            "detail": "3x12" },
+        { "name": "Patada de gluteo",        "detail": "3x12 c/lado" }
       ],
-      "Miercoles": [
-        { "name": "Jalon al pecho", "detail": "3x12" },
-        { "name": "Remo sentado", "detail": "3x10" },
-        { "name": "Pullover en polea", "detail": "3x12" },
-        { "name": "Vuelos laterales", "detail": "3x15" },
-        { "name": "Press hombro maquina", "detail": "3x10" },
-        { "name": "Curl biceps mancuernas", "detail": "3x12" },
-        { "name": "Plancha", "detail": "3x40s" }
+      "Día 2": [
+        { "name": "Jalon al pecho",          "detail": "3x12" },
+        { "name": "Remo sentado",            "detail": "3x10" },
+        { "name": "Pullover en polea",       "detail": "3x12" },
+        { "name": "Vuelos laterales",        "detail": "3x15" },
+        { "name": "Press hombro maquina",    "detail": "3x10" },
+        { "name": "Curl biceps mancuernas",  "detail": "3x12" },
+        { "name": "Plancha",                 "detail": "3x40s" }
       ],
-      "Viernes": [
-        { "name": "Press pecho maquina", "detail": "3x10" },
-        { "name": "Aperturas en peck deck", "detail": "3x12" },
-        { "name": "Curl biceps polea", "detail": "3x12" },
+      "Día 3": [
+        { "name": "Press pecho maquina",     "detail": "3x10" },
+        { "name": "Aperturas en peck deck",  "detail": "3x12" },
+        { "name": "Curl biceps polea",       "detail": "3x12" },
         { "name": "Extension triceps polea", "detail": "3x12" },
-        { "name": "Abdominales en maquina", "detail": "3x15" }
+        { "name": "Abdominales en maquina",  "detail": "3x15" }
+      ]
+    },
+    "2": {
+      "Día 1": [
+        { "name": "Hip Thrust",             "detail": "4x12" },
+        { "name": "Peso muerto rumano",      "detail": "3x12" },
+        { "name": "Sentadilla",              "detail": "3x12" },
+        { "name": "Abducciones en maquina",  "detail": "3x20" },
+        { "name": "Curl femoral",            "detail": "3x15" },
+        { "name": "Patada de gluteo",        "detail": "3x15 c/lado" }
+      ],
+      "Día 2": [
+        { "name": "Jalon al pecho",          "detail": "4x10" },
+        { "name": "Remo sentado",            "detail": "3x12" },
+        { "name": "Pullover en polea",       "detail": "3x12" },
+        { "name": "Vuelos laterales",        "detail": "3x20" },
+        { "name": "Press hombro maquina",    "detail": "3x12" },
+        { "name": "Curl biceps mancuernas",  "detail": "3x15" },
+        { "name": "Plancha",                 "detail": "3x50s" }
+      ],
+      "Día 3": [
+        { "name": "Press pecho maquina",     "detail": "3x12" },
+        { "name": "Aperturas en peck deck",  "detail": "3x15" },
+        { "name": "Curl biceps polea",       "detail": "3x15" },
+        { "name": "Extension triceps polea", "detail": "3x15" },
+        { "name": "Abdominales en maquina",  "detail": "3x20" }
+      ]
+    },
+    "3": {
+      "Día 1": [
+        { "name": "Hip Thrust",             "detail": "4x15" },
+        { "name": "Peso muerto rumano",      "detail": "4x10" },
+        { "name": "Sentadilla",              "detail": "4x10" },
+        { "name": "Abducciones en maquina",  "detail": "4x15" },
+        { "name": "Curl femoral",            "detail": "4x12" },
+        { "name": "Patada de gluteo",        "detail": "3x20 c/lado" }
+      ],
+      "Día 2": [
+        { "name": "Jalon al pecho",          "detail": "4x12" },
+        { "name": "Remo sentado",            "detail": "4x10" },
+        { "name": "Pullover en polea",       "detail": "4x10" },
+        { "name": "Vuelos laterales",        "detail": "4x15" },
+        { "name": "Press hombro maquina",    "detail": "4x10" },
+        { "name": "Curl biceps mancuernas",  "detail": "4x10" },
+        { "name": "Plancha",                 "detail": "4x40s" }
+      ],
+      "Día 3": [
+        { "name": "Press pecho maquina",     "detail": "4x10" },
+        { "name": "Aperturas en peck deck",  "detail": "4x12" },
+        { "name": "Curl biceps polea",       "detail": "4x10" },
+        { "name": "Extension triceps polea", "detail": "4x10" },
+        { "name": "Abdominales en maquina",  "detail": "4x15" }
+      ]
+    },
+    "4": {
+      "Día 1": [
+        { "name": "Hip Thrust",             "detail": "4x15" },
+        { "name": "Peso muerto rumano",      "detail": "4x12" },
+        { "name": "Sentadilla",              "detail": "4x12" },
+        { "name": "Abducciones en maquina",  "detail": "4x20" },
+        { "name": "Curl femoral",            "detail": "4x15" },
+        { "name": "Patada de gluteo",        "detail": "4x15 c/lado" }
+      ],
+      "Día 2": [
+        { "name": "Jalon al pecho",          "detail": "4x12" },
+        { "name": "Remo sentado",            "detail": "4x12" },
+        { "name": "Pullover en polea",       "detail": "4x12" },
+        { "name": "Vuelos laterales",        "detail": "4x20" },
+        { "name": "Press hombro maquina",    "detail": "4x12" },
+        { "name": "Curl biceps mancuernas",  "detail": "4x12" },
+        { "name": "Plancha",                 "detail": "4x50s" }
+      ],
+      "Día 3": [
+        { "name": "Press pecho maquina",     "detail": "4x12" },
+        { "name": "Aperturas en peck deck",  "detail": "4x15" },
+        { "name": "Curl biceps polea",       "detail": "4x12" },
+        { "name": "Extension triceps polea", "detail": "4x12" },
+        { "name": "Abdominales en maquina",  "detail": "4x20" }
       ]
     }
   },
   "quemar": {
     "1": {
-      "Lunes": [
-        { "name": "Cinta inclinada", "detail": "15 min" },
-        { "name": "Prensa de piernas", "detail": "3x15" },
-        { "name": "Curl femoral", "detail": "3x15" },
-        { "name": "Abducciones en maquina", "detail": "3x20" },
-        { "name": "Bicicleta estatica", "detail": "10 min" }
+      "Día 1": [
+        { "name": "Cinta inclinada",         "detail": "15 min" },
+        { "name": "Prensa de piernas",       "detail": "3x15" },
+        { "name": "Curl femoral",            "detail": "3x15" },
+        { "name": "Abducciones en maquina",  "detail": "3x20" },
+        { "name": "Bicicleta estatica",      "detail": "10 min" }
       ],
-      "Miercoles": [
-        { "name": "Eliptica", "detail": "12 min" },
-        { "name": "Jalon al pecho", "detail": "3x12" },
-        { "name": "Remo sentado", "detail": "3x12" },
-        { "name": "Press pecho maquina", "detail": "3x12" },
-        { "name": "Vuelos laterales", "detail": "3x15" },
-        { "name": "Curl biceps mancuernas", "detail": "3x12" },
-        { "name": "Plancha", "detail": "3x40s" }
+      "Día 2": [
+        { "name": "Eliptica",                "detail": "12 min" },
+        { "name": "Jalon al pecho",          "detail": "3x12" },
+        { "name": "Remo sentado",            "detail": "3x12" },
+        { "name": "Press pecho maquina",     "detail": "3x12" },
+        { "name": "Vuelos laterales",        "detail": "3x15" },
+        { "name": "Curl biceps mancuernas",  "detail": "3x12" },
+        { "name": "Plancha",                 "detail": "3x40s" }
       ],
-      "Viernes": [
-        { "name": "Hip Thrust", "detail": "3x15" },
-        { "name": "Peso muerto rumano", "detail": "3x12" },
-        { "name": "Curl biceps mancuernas", "detail": "3x12" },
+      "Día 3": [
+        { "name": "Hip Thrust",             "detail": "3x15" },
+        { "name": "Peso muerto rumano",      "detail": "3x12" },
+        { "name": "Curl biceps mancuernas",  "detail": "3x12" },
         { "name": "Extension triceps polea", "detail": "3x12" },
-        { "name": "Cinta suave", "detail": "10 min" }
+        { "name": "Cinta suave",             "detail": "10 min" }
+      ]
+    },
+    "2": {
+      "Día 1": [
+        { "name": "Cinta inclinada",         "detail": "20 min" },
+        { "name": "Prensa de piernas",       "detail": "3x20" },
+        { "name": "Curl femoral",            "detail": "3x20" },
+        { "name": "Abducciones en maquina",  "detail": "4x15" },
+        { "name": "Bicicleta estatica",      "detail": "12 min" }
+      ],
+      "Día 2": [
+        { "name": "Eliptica",                "detail": "15 min" },
+        { "name": "Jalon al pecho",          "detail": "3x15" },
+        { "name": "Remo sentado",            "detail": "3x15" },
+        { "name": "Press pecho maquina",     "detail": "3x15" },
+        { "name": "Vuelos laterales",        "detail": "4x12" },
+        { "name": "Curl biceps mancuernas",  "detail": "3x15" },
+        { "name": "Plancha",                 "detail": "3x50s" }
+      ],
+      "Día 3": [
+        { "name": "Hip Thrust",             "detail": "4x12" },
+        { "name": "Peso muerto rumano",      "detail": "3x15" },
+        { "name": "Curl biceps mancuernas",  "detail": "3x15" },
+        { "name": "Extension triceps polea", "detail": "3x15" },
+        { "name": "Cinta suave",             "detail": "12 min" }
+      ]
+    },
+    "3": {
+      "Día 1": [
+        { "name": "Cinta inclinada",         "detail": "20 min" },
+        { "name": "Prensa de piernas",       "detail": "4x15" },
+        { "name": "Curl femoral",            "detail": "4x15" },
+        { "name": "Abducciones en maquina",  "detail": "4x20" },
+        { "name": "Bicicleta estatica",      "detail": "15 min" }
+      ],
+      "Día 2": [
+        { "name": "Eliptica",                "detail": "18 min" },
+        { "name": "Jalon al pecho",          "detail": "4x12" },
+        { "name": "Remo sentado",            "detail": "4x12" },
+        { "name": "Press pecho maquina",     "detail": "4x12" },
+        { "name": "Vuelos laterales",        "detail": "4x15" },
+        { "name": "Curl biceps mancuernas",  "detail": "4x12" },
+        { "name": "Plancha",                 "detail": "4x40s" }
+      ],
+      "Día 3": [
+        { "name": "Hip Thrust",             "detail": "4x15" },
+        { "name": "Peso muerto rumano",      "detail": "4x12" },
+        { "name": "Curl biceps mancuernas",  "detail": "4x12" },
+        { "name": "Extension triceps polea", "detail": "4x12" },
+        { "name": "Cinta suave",             "detail": "15 min" }
+      ]
+    },
+    "4": {
+      "Día 1": [
+        { "name": "Cinta inclinada",         "detail": "25 min" },
+        { "name": "Prensa de piernas",       "detail": "4x20" },
+        { "name": "Curl femoral",            "detail": "4x20" },
+        { "name": "Abducciones en maquina",  "detail": "4x20" },
+        { "name": "Bicicleta estatica",      "detail": "15 min" }
+      ],
+      "Día 2": [
+        { "name": "Eliptica",                "detail": "20 min" },
+        { "name": "Jalon al pecho",          "detail": "4x15" },
+        { "name": "Remo sentado",            "detail": "4x15" },
+        { "name": "Press pecho maquina",     "detail": "4x15" },
+        { "name": "Vuelos laterales",        "detail": "4x20" },
+        { "name": "Curl biceps mancuernas",  "detail": "4x15" },
+        { "name": "Plancha",                 "detail": "4x50s" }
+      ],
+      "Día 3": [
+        { "name": "Hip Thrust",             "detail": "4x15" },
+        { "name": "Peso muerto rumano",      "detail": "4x15" },
+        { "name": "Curl biceps mancuernas",  "detail": "4x15" },
+        { "name": "Extension triceps polea", "detail": "4x15" },
+        { "name": "Cinta suave",             "detail": "15 min" }
       ]
     }
   }

@@ -378,7 +378,7 @@ async function loadRoutines() {
 loadRoutines();
 
 function getRoutines() {
-    return routines[currentTab]?.[currentWeek] || routines[currentTab]?.['1'] || routines[currentTab]?.[1] || { Lunes: [] };
+    return routines[currentTab]?.[currentWeek] || routines[currentTab]?.['1'] || routines[currentTab]?.[1] || { 'Día 1': [] };
 }
 
 // --- Modal helpers ---
@@ -414,7 +414,7 @@ document.getElementById('btn-routine').addEventListener('click', () => {
     document.getElementById('routine-week').textContent = currentWeek;
     const body = document.getElementById('routine-body');
     const days = getRoutines();
-    const dayMap = { 1: 'Lunes', 2: 'Martes', 3: 'Miercoles', 4: 'Jueves', 5: 'Viernes', 6: 'Sabado', 0: 'Domingo' };
+    const dayMap = { 1: 'Día 1', 3: 'Día 2', 5: 'Día 3' };
     const todayName = dayMap[new Date().getDay()];
     const alreadyDone = hasTodayWorkout();
     body.innerHTML = Object.entries(days).map(([day, exercises]) => {
@@ -781,7 +781,7 @@ if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location
 
 // Cartel del día — dinámico por programa
 function updateTodayBanner() {
-    const dayMap = { 1: 'Lunes', 3: 'Miercoles', 5: 'Viernes' };
+    const dayMap = { 1: 'Día 1', 3: 'Día 2', 5: 'Día 3' };
     const day = new Date().getDay();
     const dayName = dayMap[day];
     const banner = document.getElementById('today-banner');
