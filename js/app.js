@@ -47,6 +47,30 @@ const exerciseImageMap = {
     'Plancha frontal':                   'VBAWRPG',
 };
 
+// Fallback estático (JPG) cuando no hay GIF en exercisedb.
+// Fuente: yuhonas/free-exercise-db (dominio público).
+const JPG_CDN = 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/';
+const exerciseFallbackImageMap = {
+    'Extensión de piernas en máquina':         'Leg_Extensions',
+    'Step-ups con mancuernas':                 'Dumbbell_Step_Ups',
+    'Zancadas con mancuernas':                 'Dumbbell_Lunges',
+    'Elevaciones de piernas en barra':         'Hanging_Leg_Raise',
+    'Giros rusos con medicine ball':           'Russian_Twist',
+    'Elevaciones de talones en máquina':       'Standing_Calf_Raises',
+    'Bulgarian split squat con mancuernas':    'Split_Squat_with_Dumbbells',
+    'Máquina de palanca de torso':             'Torso_Rotation',
+    'Abdominales bicicleta':                   'Air_Bike',
+    'Abdominales con piernas colgantes':       'Hanging_Leg_Raise',
+};
+
+function getExerciseImageUrl(name) {
+    const hash = exerciseImageMap[name];
+    if (hash) return `${GIF_CDN}${hash}.gif`;
+    const slug = exerciseFallbackImageMap[name];
+    if (slug) return `${JPG_CDN}${slug}/0.jpg`;
+    return null;
+}
+
 function getDayMap() {
     if (currentTab === 'tonificar') return { 1: 'Día 1', 2: 'Día 2', 4: 'Día 3', 5: 'Día 4' };
     return { 1: 'Día 1', 3: 'Día 2', 5: 'Día 3' };
@@ -334,8 +358,8 @@ function getAllExerciseNames() {
 function getAllExerciseImageUrls() {
     const urls = {};
     getAllExerciseNames().forEach(name => {
-        const hash = exerciseImageMap[name];
-        if (hash) urls[name] = `${GIF_CDN}${hash}.gif`;
+        const url = getExerciseImageUrl(name);
+        if (url) urls[name] = url;
     });
     return urls;
 }
@@ -400,11 +424,11 @@ function openModal(id) { document.getElementById(id).classList.add('active'); }
 function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
 function openExercisePreview(name) {
-    const hash = exerciseImageMap[name];
+    const url = getExerciseImageUrl(name);
     const anim = document.getElementById('exercise-anim');
     document.getElementById('exercise-modal-title').textContent = name;
-    if (hash) {
-        anim.src = `${GIF_CDN}${hash}.gif`;
+    if (url) {
+        anim.src = url;
         anim.style.display = '';
     } else {
         anim.src = '';
