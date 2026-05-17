@@ -36,7 +36,21 @@ const exerciseImageMap = {
     'Bicicleta estatica':        'H1PESYI',
     'Eliptica':                  'rjtuP6X',
     'Curl biceps mancuernas':    'NbVPDMW',
+    'Sentadilla en prensa':              'V07qpXy',
+    'Curl femoral en máquina':           'Zg3XY7P',
+    'Glute bridge en máquina Smith':     'SNFfUff',
+    'Encogimientos abdominales en máquina': 'Wgaz7pm',
+    'Planchas laterales':                'VBAWRPG',
+    'Prensa de piernas inclinada':       'V07qpXy',
+    'Peso muerto rumano con mancuernas': 'ila4NZS',
+    'Hip thrust con barra':              'SNFfUff',
+    'Plancha frontal':                   'VBAWRPG',
 };
+
+function getDayMap() {
+    if (currentTab === 'tonificar') return { 1: 'Día 1', 2: 'Día 2', 4: 'Día 3', 5: 'Día 4' };
+    return { 1: 'Día 1', 3: 'Día 2', 5: 'Día 3' };
+}
 
 function defaultState() {
     return { streak: 0, weekCount: 0, total: 0, workouts: [], lastDate: null };
@@ -414,7 +428,7 @@ document.getElementById('btn-routine').addEventListener('click', () => {
     document.getElementById('routine-week').textContent = currentWeek;
     const body = document.getElementById('routine-body');
     const days = getRoutines();
-    const dayMap = { 1: 'Día 1', 3: 'Día 2', 5: 'Día 3' };
+    const dayMap = getDayMap();
     const todayName = dayMap[new Date().getDay()];
     const alreadyDone = hasTodayWorkout();
     body.innerHTML = Object.entries(days).map(([day, exercises]) => {
@@ -781,7 +795,7 @@ if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location
 
 // Cartel del día — dinámico por programa
 function updateTodayBanner() {
-    const dayMap = { 1: 'Día 1', 3: 'Día 2', 5: 'Día 3' };
+    const dayMap = getDayMap();
     const day = new Date().getDay();
     const dayName = dayMap[day];
     const banner = document.getElementById('today-banner');

@@ -2,8 +2,9 @@
   "labels": {
     "tonificar": {
       "Día 1": "Piernas y Glúteos 🦵",
-      "Día 2": "Espalda y Hombros 💪",
-      "Día 3": "Pecho y Brazos 🏋"
+      "Día 2": "Abdominales 🔥",
+      "Día 3": "Piernas y Glúteos 🍑",
+      "Día 4": "Abdominales 💥"
     },
     "quemar": {
       "Día 1": "Cardio + Piernas 🔥",
@@ -14,106 +15,118 @@
   "tonificar": {
     "1": {
       "Día 1": [
-        { "name": "Hip Thrust",             "detail": "3x12" },
-        { "name": "Peso muerto rumano",      "detail": "3x10" },
-        { "name": "Sentadilla",              "detail": "3x10" },
-        { "name": "Abducciones en maquina",  "detail": "3x15" },
-        { "name": "Curl femoral",            "detail": "3x12" },
-        { "name": "Patada de gluteo",        "detail": "3x12 c/lado" }
+        { "name": "Sentadilla en prensa",                "detail": "3x12" },
+        { "name": "Extensión de piernas en máquina",     "detail": "3x12" },
+        { "name": "Curl femoral en máquina",             "detail": "3x12" },
+        { "name": "Glute bridge en máquina Smith",       "detail": "3x10" },
+        { "name": "Step-ups con mancuernas",             "detail": "3x12" },
+        { "name": "Zancadas con mancuernas",             "detail": "3x12" }
       ],
       "Día 2": [
-        { "name": "Jalon al pecho",          "detail": "3x12" },
-        { "name": "Remo sentado",            "detail": "3x10" },
-        { "name": "Pullover en polea",       "detail": "3x12" },
-        { "name": "Vuelos laterales",        "detail": "3x15" },
-        { "name": "Press hombro maquina",    "detail": "3x10" },
-        { "name": "Curl biceps mancuernas",  "detail": "3x12" },
-        { "name": "Plancha",                 "detail": "3x40s" }
+        { "name": "Encogimientos abdominales en máquina","detail": "3x12" },
+        { "name": "Elevaciones de piernas en barra",     "detail": "3x10" },
+        { "name": "Planchas laterales",                  "detail": "3x20s c/lado" },
+        { "name": "Giros rusos con medicine ball",       "detail": "3x15" }
       ],
       "Día 3": [
-        { "name": "Press pecho maquina",     "detail": "3x10" },
-        { "name": "Aperturas en peck deck",  "detail": "3x12" },
-        { "name": "Curl biceps polea",       "detail": "3x12" },
-        { "name": "Extension triceps polea", "detail": "3x12" },
-        { "name": "Abdominales en maquina",  "detail": "3x15" }
+        { "name": "Prensa de piernas inclinada",         "detail": "3x12" },
+        { "name": "Elevaciones de talones en máquina",   "detail": "3x15" },
+        { "name": "Peso muerto rumano con mancuernas",   "detail": "3x10" },
+        { "name": "Bulgarian split squat con mancuernas","detail": "3x10" },
+        { "name": "Hip thrust con barra",                "detail": "3x10" }
+      ],
+      "Día 4": [
+        { "name": "Máquina de palanca de torso",         "detail": "3x12" },
+        { "name": "Abdominales bicicleta",               "detail": "3x15" },
+        { "name": "Plancha frontal",                     "detail": "3x30s" },
+        { "name": "Abdominales con piernas colgantes",   "detail": "3x10" }
       ]
     },
     "2": {
       "Día 1": [
-        { "name": "Hip Thrust",             "detail": "4x12" },
-        { "name": "Peso muerto rumano",      "detail": "3x12" },
-        { "name": "Sentadilla",              "detail": "3x12" },
-        { "name": "Abducciones en maquina",  "detail": "3x20" },
-        { "name": "Curl femoral",            "detail": "3x15" },
-        { "name": "Patada de gluteo",        "detail": "3x15 c/lado" }
+        { "name": "Sentadilla en prensa",                "detail": "3x15" },
+        { "name": "Extensión de piernas en máquina",     "detail": "3x15" },
+        { "name": "Curl femoral en máquina",             "detail": "3x15" },
+        { "name": "Glute bridge en máquina Smith",       "detail": "3x12" },
+        { "name": "Step-ups con mancuernas",             "detail": "3x12" },
+        { "name": "Zancadas con mancuernas",             "detail": "3x12" }
       ],
       "Día 2": [
-        { "name": "Jalon al pecho",          "detail": "4x10" },
-        { "name": "Remo sentado",            "detail": "3x12" },
-        { "name": "Pullover en polea",       "detail": "3x12" },
-        { "name": "Vuelos laterales",        "detail": "3x20" },
-        { "name": "Press hombro maquina",    "detail": "3x12" },
-        { "name": "Curl biceps mancuernas",  "detail": "3x15" },
-        { "name": "Plancha",                 "detail": "3x50s" }
+        { "name": "Encogimientos abdominales en máquina","detail": "3x15" },
+        { "name": "Elevaciones de piernas en barra",     "detail": "3x12" },
+        { "name": "Planchas laterales",                  "detail": "3x25s c/lado" },
+        { "name": "Giros rusos con medicine ball",       "detail": "3x20" }
       ],
       "Día 3": [
-        { "name": "Press pecho maquina",     "detail": "3x12" },
-        { "name": "Aperturas en peck deck",  "detail": "3x15" },
-        { "name": "Curl biceps polea",       "detail": "3x15" },
-        { "name": "Extension triceps polea", "detail": "3x15" },
-        { "name": "Abdominales en maquina",  "detail": "3x20" }
+        { "name": "Prensa de piernas inclinada",         "detail": "3x15" },
+        { "name": "Elevaciones de talones en máquina",   "detail": "3x20" },
+        { "name": "Peso muerto rumano con mancuernas",   "detail": "3x12" },
+        { "name": "Bulgarian split squat con mancuernas","detail": "3x10" },
+        { "name": "Hip thrust con barra",                "detail": "3x12" }
+      ],
+      "Día 4": [
+        { "name": "Máquina de palanca de torso",         "detail": "3x15" },
+        { "name": "Abdominales bicicleta",               "detail": "3x20" },
+        { "name": "Plancha frontal",                     "detail": "3x45s" },
+        { "name": "Abdominales con piernas colgantes",   "detail": "3x12" }
       ]
     },
     "3": {
       "Día 1": [
-        { "name": "Hip Thrust",             "detail": "4x15" },
-        { "name": "Peso muerto rumano",      "detail": "4x10" },
-        { "name": "Sentadilla",              "detail": "4x10" },
-        { "name": "Abducciones en maquina",  "detail": "4x15" },
-        { "name": "Curl femoral",            "detail": "4x12" },
-        { "name": "Patada de gluteo",        "detail": "3x20 c/lado" }
+        { "name": "Sentadilla en prensa",                "detail": "4x12" },
+        { "name": "Extensión de piernas en máquina",     "detail": "4x12" },
+        { "name": "Curl femoral en máquina",             "detail": "4x12" },
+        { "name": "Glute bridge en máquina Smith",       "detail": "4x10" },
+        { "name": "Step-ups con mancuernas",             "detail": "3x15" },
+        { "name": "Zancadas con mancuernas",             "detail": "3x15" }
       ],
       "Día 2": [
-        { "name": "Jalon al pecho",          "detail": "4x12" },
-        { "name": "Remo sentado",            "detail": "4x10" },
-        { "name": "Pullover en polea",       "detail": "4x10" },
-        { "name": "Vuelos laterales",        "detail": "4x15" },
-        { "name": "Press hombro maquina",    "detail": "4x10" },
-        { "name": "Curl biceps mancuernas",  "detail": "4x10" },
-        { "name": "Plancha",                 "detail": "4x40s" }
+        { "name": "Encogimientos abdominales en máquina","detail": "4x12" },
+        { "name": "Elevaciones de piernas en barra",     "detail": "4x12" },
+        { "name": "Planchas laterales",                  "detail": "3x30s c/lado" },
+        { "name": "Giros rusos con medicine ball",       "detail": "3x20" }
       ],
       "Día 3": [
-        { "name": "Press pecho maquina",     "detail": "4x10" },
-        { "name": "Aperturas en peck deck",  "detail": "4x12" },
-        { "name": "Curl biceps polea",       "detail": "4x10" },
-        { "name": "Extension triceps polea", "detail": "4x10" },
-        { "name": "Abdominales en maquina",  "detail": "4x15" }
+        { "name": "Prensa de piernas inclinada",         "detail": "4x12" },
+        { "name": "Elevaciones de talones en máquina",   "detail": "4x15" },
+        { "name": "Peso muerto rumano con mancuernas",   "detail": "4x10" },
+        { "name": "Bulgarian split squat con mancuernas","detail": "3x12" },
+        { "name": "Hip thrust con barra",                "detail": "4x10" }
+      ],
+      "Día 4": [
+        { "name": "Máquina de palanca de torso",         "detail": "4x12" },
+        { "name": "Abdominales bicicleta",               "detail": "3x20" },
+        { "name": "Plancha frontal",                     "detail": "3x1min" },
+        { "name": "Abdominales con piernas colgantes",   "detail": "4x12" }
       ]
     },
     "4": {
       "Día 1": [
-        { "name": "Hip Thrust",             "detail": "4x15" },
-        { "name": "Peso muerto rumano",      "detail": "4x12" },
-        { "name": "Sentadilla",              "detail": "4x12" },
-        { "name": "Abducciones en maquina",  "detail": "4x20" },
-        { "name": "Curl femoral",            "detail": "4x15" },
-        { "name": "Patada de gluteo",        "detail": "4x15 c/lado" }
+        { "name": "Sentadilla en prensa",                "detail": "4x15" },
+        { "name": "Extensión de piernas en máquina",     "detail": "4x15" },
+        { "name": "Curl femoral en máquina",             "detail": "4x15" },
+        { "name": "Glute bridge en máquina Smith",       "detail": "4x12" },
+        { "name": "Step-ups con mancuernas",             "detail": "3x15" },
+        { "name": "Zancadas con mancuernas",             "detail": "3x15" }
       ],
       "Día 2": [
-        { "name": "Jalon al pecho",          "detail": "4x12" },
-        { "name": "Remo sentado",            "detail": "4x12" },
-        { "name": "Pullover en polea",       "detail": "4x12" },
-        { "name": "Vuelos laterales",        "detail": "4x20" },
-        { "name": "Press hombro maquina",    "detail": "4x12" },
-        { "name": "Curl biceps mancuernas",  "detail": "4x12" },
-        { "name": "Plancha",                 "detail": "4x50s" }
+        { "name": "Encogimientos abdominales en máquina","detail": "4x15" },
+        { "name": "Elevaciones de piernas en barra",     "detail": "4x15" },
+        { "name": "Planchas laterales",                  "detail": "3x30s c/lado" },
+        { "name": "Giros rusos con medicine ball",       "detail": "3x20" }
       ],
       "Día 3": [
-        { "name": "Press pecho maquina",     "detail": "4x12" },
-        { "name": "Aperturas en peck deck",  "detail": "4x15" },
-        { "name": "Curl biceps polea",       "detail": "4x12" },
-        { "name": "Extension triceps polea", "detail": "4x12" },
-        { "name": "Abdominales en maquina",  "detail": "4x20" }
+        { "name": "Prensa de piernas inclinada",         "detail": "4x15" },
+        { "name": "Elevaciones de talones en máquina",   "detail": "4x20" },
+        { "name": "Peso muerto rumano con mancuernas",   "detail": "4x12" },
+        { "name": "Bulgarian split squat con mancuernas","detail": "3x12" },
+        { "name": "Hip thrust con barra",                "detail": "4x12" }
+      ],
+      "Día 4": [
+        { "name": "Máquina de palanca de torso",         "detail": "4x15" },
+        { "name": "Abdominales bicicleta",               "detail": "3x20" },
+        { "name": "Plancha frontal",                     "detail": "3x1min" },
+        { "name": "Abdominales con piernas colgantes",   "detail": "4x15" }
       ]
     }
   },
