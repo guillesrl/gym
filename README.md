@@ -8,14 +8,20 @@ App web brutalista para registrar rutinas de gimnasio, hacer seguimiento de prog
 
 ## Características
 
-- **Dos programas de entrenamiento** — Tonificar y Quemar Grasa, cada uno con su rutina semanal
-- **Rutina semanal interactiva** — visualiza ejercicios por día, marca como completados, apunta el peso usado y navega entre semanas
-- **GIFs de referencia** — cada ejercicio muestra una animación del movimiento vía ExerciseDB CDN
+- **Rutina de 4 días** — Lunes (Espalda), Miércoles (Glúteos y Piernas), Viernes (Hombro y Brazos), Domingo (Cuádriceps)
+- **Progresión en 4 semanas** — series y repeticiones suben progresivamente, semana detectada automáticamente desde la fecha de inicio
+- **Series y reps editables** — cada ejercicio tiene inputs `series x reps` con el valor sugerido como placeholder; tu personalización se guarda por ejercicio + semana
+- **GIFs 720p de referencia** — animación HD del movimiento para cada ejercicio (fitcron.com + fallbacks)
 - **Registro de entrenos** — guarda duración por día directamente desde la rutina
-- **Estadísticas en tiempo real** — racha de días consecutivos, entrenos esta semana y total histórico
+- **Records personales** — detecta automáticamente cada vez que superas tu peso máximo en un ejercicio
+- **Estadísticas en tiempo real** — racha de días consecutivos, entrenos de la semana y total histórico
+- **Gráfica de evolución de peso** — canvas con histórico por ejercicio
 - **Historial editable** — edita duración o elimina cualquier entreno registrado
+- **Backup completo** — exporta/importa JSON con state, PRs, históricos, series/reps y preferencias
 - **Exportar historial** — descarga un `.html` con tabla completa y resumen de stats
-- **PWA offline-first** — Service Worker con cache de todos los assets; instalable en Android/iOS
+- **Frase motivacional diaria** — pool de 49 frases (7 por día) que rotan por semana del año
+- **Modo oscuro** — toggle persistente con detección automática de preferencia del sistema
+- **PWA offline-first** — Service Worker con cache de imágenes; HTML/CSS/JS siempre desde red para actualizaciones instantáneas
 - **Diseño brutalista** — tipografía pesada, bordes duros, sombras offset, paleta negro/crema/rosa
 
 ---
@@ -27,7 +33,7 @@ App web brutalista para registrar rutinas de gimnasio, hacer seguimiento de prog
 | Frontend | HTML + CSS + JS vanilla (sin frameworks) |
 | Fuente | Inter via Google Fonts |
 | Persistencia | `localStorage` |
-| GIFs ejercicios | `static.exercisedb.dev/media/` |
+| GIFs ejercicios | `fitcron.com` (720p) + `static.exercisedb.dev` + `raw.githubusercontent.com/yuhonas/free-exercise-db` (fallback JPG) |
 | PWA | Service Worker + Web App Manifest |
 | Iconos | SVG inline (Lucide) |
 
@@ -36,39 +42,35 @@ App web brutalista para registrar rutinas de gimnasio, hacer seguimiento de prog
 ## Estructura
 
 ```
-entreno-brutal/
-├── index.html           # App completa (markup + estilos + lógica)
-├── icon.svg             # Icono principal (mancuerna rosa sobre fondo negro)
-├── icon-maskable.svg    # Icono con safe area para Android
-├── manifest.webmanifest # Configuración PWA
-├── sw.js                # Service Worker — cache offline-first
-└── assets/
-    ├── exercise-demo.webp          # Fallback imagen ejercicio
-    └── exercises/                  # JPGs locales (dos poses por ejercicio)
-        ├── Barbell_Hip_Thrust-0.jpg
-        ├── Barbell_Hip_Thrust-1.jpg
-        └── ...
+gym/
+├── index.html              # Markup principal
+├── css/style.css           # Estilos brutalistas
+├── js/app.js               # Toda la lógica de la app
+├── data/routines.json      # Definición de rutinas (4 semanas)
+├── icon.svg                # Icono PWA
+├── manifest.webmanifest    # Configuración PWA
+├── sw.js                   # Service Worker
+├── MEMORY.md               # Notas internas
+└── README.md
 ```
 
 ---
 
-## Rutinas incluidas
+## Rutina
 
-### Tonificar — Semana 1
+Las 4 semanas siguen una progresión: Semana 1 baseline (3 series, reps bajas), Semana 2 sube reps, Semana 3 sube a 4 series, Semana 4 pico.
 
-| Día | Ejercicios |
-|---|---|
-| Lunes | Hip Thrust, Peso muerto rumano, Sentadilla, Abducciones, Curl femoral, Patada de glúteo |
-| Miércoles | Jalón al pecho, Remo sentado, Pullover en polea, Vuelos laterales, Press hombro máquina, Plancha |
-| Viernes | Press pecho máquina, Aperturas peck deck, Curl bíceps polea, Extensión tríceps polea, Abdominales máquina |
+### Lunes — Espalda
+Remo, Jalón al pecho, Pullover en polea, Face pull, Extensiones de columna en banco, ABC Abdominales, Pájaros con mancuernas
 
-### Quemar Grasa — Semana 1
+### Miércoles — Glúteos y Piernas
+Hip Thrust, Peso muerto, Zancadas, Sentadilla rumana, Abducciones, Isquios en máquina
 
-| Día | Ejercicios |
-|---|---|
-| Lunes | Cinta inclinada, Prensa de piernas, Curl femoral, Abducciones, Bicicleta estática |
-| Miércoles | Elíptica, Jalón al pecho, Remo sentado, Press pecho máquina, Vuelos laterales, Plancha |
-| Viernes | Hip Thrust, Peso muerto rumano, Curl bíceps mancuernas, Extensión tríceps polea, Cinta suave |
+### Viernes — Hombro y Brazos
+Vuelos frontales, Vuelos laterales, Press de hombro, Pecho en máquina, Bíceps en polea, Tríceps en polea, ABC Abdominales
+
+### Domingo — Pierna (Cuádriceps)
+Hip Thrust, Peso muerto, Sentadilla, Zancadas, Aducciones, Cuádriceps en máquina
 
 ---
 
@@ -82,9 +84,6 @@ python3 -m http.server 8080
 
 # Node (npx)
 npx serve .
-
-# VS Code
-# Live Server extension → Open with Live Server
 ```
 
 Abre `http://localhost:8080` en el navegador. Para que el Service Worker funcione correctamente necesita `http://` o `https://` (no `file://`).
@@ -101,20 +100,27 @@ Abre `http://localhost:8080` en el navegador. Para que el Service Worker funcion
 
 ## Persistencia de datos
 
-Todos los datos se guardan en `localStorage` bajo la clave `entreno-brutal`. El peso por ejercicio se guarda individualmente como `peso:<NombreEjercicio>`.
+Todo se guarda en `localStorage`:
 
-Para exportar o hacer backup, usa el botón **"Descargar historial"** que genera un HTML con toda la información.
+| Clave | Contenido |
+|---|---|
+| `entreno-brutal` | Estado principal (workouts, racha, totales) |
+| `peso:<Ejercicio>` | Peso actual en kg |
+| `peso-history:<Ejercicio>` | Histórico para gráfica de evolución |
+| `pr:<Ejercicio>` / `pr-date:<Ejercicio>` | Récord personal + fecha |
+| `series:w<N>:<Ejercicio>` / `reps:w<N>:<Ejercicio>` | Personalización por semana |
+| `program-start-date` | Fecha de inicio (para calcular semana actual) |
+| `dark-mode` | Preferencia de tema |
+
+Usá los botones **Exportar / Importar backup** para sincronizar entre dispositivos con un JSON.
 
 ---
 
-## Roadmap / Ideas futuras
+## Actualizar la versión
 
-- [ ] Semanas 2–4 en ambos programas
-- [ ] Editar intensidad y notas al registrar
-- [ ] Gráficas de progreso de peso por ejercicio
-- [ ] Timer de descanso entre series
-- [ ] Sync/backup vía JSON import-export
-- [ ] Modo oscuro
+Al cambiar HTML/CSS/JS conviene bumpear:
+- `?v=N` en `index.html` para los assets
+- `CACHE_NAME` en `sw.js` para forzar la activación del nuevo Service Worker
 
 ---
 
