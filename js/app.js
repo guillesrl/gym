@@ -81,28 +81,34 @@ function parseDetail(detail) {
     return { series: m[1], reps: m[2], suffix: m[3].trim() };
 }
 
+function setRepKey(field, name, week) {
+    return `${field}:w${week}:${name}`;
+}
+
 function renderDetailInputs(name, detail) {
     const parsed = parseDetail(detail);
-    const savedSeries = localStorage.getItem('series:' + name) || '';
-    const savedReps = localStorage.getItem('reps:' + name) || '';
+    const week = currentWeek;
+    const savedSeries = localStorage.getItem(setRepKey('series', name, week)) || '';
+    const savedReps = localStorage.getItem(setRepKey('reps', name, week)) || '';
     const safeName = escapeHtml(name);
     const suffix = parsed.suffix ? `<span class="suffix">${escapeHtml(parsed.suffix)}</span>` : '';
+    const repsPh = parsed.reps + (parsed.suffix ? parsed.suffix.replace(/\s+/g, '') : '');
     return `<span class="exercise-detail">
         <input type="number" min="1" max="20" inputmode="numeric"
-            data-exercise="${safeName}" data-field="series"
-            placeholder="${parsed.series}" value="${escapeHtml(savedSeries)}"
+            data-exercise="${safeName}" data-week="${week}" data-field="series"
+            placeholder="${escapeHtml(parsed.series)}" value="${escapeHtml(savedSeries)}"
             title="Series" onchange="handleSetRepChange(this)">
         <span class="sep">x</span>
         <input type="number" min="1" max="200" inputmode="numeric"
-            data-exercise="${safeName}" data-field="reps"
-            placeholder="${parsed.reps}" value="${escapeHtml(savedReps)}"
+            data-exercise="${safeName}" data-week="${week}" data-field="reps"
+            placeholder="${escapeHtml(repsPh)}" value="${escapeHtml(savedReps)}"
             title="Repeticiones" onchange="handleSetRepChange(this)">
         ${suffix}
     </span>`;
 }
 
 window.handleSetRepChange = function(input) {
-    const key = (input.dataset.field === 'series' ? 'series:' : 'reps:') + input.dataset.exercise;
+    const key = setRepKey(input.dataset.field, input.dataset.exercise, input.dataset.week);
     if (input.value === '') localStorage.removeItem(key);
     else localStorage.setItem(key, input.value);
 };
@@ -402,20 +408,83 @@ function prefetchExerciseImages() {
     });
 }
 
-// --- Frases motivacionales (una por día de la semana) ---
+// --- Frases motivacionales: 7 por día, rotan por semana del año ---
 const DAILY_PHRASES = [
-    'Domingo de fuerza: lo que siembras hoy, lo cosechas mañana.',
-    'Lunes brutal: empieza la semana rompiendo límites.',
-    'Martes de hierro: cada repetición cuenta.',
-    'Miércoles imparable: el dolor es temporal, el orgullo eterno.',
-    'Jueves de fuego: hoy mejoras la versión de ayer.',
-    'Viernes salvaje: termina la semana sin excusas.',
-    'Sábado guerrero: descansar es para los débiles.'
+    [ // Domingo
+        'Domingo de fuerza: lo que siembras hoy, lo cosechas mañana.',
+        'Hoy descansa quien quiera ser promedio. Tú no.',
+        'El domingo perfecto: una serie más que la semana pasada.',
+        'Cierra la semana con la misma intensidad con la que la abriste.',
+        'No esperes al lunes para empezar lo que puedes hacer hoy.',
+        'Lo difícil de hoy es lo fácil de mañana.',
+        'Cada domingo es la base de la próxima semana brutal.'
+    ],
+    [ // Lunes
+        'Lunes brutal: empieza la semana rompiendo límites.',
+        'Lunes: el día favorito de los que ganan.',
+        'La excusa más fácil es el lunes. Ignórala.',
+        'Empieza fuerte, termina más fuerte.',
+        'Un lunes entrenado vale por toda la semana planeada.',
+        'Hoy decides quién serás el viernes.',
+        'Sin lunes no hay viernes. Hazlo contar.'
+    ],
+    [ // Martes
+        'Martes de hierro: cada repetición cuenta.',
+        'Hoy nadie te ve, pero el espejo del viernes sí.',
+        'Suma una repetición más. Solo una. Siempre.',
+        'No bajes el peso, sube tu mentalidad.',
+        'El martes separa a los constantes del resto.',
+        'La técnica primero. La gloria después.',
+        'Lo que no te reta, no te cambia.'
+    ],
+    [ // Miércoles
+        'Miércoles imparable: el dolor es temporal, el orgullo eterno.',
+        'Mitad de semana, doble de actitud.',
+        'Si llegaste hasta acá, no aflojes ahora.',
+        'El miércoles premia a los que no se rindieron el lunes.',
+        'No cuentes los días, haz que los días cuenten.',
+        'La constancia vence al talento que no entrena.',
+        'Hoy es el día perfecto para superarte.'
+    ],
+    [ // Jueves
+        'Jueves de fuego: hoy mejoras la versión de ayer.',
+        'Casi viernes. Casi no sirve. Entrena.',
+        'El jueves es el ensayo final del campeón.',
+        'No busques motivación, crea disciplina.',
+        'Una sesión más cerca del cuerpo que quieres.',
+        'Cuando duela, sonríe: estás creciendo.',
+        'No se trata de tener tiempo, se trata de hacerlo.'
+    ],
+    [ // Viernes
+        'Viernes salvaje: termina la semana sin excusas.',
+        'Cierra la semana con la mejor sesión.',
+        'El viernes premia lo hecho de lunes a jueves.',
+        'No celebres antes de terminar el trabajo.',
+        'El viernes del débil es descanso, el del fuerte es PR.',
+        'La fiesta espera. La rutina, no.',
+        'Salí del gym sintiendo que ganaste la semana.'
+    ],
+    [ // Sábado
+        'Sábado guerrero: el descanso también se entrena.',
+        'Sábado activo, semana ganada.',
+        'Hoy mueve el cuerpo aunque sea por placer.',
+        'El sábado del disciplinado es leyenda.',
+        'Recuperar también es progresar.',
+        'No todo es peso: hoy estira, respira, vuelve más fuerte.',
+        'El esfuerzo del sábado se nota el lunes.'
+    ]
 ];
+function getWeekOfYear(date = new Date()) {
+    const start = new Date(date.getFullYear(), 0, 1);
+    const diff = (date - start) / 86400000;
+    return Math.floor((diff + start.getDay()) / 7);
+}
 function renderDailyMotivation() {
     const el = document.getElementById('daily-motivation');
     if (!el) return;
-    el.textContent = DAILY_PHRASES[new Date().getDay()];
+    const now = new Date();
+    const pool = DAILY_PHRASES[now.getDay()];
+    el.textContent = pool[getWeekOfYear(now) % pool.length];
 }
 
 // --- Week ---
@@ -792,6 +861,7 @@ document.getElementById('btn-backup-export').addEventListener('click', () => {
         prDates: {},
         pesoHistory: {},
         pesoCurrent: {},
+        setsReps: {},
         programStartDate: localStorage.getItem('program-start-date'),
         darkMode: localStorage.getItem('dark-mode')
     };
@@ -805,6 +875,12 @@ document.getElementById('btn-backup-export').addEventListener('click', () => {
         const pc = localStorage.getItem('peso:' + name);
         if (pc) backup.pesoCurrent[name] = pc;
     });
+    for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && (k.startsWith('series:') || k.startsWith('reps:'))) {
+            backup.setsReps[k] = localStorage.getItem(k);
+        }
+    }
     const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -838,6 +914,7 @@ document.getElementById('backup-file-input').addEventListener('change', (e) => {
             Object.entries(backup.prDates || {}).forEach(([name, val]) => localStorage.setItem('pr-date:' + name, val));
             Object.entries(backup.pesoHistory || {}).forEach(([name, val]) => localStorage.setItem('peso-history:' + name, val));
             Object.entries(backup.pesoCurrent || {}).forEach(([name, val]) => localStorage.setItem('peso:' + name, val));
+            Object.entries(backup.setsReps || {}).forEach(([key, val]) => localStorage.setItem(key, val));
             alert('Backup restaurado correctamente.');
             location.reload();
         } catch (err) {
