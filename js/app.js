@@ -52,6 +52,7 @@ const exerciseDirectImageMap = {
     'Aducciones': 'https://wefit.es/wp-content/uploads/2024/03/hip-adduction-close.gif',
     'Zancadas': 'https://fitcron.com/wp-content/uploads/2021/04/03811301-Dumbbell-Rear-Lunge_Thighs_720.gif',
     'Vuelos frontales': 'https://fitcron.com/wp-content/uploads/2021/04/03101301-Dumbbell-Front-Raise_Shoulders_720.gif',
+    'Cuádriceps en máquina': 'https://fitcron.com/wp-content/uploads/2021/04/05851301-Lever-Leg-Extension_Thighs_720.gif',
 };
 
 function getExerciseImageUrl(name) {
