@@ -72,9 +72,40 @@ function getExerciseImageUrl(name) {
 }
 
 function getDayMap() {
-    if (currentTab === 'tonificar') return { 1: 'Día 1', 2: 'Día 2', 4: 'Día 3', 5: 'Día 4' };
-    return { 1: 'Día 1', 3: 'Día 2', 5: 'Día 3' };
+    return { 1: 'Día 1', 2: 'Día 2', 4: 'Día 3', 5: 'Día 4' };
 }
+
+function parseDetail(detail) {
+    const m = String(detail || '').match(/^(\d+)\s*x\s*(\d+)(.*)$/i);
+    if (!m) return { series: '', reps: '', suffix: detail || '' };
+    return { series: m[1], reps: m[2], suffix: m[3].trim() };
+}
+
+function renderDetailInputs(name, detail) {
+    const parsed = parseDetail(detail);
+    const savedSeries = localStorage.getItem('series:' + name) || '';
+    const savedReps = localStorage.getItem('reps:' + name) || '';
+    const safeName = escapeHtml(name);
+    const suffix = parsed.suffix ? `<span class="suffix">${escapeHtml(parsed.suffix)}</span>` : '';
+    return `<span class="exercise-detail">
+        <input type="number" min="1" max="20" inputmode="numeric"
+            data-exercise="${safeName}" data-field="series"
+            placeholder="${parsed.series}" value="${escapeHtml(savedSeries)}"
+            title="Series" onchange="handleSetRepChange(this)">
+        <span class="sep">x</span>
+        <input type="number" min="1" max="200" inputmode="numeric"
+            data-exercise="${safeName}" data-field="reps"
+            placeholder="${parsed.reps}" value="${escapeHtml(savedReps)}"
+            title="Repeticiones" onchange="handleSetRepChange(this)">
+        ${suffix}
+    </span>`;
+}
+
+window.handleSetRepChange = function(input) {
+    const key = (input.dataset.field === 'series' ? 'series:' : 'reps:') + input.dataset.exercise;
+    if (input.value === '') localStorage.removeItem(key);
+    else localStorage.setItem(key, input.value);
+};
 
 function defaultState() {
     return { streak: 0, weekCount: 0, total: 0, workouts: [], lastDate: null };
@@ -345,13 +376,12 @@ window.handleWeightChange = function(input) {
 };
 function getAllExerciseNames() {
     const names = new Set();
-    ['tonificar', 'quemar'].forEach(tab => {
-        const prog = routines[tab];
-        if (!prog) return;
+    const prog = routines.tonificar;
+    if (prog) {
         Object.values(prog).forEach(week =>
             Object.values(week).forEach(exs => exs.forEach(ex => names.add(ex.name)))
         );
-    });
+    }
     return [...names];
 }
 
@@ -372,16 +402,21 @@ function prefetchExerciseImages() {
     });
 }
 
-// --- Tabs ---
-document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        currentTab = tab.dataset.tab;
-        document.getElementById('program-name').textContent = currentTab === 'tonificar' ? 'Tonificar' : 'Quemar Grasa';
-        updateTodayBanner();
-    });
-});
+// --- Frases motivacionales (una por día de la semana) ---
+const DAILY_PHRASES = [
+    'Domingo de fuerza: lo que siembras hoy, lo cosechas mañana.',
+    'Lunes brutal: empieza la semana rompiendo límites.',
+    'Martes de hierro: cada repetición cuenta.',
+    'Miércoles imparable: el dolor es temporal, el orgullo eterno.',
+    'Jueves de fuego: hoy mejoras la versión de ayer.',
+    'Viernes salvaje: termina la semana sin excusas.',
+    'Sábado guerrero: descansar es para los débiles.'
+];
+function renderDailyMotivation() {
+    const el = document.getElementById('daily-motivation');
+    if (!el) return;
+    el.textContent = DAILY_PHRASES[new Date().getDay()];
+}
 
 // --- Week ---
 document.getElementById('prev-week').addEventListener('click', () => {
@@ -468,7 +503,7 @@ document.getElementById('btn-routine').addEventListener('click', () => {
                     <div class="exercise-item">
                         <div class="exercise-check" onclick="toggleCheck(this)"></div>
                         <span class="exercise-name">${ex.name}</span>
-                        <span class="exercise-detail">${ex.detail}</span>
+                        ${renderDetailInputs(ex.name, ex.detail)}
                         <div class="exercise-weight">
                             <input type="number" min="0" step="0.5" placeholder="0" title="Peso en kg"
                                 data-exercise="${escapeHtml(ex.name)}"
@@ -817,17 +852,7 @@ if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location
     navigator.serviceWorker.register('./sw.js');
 }
 
-// Cartel del día — dinámico por programa
-function updateTodayBanner() {
-    const dayMap = getDayMap();
-    const day = new Date().getDay();
-    const dayName = dayMap[day];
-    const banner = document.getElementById('today-banner');
-    if (!banner) return;
-    if (!dayName) { banner.textContent = ''; return; }
-    const label = routines.labels?.[currentTab]?.[dayName];
-    banner.textContent = label ? `Hoy toca ${label}` : '';
-}
+function updateTodayBanner() { renderDailyMotivation(); }
 
 // Init
 updateUI();

@@ -54,13 +54,14 @@ body {
 .dark-toggle .icon-moon { display: block; }
 body.dark .dark-toggle .icon-sun { display: block; }
 body.dark .dark-toggle .icon-moon { display: none; }
-.today-banner {
-    text-align: center; padding: 10px 16px; margin-bottom: 20px;
-    background: var(--accent); border: 2px solid var(--border);
-    font-size: 15px; font-weight: 800; letter-spacing: 0.5px;
-    line-height: 1.4;
+.daily-motivation {
+    text-align: center; padding: 16px 18px; margin-bottom: 24px;
+    background: var(--primary); color: var(--primary-foreground);
+    border: 2px solid var(--border); box-shadow: var(--shadow-small);
+    font-size: 14px; font-weight: 800; letter-spacing: 0.8px;
+    line-height: 1.5; text-transform: uppercase;
 }
-.today-banner:empty { display: none; }
+.daily-motivation:empty { display: none; }
 .header h1 {
     font-size: 28px; font-weight: 900; letter-spacing: 2px;
     text-transform: uppercase; margin-bottom: 8px;
@@ -281,7 +282,18 @@ body.dark .dark-toggle .icon-moon { display: none; }
 .exercise-check.done svg { animation: checkDraw 0.3s ease forwards; }
 @keyframes checkDraw { to { stroke-dashoffset: 0; } }
 .exercise-name { font-size: 13px; font-weight: 600; flex: 1; }
-.exercise-detail { font-size: 12px; color: var(--muted-foreground); }
+.exercise-detail {
+    display: inline-flex; align-items: center; gap: 3px;
+    font-size: 12px; color: var(--muted-foreground); flex-shrink: 0;
+}
+.exercise-detail input {
+    width: 36px; padding: 3px 2px; border: 2px solid var(--border);
+    background: var(--card); font-family: inherit; font-size: 11px;
+    font-weight: 700; text-align: center; color: var(--foreground);
+}
+.exercise-detail input:focus { outline: none; border-color: var(--primary); }
+.exercise-detail .sep { font-weight: 800; color: var(--foreground); }
+.exercise-detail .suffix { font-size: 10px; color: var(--muted-foreground); }
 .exercise-weight {
     display: flex; align-items: center; gap: 4px; flex-shrink: 0;
 }
@@ -388,6 +400,8 @@ body.dark .dark-toggle .icon-moon { display: none; }
     .btn-label-mobile { display: inline; }
     .exercise-weight input { width: 36px; padding: 4px 2px; font-size: 11px; }
     .exercise-weight span { display: none; }
+    .exercise-detail input { width: 28px; padding: 3px 1px; font-size: 10px; }
+    .exercise-detail .suffix { display: none; }
 }
 
 /* Register View */
