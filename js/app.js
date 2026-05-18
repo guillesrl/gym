@@ -13,54 +13,34 @@ function getAutoWeek() {
 
 const GIF_CDN = 'https://static.exercisedb.dev/media/';
 const exerciseImageMap = {
-    'Hip Thrust':                'SNFfUff',
-    'Peso muerto rumano':        'ila4NZS',
-    'Sentadilla':                'qXTaZnJ',
-    'Abducciones en maquina':    'CHpahtl',
-    'Curl femoral':              'Zg3XY7P',
-    'Patada de gluteo':          'Kpajagk',
-    'Jalon al pecho':            'eYnzaCm',
-    'Remo sentado':              'fUBheHs',
+    'Remo':                      'fUBheHs',
+    'Jalón al pecho':            'eYnzaCm',
     'Pullover en polea':         'PskORrA',
+    'ABC Abdominales':           'Wgaz7pm',
+    'Hip Thrust':                'SNFfUff',
+    'Peso muerto':               'ila4NZS',
+    'Sentadilla rumana':         'ila4NZS',
+    'Abducciones':               'CHpahtl',
+    'Isquios en máquina':        'Zg3XY7P',
     'Vuelos laterales':          'DsgkuIt',
-    'Press hombro maquina':      'CggQhII',
-    'Plancha':                   'VBAWRPG',
-    'Press pecho maquina':       'T0yTjgW',
-    'Aperturas en peck deck':    'xLYSdtg',
-    'Curl biceps polea':         'G08RZcQ',
-    'Extension triceps polea':   '3ZflifB',
-    'Abdominales en maquina':    'Wgaz7pm',
-    'Cinta inclinada':           'rjiM4L3',
-    'Cinta suave':               'rjiM4L3',
-    'Prensa de piernas':         'V07qpXy',
-    'Bicicleta estatica':        'H1PESYI',
-    'Eliptica':                  'rjtuP6X',
-    'Curl biceps mancuernas':    'NbVPDMW',
-    'Sentadilla en prensa':              'V07qpXy',
-    'Curl femoral en máquina':           'Zg3XY7P',
-    'Glute bridge en máquina Smith':     'SNFfUff',
-    'Encogimientos abdominales en máquina': 'Wgaz7pm',
-    'Planchas laterales':                'VBAWRPG',
-    'Prensa de piernas inclinada':       'V07qpXy',
-    'Peso muerto rumano con mancuernas': 'ila4NZS',
-    'Hip thrust con barra':              'SNFfUff',
-    'Plancha frontal':                   'VBAWRPG',
+    'Press de hombro':           'CggQhII',
+    'Pecho en máquina':          'T0yTjgW',
+    'Bíceps en polea':           'G08RZcQ',
+    'Tríceps en polea':          '3ZflifB',
+    'Sentadilla':                'qXTaZnJ',
+    'Cuádriceps en máquina':     'V07qpXy',
 };
 
 // Fallback estático (JPG) cuando no hay GIF en exercisedb.
 // Fuente: yuhonas/free-exercise-db (dominio público).
 const JPG_CDN = 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/';
 const exerciseFallbackImageMap = {
-    'Extensión de piernas en máquina':         'Leg_Extensions',
-    'Step-ups con mancuernas':                 'Dumbbell_Step_Ups',
-    'Zancadas con mancuernas':                 'Dumbbell_Lunges',
-    'Elevaciones de piernas en barra':         'Hanging_Leg_Raise',
-    'Giros rusos con medicine ball':           'Russian_Twist',
-    'Elevaciones de talones en máquina':       'Standing_Calf_Raises',
-    'Bulgarian split squat con mancuernas':    'Split_Squat_with_Dumbbells',
-    'Máquina de palanca de torso':             'Torso_Rotation',
-    'Abdominales bicicleta':                   'Air_Bike',
-    'Abdominales con piernas colgantes':       'Hanging_Leg_Raise',
+    'Face pull':                       'Face_Pull',
+    'Extensiones de columna en banco': 'Hyperextensions',
+    'Vuelos frontales':                'Front_Dumbbell_Raise',
+    'Zancadas':                        'Dumbbell_Lunges',
+    'Aducciones':                      'Thigh_Adductor',
+    'Cuádriceps en máquina':           'Leg_Extensions',
 };
 
 function getExerciseImageUrl(name) {
@@ -72,7 +52,7 @@ function getExerciseImageUrl(name) {
 }
 
 function getDayMap() {
-    return { 1: 'Día 1', 2: 'Día 2', 4: 'Día 3', 5: 'Día 4' };
+    return { 1: 'Día 1', 3: 'Día 2', 5: 'Día 3', 0: 'Día 4' };
 }
 
 function parseDetail(detail) {
@@ -192,7 +172,7 @@ function updateUI() {
 function updateWeekProgress() {
     const el = document.getElementById('week-progress');
     if (!el) return;
-    const totalDays = 3;
+    const totalDays = 4;
     const done = Math.min(state.weekCount, totalDays);
     let dots = '';
     for (let i = 0; i < totalDays; i++) {
@@ -644,7 +624,7 @@ document.getElementById('routine-body').addEventListener('click', (e) => {
 // --- Action: Progreso ---
 function renderProgress() {
     const body = document.getElementById('progress-body');
-    const weekGoal = 3;
+    const weekGoal = 4;
     const pct = Math.min(100, Math.round((state.weekCount / weekGoal) * 100));
     const prs = getAllExerciseNames()
         .map(name => ({ name, weight: getPR(name), date: getPRDate(name) }))
