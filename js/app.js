@@ -45,7 +45,14 @@ const exerciseFallbackImageMap = {
     'Pájaros con mancuernas':          'Dumbbell_Rear_Lateral_Raise',
 };
 
+// URLs directas a GIFs externos (sin patrón fijo)
+const exerciseDirectImageMap = {
+    'Face pull': 'https://burnfit.io/en/wp-content/uploads/sites/3/2026/01/FACE_PULL-1.gif',
+};
+
 function getExerciseImageUrl(name) {
+    const direct = exerciseDirectImageMap[name];
+    if (direct) return direct;
     const hash = exerciseImageMap[name];
     if (hash) return `${GIF_CDN}${hash}.gif`;
     const slug = exerciseFallbackImageMap[name];
