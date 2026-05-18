@@ -49,6 +49,7 @@ const exerciseFallbackImageMap = {
 const exerciseDirectImageMap = {
     'Face pull': 'https://burnfit.io/en/wp-content/uploads/sites/3/2026/01/FACE_PULL-1.gif',
     'Extensiones de columna en banco': 'https://fitcron.com/wp-content/uploads/2021/04/04891301-Hyperextension_Waist_720.gif',
+    'Aducciones': 'https://wefit.es/wp-content/uploads/2024/03/hip-adduction-close.gif',
 };
 
 function getExerciseImageUrl(name) {
