@@ -29,6 +29,7 @@ const exerciseImageMap = {
     'Tríceps en polea':          '3ZflifB',
     'Sentadilla':                'qXTaZnJ',
     'Cuádriceps en máquina':     'V07qpXy',
+    'Pájaros con mancuernas':    'DsgkuIt',
 };
 
 // Fallback estático (JPG) cuando no hay GIF en exercisedb.
@@ -41,6 +42,7 @@ const exerciseFallbackImageMap = {
     'Zancadas':                        'Dumbbell_Lunges',
     'Aducciones':                      'Thigh_Adductor',
     'Cuádriceps en máquina':           'Leg_Extensions',
+    'Pájaros con mancuernas':          'Dumbbell_Rear_Lateral_Raise',
 };
 
 function getExerciseImageUrl(name) {
