@@ -45,14 +45,30 @@ const exerciseFallbackImageMap = {
     'Pájaros con mancuernas':          'Dumbbell_Rear_Lateral_Raise',
 };
 
-// URLs directas a GIFs externos (sin patrón fijo)
+// URLs directas a GIFs externos en alta resolución (720p)
 const exerciseDirectImageMap = {
-    'Face pull': 'https://burnfit.io/en/wp-content/uploads/sites/3/2026/01/FACE_PULL-1.gif',
+    'Remo':                            'https://fitcron.com/wp-content/uploads/2021/04/08611301-Cable-seated-row_Back_720.gif',
+    'Jalón al pecho':                  'https://fitcron.com/wp-content/uploads/2021/04/01981301-Cable-Pulldown_Back_720.gif',
+    'Pullover en polea':               'https://fitcron.com/wp-content/uploads/2021/03/01841301-Cable-Lying-Extension-Pullover-with-rope-attachment_Back_720.gif',
+    'Face pull':                       'https://burnfit.io/en/wp-content/uploads/sites/3/2026/01/FACE_PULL-1.gif',
     'Extensiones de columna en banco': 'https://fitcron.com/wp-content/uploads/2021/04/04891301-Hyperextension_Waist_720.gif',
-    'Aducciones': 'https://wefit.es/wp-content/uploads/2024/03/hip-adduction-close.gif',
-    'Zancadas': 'https://fitcron.com/wp-content/uploads/2021/04/03811301-Dumbbell-Rear-Lunge_Thighs_720.gif',
-    'Vuelos frontales': 'https://fitcron.com/wp-content/uploads/2021/04/03101301-Dumbbell-Front-Raise_Shoulders_720.gif',
-    'Cuádriceps en máquina': 'https://fitcron.com/wp-content/uploads/2021/04/05851301-Lever-Leg-Extension_Thighs_720.gif',
+    'ABC Abdominales':                 'https://fitcron.com/wp-content/uploads/2021/04/05951301-Lever-Seated-Crunch-chest-pad_Waist_720.gif',
+    'Pájaros con mancuernas':          'https://fitcron.com/wp-content/uploads/2021/04/03801301-Dumbbell-Rear-Lateral-Raise_Shoulders_720.gif',
+    'Hip Thrust':                      'https://fitcron.com/wp-content/uploads/2021/04/10601301-Barbell-Hip-Thrust_Hips_720.gif',
+    'Peso muerto':                     'https://fitcron.com/wp-content/uploads/2021/04/00321301-Barbell-Deadlift_Hips-FIX_720.gif',
+    'Zancadas':                        'https://fitcron.com/wp-content/uploads/2021/04/03811301-Dumbbell-Rear-Lunge_Thighs_720.gif',
+    'Sentadilla rumana':               'https://fitcron.com/wp-content/uploads/2021/04/14591301-Dumbbell-Romanian-Deadlift_Hips_720.gif',
+    'Abducciones':                     'https://fitcron.com/wp-content/uploads/2021/04/05971301-Lever-Seated-Hip-Abduction_Hips-FIX_720.gif',
+    'Aducciones':                      'https://fitcron.com/wp-content/uploads/2021/04/05981301-Lever-Seated-Hip-Adduction_Thighs_720.gif',
+    'Isquios en máquina':              'https://fitcron.com/wp-content/uploads/2021/04/05861301-Lever-Lying-Leg-Curl_Thighs_720.gif',
+    'Vuelos frontales':                'https://fitcron.com/wp-content/uploads/2021/04/03101301-Dumbbell-Front-Raise_Shoulders_720.gif',
+    'Vuelos laterales':                'https://fitcron.com/wp-content/uploads/2021/04/33431301-Lever-Lateral-Raise-VERSION-2_Shoulders_720.gif',
+    'Press de hombro':                 'https://fitcron.com/wp-content/uploads/2021/04/11651301-Barbell-Standing-Military-Press-without-rack_Shoulders_720.gif',
+    'Pecho en máquina':                'https://fitcron.com/wp-content/uploads/2021/04/10411301-Lever-Lying-Chest-Press-plate-loaded_Chest_720.gif',
+    'Bíceps en polea':                 'https://fitcron.com/wp-content/uploads/2021/04/01951301-Cable-Preacher-Curl_Upper-Arms_720.gif',
+    'Tríceps en polea':                'https://fitcron.com/wp-content/uploads/2021/04/37191301-Cable-Standing-High-Cross-Triceps-Extension_Upper-Arms_720.gif',
+    'Sentadilla':                      'https://fitcron.com/wp-content/uploads/2021/04/00431301-Barbell-Full-Squat_Thighs_720.gif',
+    'Cuádriceps en máquina':           'https://fitcron.com/wp-content/uploads/2021/04/05851301-Lever-Leg-Extension_Thighs_720.gif',
 };
 
 function getExerciseImageUrl(name) {
