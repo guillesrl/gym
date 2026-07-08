@@ -87,18 +87,28 @@ function getExerciseImageUrl(name) {
     return null;
 }
 
-function getDayMap() {
-    if (currentTab === 'hombre') return { 1: 'Día 1', 3: 'Día 2', 5: 'Día 3' };
+function getDayMapFor(program) {
+    if (program === 'hombre') return { 1: 'Día 1', 3: 'Día 2', 5: 'Día 3' };
     return { 1: 'Día 1', 2: 'Día 2', 3: 'Día 3', 4: 'Día 4', 5: 'Día 5' };
+}
+function getDayMap() {
+    return getDayMapFor(currentTab);
 }
 
 const WEEKDAY_NAMES = { 0: 'Domingo', 1: 'Lunes', 2: 'Martes', 3: 'Miércoles', 4: 'Jueves', 5: 'Viernes', 6: 'Sábado' };
-function getDayLabel(dayKey) {
-    const map = getDayMap();
+function getDayLabelFor(program, dayKey) {
+    const map = getDayMapFor(program);
     const num = Object.keys(map).find(k => map[k] === dayKey);
-    const weekday = num !== undefined ? WEEKDAY_NAMES[num] : dayKey;
-    const muscle = routines.labels?.[currentTab]?.[dayKey];
-    return muscle ? `${weekday} · ${muscle}` : weekday;
+    const weekday = num !== undefined ? WEEKDAY_NAMES[num] : '';
+    const muscle = routines.labels?.[program]?.[dayKey];
+    const parts = [weekday, muscle].filter(Boolean);
+    return parts.length ? parts.join(' · ') : dayKey;
+}
+function getDayLabel(dayKey) {
+    return getDayLabelFor(currentTab, dayKey);
+}
+function programLabel(program) {
+    return program === 'hombre' ? 'Hombre' : (program === 'tonificar' ? 'Mujer' : program);
 }
 
 function getProgramDays() {
@@ -241,10 +251,10 @@ function buildHistoryHtml() {
             <tr>
                 <td>${workouts.length - index}</td>
                 <td>${escapeHtml(w.date)}</td>
-                <td>${w.type === 'tonificar' ? 'Tonificar' : 'Quemar Grasa'}</td>
+                <td>${escapeHtml(programLabel(w.type))}</td>
                 <td>${escapeHtml(w.duration)} min</td>
                 <td>${escapeHtml(w.intensity)}</td>
-                <td>${escapeHtml(w.notes || '-')}</td>
+                <td>${escapeHtml(w.notes ? getDayLabelFor(w.type, w.notes) : '-')}</td>
             </tr>
         `).join('')
         : '<tr><td colspan="6" class="empty">No hay entrenos registrados todavia.</td></tr>';
@@ -845,18 +855,22 @@ function renderHistory() {
     const allReversed = [...state.workouts].reverse();
     body.innerHTML = allReversed.map((w, ri) => {
         const realIdx = state.workouts.length - 1 - ri;
+        const dayOptions = Object.values(getDayMapFor(w.type)).map(dk =>
+            `<option value="${escapeHtml(dk)}"${w.notes === dk ? ' selected' : ''}>${escapeHtml(getDayLabelFor(w.type, dk))}</option>`
+        ).join('');
         return `
         <div class="history-item" data-idx="${realIdx}">
             <span class="history-date">${w.date}</span>
-            <span class="history-type">${w.type === 'tonificar' ? 'Tonif.' : 'Quemar'}</span>
-            <span class="history-duration">${w.duration}min · ${escapeHtml(w.intensity)}${w.notes ? ' · ' + escapeHtml(w.notes) : ''}</span>
+            <span class="history-type">${escapeHtml(programLabel(w.type))}</span>
+            <span class="history-duration">${w.duration}min${w.notes ? ' · ' + escapeHtml(getDayLabelFor(w.type, w.notes)) : ''}</span>
             <div class="history-item-actions">
-                <button class="btn-edit-workout" data-idx="${realIdx}">✏ Editar</button>
+                <button class="btn-edit-workout" data-idx="${realIdx}">✏ Modificar</button>
                 <button class="btn-del-workout" data-idx="${realIdx}">✕</button>
             </div>
             <div class="history-edit-row" id="edit-row-${realIdx}" style="display:none">
-                <input type="number" id="edit-dur-${realIdx}" value="${w.duration}" min="5" max="180" placeholder="min">
-                <span style="font-size:12px">min</span>
+                <label>Fecha<input type="date" id="edit-date-${realIdx}" value="${escapeHtml(w.date)}"></label>
+                <label>Min<input type="number" id="edit-dur-${realIdx}" value="${w.duration}" min="5" max="180" placeholder="min"></label>
+                <label>Día<select id="edit-day-${realIdx}">${dayOptions}</select></label>
                 <button onclick="saveEditWorkout(${realIdx})">Guardar</button>
                 <button onclick="document.getElementById('edit-row-${realIdx}').style.display='none'" style="background:var(--card);color:var(--foreground)">Cancelar</button>
             </div>
@@ -884,9 +898,16 @@ function renderHistory() {
 }
 
 window.saveEditWorkout = (idx) => {
-    const val = parseInt(document.getElementById(`edit-dur-${idx}`).value);
-    if (!val || val < 5) return;
-    state.workouts[idx].duration = val;
+    const durEl = document.getElementById(`edit-dur-${idx}`);
+    const dateEl = document.getElementById(`edit-date-${idx}`);
+    const dayEl = document.getElementById(`edit-day-${idx}`);
+    const val = parseInt(durEl.value);
+    if (!val || val < 5) { durEl.focus(); durEl.style.borderColor = 'red'; return; }
+    const w = state.workouts[idx];
+    if (dateEl && dateEl.value) w.date = dateEl.value;
+    w.duration = val;
+    if (dayEl && dayEl.value) w.notes = dayEl.value;
+    state.total = state.workouts.length;
     state.weekCount = getCurrentWeekCount();
     saveState(); updateUI(); renderHistory();
 };
