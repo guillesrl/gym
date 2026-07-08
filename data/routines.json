@@ -6,6 +6,11 @@
       "Día 3": "Piernas y Glúteos 🍑",
       "Día 4": "Hombros y Brazos 🔥",
       "Día 5": "Glúteos y Piernas 🦵"
+    },
+    "hombre": {
+      "Día 1": "Pecho y Bíceps 💪",
+      "Día 2": "Espalda y Tríceps 🔙",
+      "Día 3": "Pierna y ABS 🦵"
     }
   },
   "tonificar": {
@@ -163,6 +168,100 @@
         { "name": "Prensa de piernas",   "detail": "3x15" },
         { "name": "Abducciones",         "detail": "3x20" },
         { "name": "ABC Abdominales",     "detail": "3x20" }
+      ]
+    }
+  },
+  "hombre": {
+    "1": {
+      "Día 1": [
+        { "name": "Press de banca",             "detail": "3x10" },
+        { "name": "Press inclinado mancuernas", "detail": "3x10" },
+        { "name": "Pecho en máquina",           "detail": "3x12" },
+        { "name": "Curl con barra",             "detail": "3x12" },
+        { "name": "Bíceps en polea",            "detail": "3x12" }
+      ],
+      "Día 2": [
+        { "name": "Jalón al pecho",    "detail": "3x10" },
+        { "name": "Remo",              "detail": "3x10" },
+        { "name": "Pullover en polea", "detail": "3x12" },
+        { "name": "Press francés",     "detail": "3x12" },
+        { "name": "Tríceps en polea",  "detail": "3x12" }
+      ],
+      "Día 3": [
+        { "name": "Sentadilla",         "detail": "3x10" },
+        { "name": "Prensa de piernas",  "detail": "3x12" },
+        { "name": "Peso muerto",        "detail": "3x8" },
+        { "name": "Isquios en máquina", "detail": "3x12" },
+        { "name": "ABC Abdominales",    "detail": "3x15" }
+      ]
+    },
+    "2": {
+      "Día 1": [
+        { "name": "Press de banca",             "detail": "3x12" },
+        { "name": "Press inclinado mancuernas", "detail": "3x12" },
+        { "name": "Pecho en máquina",           "detail": "3x15" },
+        { "name": "Curl con barra",             "detail": "3x15" },
+        { "name": "Bíceps en polea",            "detail": "3x15" }
+      ],
+      "Día 2": [
+        { "name": "Jalón al pecho",    "detail": "3x12" },
+        { "name": "Remo",              "detail": "3x12" },
+        { "name": "Pullover en polea", "detail": "3x15" },
+        { "name": "Press francés",     "detail": "3x15" },
+        { "name": "Tríceps en polea",  "detail": "3x15" }
+      ],
+      "Día 3": [
+        { "name": "Sentadilla",         "detail": "3x12" },
+        { "name": "Prensa de piernas",  "detail": "3x15" },
+        { "name": "Peso muerto",        "detail": "3x10" },
+        { "name": "Isquios en máquina", "detail": "3x15" },
+        { "name": "ABC Abdominales",    "detail": "3x20" }
+      ]
+    },
+    "3": {
+      "Día 1": [
+        { "name": "Press de banca",             "detail": "3x10" },
+        { "name": "Press inclinado mancuernas", "detail": "3x10" },
+        { "name": "Pecho en máquina",           "detail": "3x12" },
+        { "name": "Curl con barra",             "detail": "3x12" },
+        { "name": "Bíceps en polea",            "detail": "3x12" }
+      ],
+      "Día 2": [
+        { "name": "Jalón al pecho",    "detail": "3x10" },
+        { "name": "Remo",              "detail": "3x10" },
+        { "name": "Pullover en polea", "detail": "3x12" },
+        { "name": "Press francés",     "detail": "3x12" },
+        { "name": "Tríceps en polea",  "detail": "3x12" }
+      ],
+      "Día 3": [
+        { "name": "Sentadilla",         "detail": "3x10" },
+        { "name": "Prensa de piernas",  "detail": "3x12" },
+        { "name": "Peso muerto",        "detail": "3x8" },
+        { "name": "Isquios en máquina", "detail": "3x12" },
+        { "name": "ABC Abdominales",    "detail": "3x15" }
+      ]
+    },
+    "4": {
+      "Día 1": [
+        { "name": "Press de banca",             "detail": "3x12" },
+        { "name": "Press inclinado mancuernas", "detail": "3x12" },
+        { "name": "Pecho en máquina",           "detail": "3x15" },
+        { "name": "Curl con barra",             "detail": "3x15" },
+        { "name": "Bíceps en polea",            "detail": "3x15" }
+      ],
+      "Día 2": [
+        { "name": "Jalón al pecho",    "detail": "3x12" },
+        { "name": "Remo",              "detail": "3x12" },
+        { "name": "Pullover en polea", "detail": "3x15" },
+        { "name": "Press francés",     "detail": "3x15" },
+        { "name": "Tríceps en polea",  "detail": "3x15" }
+      ],
+      "Día 3": [
+        { "name": "Sentadilla",         "detail": "3x12" },
+        { "name": "Prensa de piernas",  "detail": "3x15" },
+        { "name": "Peso muerto",        "detail": "3x10" },
+        { "name": "Isquios en máquina", "detail": "3x15" },
+        { "name": "ABC Abdominales",    "detail": "3x20" }
       ]
     }
   }

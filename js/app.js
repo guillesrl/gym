@@ -1,5 +1,5 @@
 // --- State ---
-let currentWeek = 1, currentTab = 'tonificar';
+let currentWeek = 1, currentTab = localStorage.getItem('rutina-genero') === 'hombre' ? 'hombre' : 'tonificar';
 let state = loadState();
 
 function getAutoWeek() {
@@ -45,6 +45,10 @@ const exerciseFallbackImageMap = {
     'Cuádriceps en máquina':           'Leg_Extensions',
     'Pájaros con mancuernas':          'Dumbbell_Rear_Lateral_Raise',
     'Prensa de piernas':               'Leg_Press',
+    'Press de banca':                  'Barbell_Bench_Press_-_Medium_Grip',
+    'Press inclinado mancuernas':      'Incline_Dumbbell_Press',
+    'Curl con barra':                  'Barbell_Curl',
+    'Press francés':                   'EZ-Bar_Skullcrusher',
 };
 
 // URLs directas a GIFs externos en alta resolución (720p)
@@ -84,7 +88,14 @@ function getExerciseImageUrl(name) {
 }
 
 function getDayMap() {
+    if (currentTab === 'hombre') return { 1: 'Día 1', 3: 'Día 2', 5: 'Día 3' };
     return { 1: 'Día 1', 2: 'Día 2', 3: 'Día 3', 4: 'Día 4', 5: 'Día 5' };
+}
+
+function getProgramDays() {
+    const wk = routines[currentTab]?.['1'] || routines[currentTab]?.[1];
+    const n = wk ? Object.keys(wk).length : 0;
+    return n || (currentTab === 'hombre' ? 3 : 5);
 }
 
 function parseDetail(detail) {
@@ -204,7 +215,7 @@ function updateUI() {
 function updateWeekProgress() {
     const el = document.getElementById('week-progress');
     if (!el) return;
-    const totalDays = 5;
+    const totalDays = getProgramDays();
     const done = Math.min(state.weekCount, totalDays);
     let dots = '';
     for (let i = 0; i < totalDays; i++) {
@@ -394,12 +405,13 @@ window.handleWeightChange = function(input) {
 };
 function getAllExerciseNames() {
     const names = new Set();
-    const prog = routines.tonificar;
-    if (prog) {
+    ['tonificar', 'hombre'].forEach(key => {
+        const prog = routines[key];
+        if (!prog) return;
         Object.values(prog).forEach(week =>
             Object.values(week).forEach(exs => exs.forEach(ex => names.add(ex.name)))
         );
-    }
+    });
     return [...names];
 }
 
@@ -511,6 +523,24 @@ function updateWeek() {
     document.querySelectorAll('.week-ref').forEach(el => el.textContent = currentWeek);
 }
 
+// --- Género (Mujer / Hombre) ---
+function updateGenderUI() {
+    document.querySelectorAll('.gender-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.gender === currentTab);
+    });
+    updateUI();
+}
+function setGender(gender) {
+    if (gender !== 'hombre' && gender !== 'tonificar') return;
+    if (gender === currentTab) return;
+    currentTab = gender;
+    localStorage.setItem('rutina-genero', currentTab);
+    updateGenderUI();
+}
+document.querySelectorAll('.gender-btn').forEach(btn => {
+    btn.addEventListener('click', () => setGender(btn.dataset.gender));
+});
+
 // --- Routines Data ---
 let routines = {};
 async function loadRoutines() {
@@ -525,7 +555,7 @@ async function loadRoutines() {
     }
     currentWeek = getAutoWeek();
     updateWeek();
-    updateUI();
+    updateGenderUI();
     updateTodayBanner();
     prefetchExerciseImages();
 }
@@ -656,7 +686,7 @@ document.getElementById('routine-body').addEventListener('click', (e) => {
 // --- Action: Progreso ---
 function renderProgress() {
     const body = document.getElementById('progress-body');
-    const weekGoal = 5;
+    const weekGoal = getProgramDays();
     const pct = Math.min(100, Math.round((state.weekCount / weekGoal) * 100));
     const prs = getAllExerciseNames()
         .map(name => ({ name, weight: getPR(name), date: getPRDate(name) }))

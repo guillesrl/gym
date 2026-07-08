@@ -75,6 +75,7 @@ body.dark .dark-toggle .icon-moon { display: none; }
     border: 2px solid var(--border); padding: 4px; margin-bottom: 24px;
     box-shadow: var(--shadow-small);
 }
+.gender-switch { margin-bottom: 16px; }
 .tab {
     flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
     padding: 10px 12px; text-align: center;
