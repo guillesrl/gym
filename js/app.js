@@ -30,6 +30,7 @@ const exerciseImageMap = {
     'Sentadilla':                'qXTaZnJ',
     'Cuádriceps en máquina':     'V07qpXy',
     'Pájaros con mancuernas':    'DsgkuIt',
+    'Patada de glúteo':          'Kpajagk',
 };
 
 // Fallback estático (JPG) cuando no hay GIF en exercisedb.
@@ -43,6 +44,7 @@ const exerciseFallbackImageMap = {
     'Aducciones':                      'Thigh_Adductor',
     'Cuádriceps en máquina':           'Leg_Extensions',
     'Pájaros con mancuernas':          'Dumbbell_Rear_Lateral_Raise',
+    'Prensa de piernas':               'Leg_Press',
 };
 
 // URLs directas a GIFs externos en alta resolución (720p)
@@ -82,7 +84,7 @@ function getExerciseImageUrl(name) {
 }
 
 function getDayMap() {
-    return { 1: 'Día 1', 3: 'Día 2', 5: 'Día 3', 0: 'Día 4' };
+    return { 1: 'Día 1', 2: 'Día 2', 3: 'Día 3', 4: 'Día 4', 5: 'Día 5' };
 }
 
 function parseDetail(detail) {
@@ -202,7 +204,7 @@ function updateUI() {
 function updateWeekProgress() {
     const el = document.getElementById('week-progress');
     if (!el) return;
-    const totalDays = 4;
+    const totalDays = 5;
     const done = Math.min(state.weekCount, totalDays);
     let dots = '';
     for (let i = 0; i < totalDays; i++) {
@@ -654,7 +656,7 @@ document.getElementById('routine-body').addEventListener('click', (e) => {
 // --- Action: Progreso ---
 function renderProgress() {
     const body = document.getElementById('progress-body');
-    const weekGoal = 4;
+    const weekGoal = 5;
     const pct = Math.min(100, Math.round((state.weekCount / weekGoal) * 100));
     const prs = getAllExerciseNames()
         .map(name => ({ name, weight: getPR(name), date: getPRDate(name) }))
