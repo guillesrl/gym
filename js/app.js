@@ -1001,7 +1001,13 @@ document.getElementById('backup-file-input').addEventListener('change', (e) => {
 });
 
 if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location.protocol)) {
-    navigator.serviceWorker.register('./sw.js');
+    navigator.serviceWorker.register('./sw.js').then(reg => reg.update()).catch(() => {});
+    let swRefreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (swRefreshing) return;
+        swRefreshing = true;
+        location.reload();
+    });
 }
 
 function updateTodayBanner() { renderDailyMotivation(); }
