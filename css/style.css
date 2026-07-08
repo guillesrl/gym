@@ -359,7 +359,7 @@ body.dark .dark-toggle .icon-moon { display: none; }
 .day-register-btn.done { background: var(--muted); color: var(--muted-foreground); border-color: var(--muted); cursor: default; opacity: 1; }
 .history-item {
     display: flex; align-items: center; gap: 6px;
-    padding: 8px 0; border-bottom: 1px solid var(--muted); flex-wrap: nowrap;
+    padding: 8px 0; border-bottom: 1px solid var(--muted); flex-wrap: wrap;
     font-size: 12px;
 }
 .history-item:last-child { border-bottom: none; }
@@ -376,29 +376,27 @@ body.dark .dark-toggle .icon-moon { display: none; }
 .btn-del-workout:hover { background: #c00; color: #fff; }
 .btn-edit-workout:hover { background: var(--accent); }
 .history-edit-row {
-    width: 100%; display: flex; gap: 6px; align-items: center;
-    padding-top: 6px; flex-wrap: wrap;
-}
-.history-edit-row input {
-    width: 70px; padding: 4px 6px; border: 2px solid var(--border);
-    font-family: inherit; font-size: 12px; font-weight: 700;
-    text-align: center; background: var(--card); color: var(--foreground);
-}
-.history-edit-row button {
-    padding: 4px 10px; border: 2px solid var(--border);
-    font-family: inherit; font-size: 11px; font-weight: 800;
-    cursor: pointer; background: var(--primary); color: var(--primary-foreground);
+    width: 100%; display: flex; gap: 8px; align-items: flex-end;
+    padding: 10px 0 4px; flex-wrap: wrap;
 }
 .history-edit-row label {
-    display: flex; flex-direction: column; gap: 2px;
-    font-size: 9px; font-weight: 800; text-transform: uppercase;
-    color: var(--muted-foreground);
+    display: flex; flex-direction: column; gap: 4px;
+    font-size: 10px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--muted-foreground);
+    flex: 1 1 90px; min-width: 0;
 }
-.history-edit-row input[type="date"] { width: auto; }
+.history-edit-row label:nth-of-type(3) { flex-basis: 100%; } /* Día ocupa toda la fila */
+.history-edit-row input,
 .history-edit-row select {
-    padding: 4px 6px; border: 2px solid var(--border);
-    font-family: inherit; font-size: 12px; font-weight: 700;
-    background: var(--card); color: var(--foreground); max-width: 160px;
+    width: 100%; box-sizing: border-box;
+    padding: 9px 10px; border: 2px solid var(--border);
+    font-family: inherit; font-size: 16px; font-weight: 700;
+    background: var(--card); color: var(--foreground);
+}
+.history-edit-row button {
+    flex: 1 1 40%; padding: 10px; border: 2px solid var(--border);
+    font-family: inherit; font-size: 14px; font-weight: 800;
+    cursor: pointer; background: var(--primary); color: var(--primary-foreground);
 }
 @media (max-width: 480px) {
     .exercise-item { flex-wrap: nowrap; gap: 6px; }
