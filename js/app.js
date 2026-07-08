@@ -92,6 +92,15 @@ function getDayMap() {
     return { 1: 'Día 1', 2: 'Día 2', 3: 'Día 3', 4: 'Día 4', 5: 'Día 5' };
 }
 
+const WEEKDAY_NAMES = { 0: 'Domingo', 1: 'Lunes', 2: 'Martes', 3: 'Miércoles', 4: 'Jueves', 5: 'Viernes', 6: 'Sábado' };
+function getDayLabel(dayKey) {
+    const map = getDayMap();
+    const num = Object.keys(map).find(k => map[k] === dayKey);
+    const weekday = num !== undefined ? WEEKDAY_NAMES[num] : dayKey;
+    const muscle = routines.labels?.[currentTab]?.[dayKey];
+    return muscle ? `${weekday} · ${muscle}` : weekday;
+}
+
 function getProgramDays() {
     const wk = routines[currentTab]?.['1'] || routines[currentTab]?.[1];
     const n = wk ? Object.keys(wk).length : 0;
@@ -606,7 +615,7 @@ document.getElementById('btn-routine').addEventListener('click', () => {
         return `
         <div class="routine-day">
             <div class="routine-day-header${isToday ? ' open' : ''}" onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('open')">
-                <span>${day}${isToday ? ' (Hoy)' : ''}</span>
+                <span>${getDayLabel(day)}${isToday ? ' (Hoy)' : ''}</span>
                 <span class="arrow">&#8250;</span>
             </div>
             <div class="routine-day-content${isToday ? ' open' : ''}">
