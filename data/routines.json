@@ -9,7 +9,7 @@
     },
     "hombre": {
       "Día 1": "Pecho y Bíceps 💪",
-      "Día 2": "Espalda y Tríceps 🔙",
+      "Día 2": "Espalda, Tríceps y Hombros 🔙",
       "Día 3": "Pierna y ABS 🦵"
     }
   },
@@ -185,7 +185,10 @@
         { "name": "Remo",              "detail": "3x10" },
         { "name": "Pullover en polea", "detail": "3x12" },
         { "name": "Press francés",     "detail": "3x12" },
-        { "name": "Tríceps en polea",  "detail": "3x12" }
+        { "name": "Tríceps en polea",  "detail": "3x12" },
+        { "name": "Press de hombro",   "detail": "3x12" },
+        { "name": "Vuelos laterales",  "detail": "3x15" },
+        { "name": "Vuelos frontales",  "detail": "3x15" }
       ],
       "Día 3": [
         { "name": "Sentadilla",         "detail": "3x10" },
@@ -208,7 +211,10 @@
         { "name": "Remo",              "detail": "3x12" },
         { "name": "Pullover en polea", "detail": "3x15" },
         { "name": "Press francés",     "detail": "3x15" },
-        { "name": "Tríceps en polea",  "detail": "3x15" }
+        { "name": "Tríceps en polea",  "detail": "3x15" },
+        { "name": "Press de hombro",   "detail": "3x15" },
+        { "name": "Vuelos laterales",  "detail": "3x20" },
+        { "name": "Vuelos frontales",  "detail": "3x20" }
       ],
       "Día 3": [
         { "name": "Sentadilla",         "detail": "3x12" },
@@ -231,7 +237,10 @@
         { "name": "Remo",              "detail": "3x10" },
         { "name": "Pullover en polea", "detail": "3x12" },
         { "name": "Press francés",     "detail": "3x12" },
-        { "name": "Tríceps en polea",  "detail": "3x12" }
+        { "name": "Tríceps en polea",  "detail": "3x12" },
+        { "name": "Press de hombro",   "detail": "3x12" },
+        { "name": "Vuelos laterales",  "detail": "3x15" },
+        { "name": "Vuelos frontales",  "detail": "3x15" }
       ],
       "Día 3": [
         { "name": "Sentadilla",         "detail": "3x10" },
@@ -254,7 +263,10 @@
         { "name": "Remo",              "detail": "3x12" },
         { "name": "Pullover en polea", "detail": "3x15" },
         { "name": "Press francés",     "detail": "3x15" },
-        { "name": "Tríceps en polea",  "detail": "3x15" }
+        { "name": "Tríceps en polea",  "detail": "3x15" },
+        { "name": "Press de hombro",   "detail": "3x15" },
+        { "name": "Vuelos laterales",  "detail": "3x20" },
+        { "name": "Vuelos frontales",  "detail": "3x20" }
       ],
       "Día 3": [
         { "name": "Sentadilla",         "detail": "3x12" },
