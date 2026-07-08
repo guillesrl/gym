@@ -1,4 +1,4 @@
-const CACHE_NAME = 'entreno-brutal-v32';
+const CACHE_NAME = 'entreno-brutal-v33';
 const STATIC_ASSETS = [
   './manifest.webmanifest',
   './icon.svg'

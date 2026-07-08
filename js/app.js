@@ -328,6 +328,10 @@ function hasTodayWorkout() {
     const today = getLocalDateKey();
     return state.workouts.some(w => w.date === today);
 }
+function isDayRegisteredToday(day) {
+    const today = getLocalDateKey();
+    return state.workouts.some(w => w.date === today && w.notes === day && w.type === currentTab);
+}
 
 function getExplosionRoot() {
     let r = document.getElementById('explosion-root');
@@ -619,9 +623,9 @@ document.getElementById('btn-routine').addEventListener('click', () => {
     const days = getRoutines();
     const dayMap = getDayMap();
     const todayName = dayMap[new Date().getDay()];
-    const alreadyDone = hasTodayWorkout();
     body.innerHTML = Object.entries(days).map(([day, exercises]) => {
         const isToday = day === todayName;
+        const alreadyDone = isDayRegisteredToday(day);
         return `
         <div class="routine-day">
             <div class="routine-day-header${isToday ? ' open' : ''}" onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('open')">
@@ -694,10 +698,9 @@ document.getElementById('routine-body').addEventListener('click', (e) => {
         regBtn.disabled = true;
         input.disabled = true;
         setTimeout(() => {
-            document.querySelectorAll('.day-register-btn').forEach(b => {
-                b.textContent = '✓ Entrenado hoy'; b.disabled = true; b.classList.add('done');
-            });
-            document.querySelectorAll('.day-duration-input').forEach(i => { i.disabled = true; i.value = ''; });
+            regBtn.innerHTML = '&#10003; Entrenado hoy';
+            regBtn.classList.add('done');
+            input.value = '';
         }, 1200);
     }
 });
