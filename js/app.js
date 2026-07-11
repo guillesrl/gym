@@ -34,6 +34,7 @@ const exerciseImageMap = {
     'Press de banca':            'EIeI8Vf',
     'Press inclinado mancuernas':'ns0SIbU',
     'Curl con barra':            '25GPyDY',
+    'Gemelos':                   'bOOdeyc',
 };
 
 // Fallback estático (JPG) cuando no hay GIF en exercisedb.
