@@ -11,6 +11,25 @@ function getAutoWeek() {
     return Math.max(1, Math.min(4, Math.floor(diffDays / 7) + 1));
 }
 
+// Semana del programa (1-4) a la que corresponde una fecha concreta
+function getWeekForDate(dateStr) {
+    const startDate = localStorage.getItem('program-start-date');
+    if (!startDate || !dateStr) return 1;
+    const start = new Date(startDate + 'T12:00:00');
+    const d = new Date(dateStr + 'T12:00:00');
+    const diffDays = Math.floor((d - start) / (1000 * 60 * 60 * 24));
+    return Math.max(1, Math.min(4, Math.floor(diffDays / 7) + 1));
+}
+
+// Ejercicios de una sesión: los guardados en el entreno o, si no, los del día de la rutina
+function getWorkoutExercises(w) {
+    if (Array.isArray(w.exercises)) return w.exercises;
+    const week = getWeekForDate(w.date);
+    const day = routines[w.type]?.[String(week)]?.[w.notes]
+        || routines[w.type]?.['1']?.[w.notes] || [];
+    return day.map(e => ({ name: e.name, detail: e.detail || '' }));
+}
+
 const GIF_CDN = 'https://static.exercisedb.dev/media/';
 const exerciseImageMap = {
     'Remo':                      'fUBheHs',
@@ -246,16 +265,23 @@ function buildHistoryHtml() {
     const downloadDate = getDownloadDateLabel();
     const workouts = [...state.workouts].reverse();
     const rows = workouts.length
-        ? workouts.map((w, index) => `
+        ? workouts.map((w, index) => {
+            const exs = getWorkoutExercises(w);
+            const dayLabel = w.notes ? getDayLabelFor(w.type, w.notes) : '-';
+            const exList = exs.length
+                ? `<div style="margin-top:6px;color:#6b6b62;font-size:12px;">${exs.map(e => escapeHtml(e.name) + (e.detail ? ` (${escapeHtml(e.detail)})` : '')).join(', ')}</div>`
+                : '';
+            return `
             <tr>
                 <td>${workouts.length - index}</td>
                 <td>${escapeHtml(w.date)}</td>
                 <td>${escapeHtml(programLabel(w.type))}</td>
                 <td>${escapeHtml(w.duration)} min</td>
                 <td>${escapeHtml(w.intensity)}</td>
-                <td>${escapeHtml(w.notes ? getDayLabelFor(w.type, w.notes) : '-')}</td>
+                <td>${escapeHtml(dayLabel)}${exList}</td>
             </tr>
-        `).join('')
+        `;
+        }).join('')
         : '<tr><td colspan="6" class="empty">No hay entrenos registrados todavia.</td></tr>';
 
     return `<!DOCTYPE html>
@@ -860,6 +886,11 @@ function renderHistory() {
         const dayOptions = Object.values(getDayMapFor(w.type)).map(dk =>
             `<option value="${escapeHtml(dk)}"${w.notes === dk ? ' selected' : ''}>${escapeHtml(getDayLabelFor(w.type, dk))}</option>`
         ).join('');
+        const exs = getWorkoutExercises(w);
+        const exSummary = exs.length
+            ? `<div class="history-exercises">${exs.map(e => escapeHtml(e.name) + (e.detail ? ` <em>${escapeHtml(e.detail)}</em>` : '')).join(' · ')}</div>`
+            : '';
+        const exRows = exs.map(e => exerciseEditRowHtml(e.name, e.detail)).join('');
         return `
         <div class="history-item" data-idx="${realIdx}">
             <span class="history-date">${w.date}</span>
@@ -869,10 +900,16 @@ function renderHistory() {
                 <button class="btn-edit-workout" data-idx="${realIdx}">✏ Modificar</button>
                 <button class="btn-del-workout" data-idx="${realIdx}">✕</button>
             </div>
+            ${exSummary}
             <div class="history-edit-row" id="edit-row-${realIdx}" style="display:none">
                 <label>Fecha<input type="date" id="edit-date-${realIdx}" value="${escapeHtml(w.date)}"></label>
                 <label>Min<input type="number" id="edit-dur-${realIdx}" value="${w.duration}" min="5" max="180" placeholder="min"></label>
                 <label>Día<select id="edit-day-${realIdx}">${dayOptions}</select></label>
+                <div class="edit-ex-block">
+                    <div class="edit-ex-title">Ejercicios</div>
+                    <div class="edit-ex-list" id="edit-ex-${realIdx}">${exRows}</div>
+                    <button type="button" class="edit-ex-add" onclick="addExerciseRow(${realIdx})">+ Añadir ejercicio</button>
+                </div>
                 <button onclick="saveEditWorkout(${realIdx})">Guardar</button>
                 <button onclick="document.getElementById('edit-row-${realIdx}').style.display='none'" style="background:var(--card);color:var(--foreground)">Cancelar</button>
             </div>
@@ -899,6 +936,19 @@ function renderHistory() {
     });
 }
 
+function exerciseEditRowHtml(name, detail) {
+    return `<div class="edit-ex-row">
+        <input class="edit-ex-name" placeholder="Ejercicio" value="${escapeHtml(name || '')}">
+        <input class="edit-ex-detail" placeholder="3x12" value="${escapeHtml(detail || '')}">
+        <button type="button" class="edit-ex-del" onclick="this.closest('.edit-ex-row').remove()">✕</button>
+    </div>`;
+}
+
+window.addExerciseRow = (idx) => {
+    const list = document.getElementById(`edit-ex-${idx}`);
+    if (list) list.insertAdjacentHTML('beforeend', exerciseEditRowHtml('', ''));
+};
+
 window.saveEditWorkout = (idx) => {
     const durEl = document.getElementById(`edit-dur-${idx}`);
     const dateEl = document.getElementById(`edit-date-${idx}`);
@@ -909,6 +959,13 @@ window.saveEditWorkout = (idx) => {
     if (dateEl && dateEl.value) w.date = dateEl.value;
     w.duration = val;
     if (dayEl && dayEl.value) w.notes = dayEl.value;
+    const list = document.getElementById(`edit-ex-${idx}`);
+    if (list) {
+        w.exercises = [...list.querySelectorAll('.edit-ex-row')].map(r => ({
+            name: r.querySelector('.edit-ex-name').value.trim(),
+            detail: r.querySelector('.edit-ex-detail').value.trim()
+        })).filter(e => e.name);
+    }
     state.total = state.workouts.length;
     state.weekCount = getCurrentWeekCount();
     saveState(); updateUI(); renderHistory();

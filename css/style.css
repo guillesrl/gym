@@ -398,6 +398,36 @@ body.dark .dark-toggle .icon-moon { display: none; }
     font-family: inherit; font-size: 14px; font-weight: 800;
     cursor: pointer; background: var(--primary); color: var(--primary-foreground);
 }
+.history-exercises {
+    flex-basis: 100%; width: 100%;
+    font-size: 11px; font-weight: 600; line-height: 1.5;
+    color: var(--muted-foreground);
+}
+.history-exercises em { font-style: normal; font-weight: 800; color: var(--foreground); }
+.edit-ex-block { flex-basis: 100%; width: 100%; }
+.edit-ex-title {
+    font-size: 10px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--muted-foreground); margin-bottom: 6px;
+}
+.edit-ex-list { display: flex; flex-direction: column; gap: 6px; }
+.edit-ex-row { display: flex; gap: 6px; align-items: center; }
+.edit-ex-row .edit-ex-name { flex: 1 1 auto; }
+.edit-ex-row .edit-ex-detail { flex: 0 0 84px; width: 84px; }
+.edit-ex-row input {
+    box-sizing: border-box; padding: 9px 10px; border: 2px solid var(--border);
+    font-family: inherit; font-size: 16px; font-weight: 700;
+    background: var(--card); color: var(--foreground); min-width: 0;
+}
+.history-edit-row .edit-ex-del {
+    flex: 0 0 auto; padding: 6px 10px; border: 2px solid #c00; color: #c00;
+    background: var(--card); font-family: inherit; font-size: 12px; font-weight: 800; cursor: pointer;
+}
+.history-edit-row .edit-ex-del:hover { background: #c00; color: #fff; }
+.history-edit-row .edit-ex-add {
+    flex: none; margin-top: 8px; padding: 8px 12px; border: 2px dashed var(--border);
+    background: var(--card); color: var(--foreground);
+    font-family: inherit; font-size: 12px; font-weight: 800; cursor: pointer; width: 100%;
+}
 @media (max-width: 480px) {
     .exercise-item { flex-wrap: nowrap; gap: 6px; }
     .exercise-preview-btn {
