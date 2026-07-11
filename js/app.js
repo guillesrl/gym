@@ -69,7 +69,6 @@ const exerciseDirectImageMap = {
     'Vuelos frontales':                'https://fitcron.com/wp-content/uploads/2021/04/03101301-Dumbbell-Front-Raise_Shoulders_720.gif',
     'Vuelos laterales':                'https://fitcron.com/wp-content/uploads/2021/04/33431301-Lever-Lateral-Raise-VERSION-2_Shoulders_720.gif',
     'Press de hombro':                 'https://fitcron.com/wp-content/uploads/2021/04/11651301-Barbell-Standing-Military-Press-without-rack_Shoulders_720.gif',
-    'Pecho en máquina':                'https://fitcron.com/wp-content/uploads/2021/04/10411301-Lever-Lying-Chest-Press-plate-loaded_Chest_720.gif',
     'Bíceps en polea':                 'https://fitcron.com/wp-content/uploads/2021/04/01951301-Cable-Preacher-Curl_Upper-Arms_720.gif',
     'Tríceps en polea':                'https://fitcron.com/wp-content/uploads/2021/04/37191301-Cable-Standing-High-Cross-Triceps-Extension_Upper-Arms_720.gif',
     'Sentadilla':                      'https://fitcron.com/wp-content/uploads/2021/04/00431301-Barbell-Full-Squat_Thighs_720.gif',
