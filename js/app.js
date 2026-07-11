@@ -16,7 +16,7 @@ const exerciseImageMap = {
     'Remo':                      'fUBheHs',
     'Jalón al pecho':            'eYnzaCm',
     'Pullover en polea':         'PskORrA',
-    'ABC Abdominales':           'Wgaz7pm',
+    'Plancha':                   'VBAWRPG',
     'Hip Thrust':                'SNFfUff',
     'Peso muerto':               'ila4NZS',
     'Sentadilla rumana':         'ila4NZS',
@@ -567,7 +567,7 @@ document.querySelectorAll('.gender-btn').forEach(btn => {
 let routines = {};
 async function loadRoutines() {
     try {
-        const res = await fetch('./data/routines.json?v=44', { cache: 'no-store' });
+        const res = await fetch('./data/routines.json?v=46', { cache: 'no-store' });
         routines = await res.json();
     } catch (e) {
         console.warn('No se pudo cargar routines.json', e);

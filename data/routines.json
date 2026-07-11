@@ -20,14 +20,14 @@
         { "name": "Zancadas",            "detail": "3x12 c/pierna" },
         { "name": "Prensa de piernas",   "detail": "3x12" },
         { "name": "Abducciones",         "detail": "3x15" },
-        { "name": "ABC Abdominales",     "detail": "3x15" }
+        { "name": "Plancha",             "detail": "3x60 seg" }
       ],
       "Día 2": [
         { "name": "Jalón al pecho",      "detail": "3x12" },
         { "name": "Remo",                "detail": "3x12" },
         { "name": "Face pull",           "detail": "3x15" },
         { "name": "Pullover en polea",   "detail": "3x12" },
-        { "name": "ABC Abdominales",     "detail": "3x15" }
+        { "name": "Plancha",             "detail": "3x60 seg" }
       ],
       "Día 3": [
         { "name": "Sentadilla",          "detail": "3x10" },
@@ -35,7 +35,7 @@
         { "name": "Patada de glúteo",    "detail": "3x15 c/lado" },
         { "name": "Isquios en máquina",  "detail": "3x12" },
         { "name": "Cuádriceps en máquina","detail": "3x15" },
-        { "name": "ABC Abdominales",     "detail": "3x15" }
+        { "name": "Plancha",             "detail": "3x60 seg" }
       ],
       "Día 4": [
         { "name": "Press de hombro",     "detail": "3x12" },
@@ -50,7 +50,7 @@
         { "name": "Zancadas",            "detail": "3x12 c/pierna" },
         { "name": "Prensa de piernas",   "detail": "3x12" },
         { "name": "Abducciones",         "detail": "3x15" },
-        { "name": "ABC Abdominales",     "detail": "3x15" }
+        { "name": "Plancha",             "detail": "3x60 seg" }
       ]
     },
     "2": {
@@ -59,14 +59,14 @@
         { "name": "Zancadas",            "detail": "3x15 c/pierna" },
         { "name": "Prensa de piernas",   "detail": "3x15" },
         { "name": "Abducciones",         "detail": "3x20" },
-        { "name": "ABC Abdominales",     "detail": "3x20" }
+        { "name": "Plancha",             "detail": "3x60 seg" }
       ],
       "Día 2": [
         { "name": "Jalón al pecho",      "detail": "3x15" },
         { "name": "Remo",                "detail": "3x15" },
         { "name": "Face pull",           "detail": "3x20" },
         { "name": "Pullover en polea",   "detail": "3x15" },
-        { "name": "ABC Abdominales",     "detail": "3x20" }
+        { "name": "Plancha",             "detail": "3x60 seg" }
       ],
       "Día 3": [
         { "name": "Sentadilla",          "detail": "3x12" },
@@ -74,7 +74,7 @@
         { "name": "Patada de glúteo",    "detail": "3x20 c/lado" },
         { "name": "Isquios en máquina",  "detail": "3x15" },
         { "name": "Cuádriceps en máquina","detail": "3x20" },
-        { "name": "ABC Abdominales",     "detail": "3x20" }
+        { "name": "Plancha",             "detail": "3x60 seg" }
       ],
       "Día 4": [
         { "name": "Press de hombro",     "detail": "3x15" },
@@ -89,7 +89,7 @@
         { "name": "Zancadas",            "detail": "3x15 c/pierna" },
         { "name": "Prensa de piernas",   "detail": "3x15" },
         { "name": "Abducciones",         "detail": "3x20" },
-        { "name": "ABC Abdominales",     "detail": "3x20" }
+        { "name": "Plancha",             "detail": "3x60 seg" }
       ]
     },
     "3": {
@@ -98,14 +98,14 @@
         { "name": "Zancadas",            "detail": "3x12 c/pierna" },
         { "name": "Prensa de piernas",   "detail": "3x12" },
         { "name": "Abducciones",         "detail": "3x15" },
-        { "name": "ABC Abdominales",     "detail": "3x15" }
+        { "name": "Plancha",             "detail": "3x60 seg" }
       ],
       "Día 2": [
         { "name": "Jalón al pecho",      "detail": "3x12" },
         { "name": "Remo",                "detail": "3x12" },
         { "name": "Face pull",           "detail": "3x15" },
         { "name": "Pullover en polea",   "detail": "3x12" },
-        { "name": "ABC Abdominales",     "detail": "3x15" }
+        { "name": "Plancha",             "detail": "3x60 seg" }
       ],
       "Día 3": [
         { "name": "Sentadilla",          "detail": "3x10" },
@@ -113,7 +113,7 @@
         { "name": "Patada de glúteo",    "detail": "3x15 c/lado" },
         { "name": "Isquios en máquina",  "detail": "3x12" },
         { "name": "Cuádriceps en máquina","detail": "3x15" },
-        { "name": "ABC Abdominales",     "detail": "3x15" }
+        { "name": "Plancha",             "detail": "3x60 seg" }
       ],
       "Día 4": [
         { "name": "Press de hombro",     "detail": "3x12" },
@@ -128,7 +128,7 @@
         { "name": "Zancadas",            "detail": "3x12 c/pierna" },
         { "name": "Prensa de piernas",   "detail": "3x12" },
         { "name": "Abducciones",         "detail": "3x15" },
-        { "name": "ABC Abdominales",     "detail": "3x15" }
+        { "name": "Plancha",             "detail": "3x60 seg" }
       ]
     },
     "4": {
@@ -137,14 +137,14 @@
         { "name": "Zancadas",            "detail": "3x15 c/pierna" },
         { "name": "Prensa de piernas",   "detail": "3x15" },
         { "name": "Abducciones",         "detail": "3x20" },
-        { "name": "ABC Abdominales",     "detail": "3x20" }
+        { "name": "Plancha",             "detail": "3x60 seg" }
       ],
       "Día 2": [
         { "name": "Jalón al pecho",      "detail": "3x15" },
         { "name": "Remo",                "detail": "3x15" },
         { "name": "Face pull",           "detail": "3x20" },
         { "name": "Pullover en polea",   "detail": "3x15" },
-        { "name": "ABC Abdominales",     "detail": "3x20" }
+        { "name": "Plancha",             "detail": "3x60 seg" }
       ],
       "Día 3": [
         { "name": "Sentadilla",          "detail": "3x12" },
@@ -152,7 +152,7 @@
         { "name": "Patada de glúteo",    "detail": "3x20 c/lado" },
         { "name": "Isquios en máquina",  "detail": "3x15" },
         { "name": "Cuádriceps en máquina","detail": "3x20" },
-        { "name": "ABC Abdominales",     "detail": "3x20" }
+        { "name": "Plancha",             "detail": "3x60 seg" }
       ],
       "Día 4": [
         { "name": "Press de hombro",     "detail": "3x15" },
@@ -167,7 +167,7 @@
         { "name": "Zancadas",            "detail": "3x15 c/pierna" },
         { "name": "Prensa de piernas",   "detail": "3x15" },
         { "name": "Abducciones",         "detail": "3x20" },
-        { "name": "ABC Abdominales",     "detail": "3x20" }
+        { "name": "Plancha",             "detail": "3x60 seg" }
       ]
     }
   },
@@ -194,7 +194,7 @@
         { "name": "Prensa de piernas",  "detail": "3x12" },
         { "name": "Peso muerto",        "detail": "3x8" },
         { "name": "Gemelos",             "detail": "3x12" },
-        { "name": "ABC Abdominales",    "detail": "3x15" }
+        { "name": "Plancha",             "detail": "3x60 seg" }
       ]
     },
     "2": {
@@ -219,7 +219,7 @@
         { "name": "Prensa de piernas",  "detail": "3x15" },
         { "name": "Peso muerto",        "detail": "3x10" },
         { "name": "Gemelos",             "detail": "3x15" },
-        { "name": "ABC Abdominales",    "detail": "3x20" }
+        { "name": "Plancha",             "detail": "3x60 seg" }
       ]
     },
     "3": {
@@ -244,7 +244,7 @@
         { "name": "Prensa de piernas",  "detail": "3x12" },
         { "name": "Peso muerto",        "detail": "3x8" },
         { "name": "Gemelos",             "detail": "3x12" },
-        { "name": "ABC Abdominales",    "detail": "3x15" }
+        { "name": "Plancha",             "detail": "3x60 seg" }
       ]
     },
     "4": {
@@ -269,7 +269,7 @@
         { "name": "Prensa de piernas",  "detail": "3x15" },
         { "name": "Peso muerto",        "detail": "3x10" },
         { "name": "Gemelos",             "detail": "3x15" },
-        { "name": "ABC Abdominales",    "detail": "3x20" }
+        { "name": "Plancha",             "detail": "3x60 seg" }
       ]
     }
   }
