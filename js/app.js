@@ -36,6 +36,7 @@ const exerciseImageMap = {
     'Curl con barra':            '25GPyDY',
     'Gemelos':                   'bOOdeyc',
     'Cardio':                    'oLrKqDH',
+    'Prensa de piernas':         '10Z2DXU',
 };
 
 // Fallback estático (JPG) cuando no hay GIF en exercisedb.
@@ -49,7 +50,6 @@ const exerciseFallbackImageMap = {
     'Aducciones':                      'Thigh_Adductor',
     'Cuádriceps en máquina':           'Leg_Extensions',
     'Pájaros con mancuernas':          'Dumbbell_Rear_Lateral_Raise',
-    'Prensa de piernas':               'Leg_Press',
 };
 
 // URLs directas a GIFs externos en alta resolución (720p)
@@ -59,7 +59,6 @@ const exerciseDirectImageMap = {
     'Pullover en polea':               'https://fitcron.com/wp-content/uploads/2021/03/01841301-Cable-Lying-Extension-Pullover-with-rope-attachment_Back_720.gif',
     'Face pull':                       'https://burnfit.io/en/wp-content/uploads/sites/3/2026/01/FACE_PULL-1.gif',
     'Extensiones de columna en banco': 'https://fitcron.com/wp-content/uploads/2021/04/04891301-Hyperextension_Waist_720.gif',
-    'ABC Abdominales':                 'https://fitcron.com/wp-content/uploads/2021/04/05951301-Lever-Seated-Crunch-chest-pad_Waist_720.gif',
     'Pájaros con mancuernas':          'https://fitcron.com/wp-content/uploads/2021/04/03801301-Dumbbell-Rear-Lateral-Raise_Shoulders_720.gif',
     'Hip Thrust':                      'https://fitcron.com/wp-content/uploads/2021/04/10601301-Barbell-Hip-Thrust_Hips_720.gif',
     'Peso muerto':                     'https://fitcron.com/wp-content/uploads/2021/04/00321301-Barbell-Deadlift_Hips-FIX_720.gif',
