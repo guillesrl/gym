@@ -43,7 +43,7 @@
         { "name": "Vuelos laterales",    "detail": "3x12" },
         { "name": "Bíceps en polea",     "detail": "3x12" },
         { "name": "Tríceps en polea",    "detail": "3x12" },
-        { "name": "ABC Abdominales",     "detail": "3x15" }
+        { "name": "Cardio",             "detail": "10 min" }
       ],
       "Día 5": [
         { "name": "Hip Thrust",          "detail": "3x12" },
@@ -82,7 +82,7 @@
         { "name": "Vuelos laterales",    "detail": "3x15" },
         { "name": "Bíceps en polea",     "detail": "3x15" },
         { "name": "Tríceps en polea",    "detail": "3x15" },
-        { "name": "ABC Abdominales",     "detail": "3x20" }
+        { "name": "Cardio",             "detail": "10 min" }
       ],
       "Día 5": [
         { "name": "Hip Thrust",          "detail": "3x15" },
@@ -121,7 +121,7 @@
         { "name": "Vuelos laterales",    "detail": "3x12" },
         { "name": "Bíceps en polea",     "detail": "3x12" },
         { "name": "Tríceps en polea",    "detail": "3x12" },
-        { "name": "ABC Abdominales",     "detail": "3x15" }
+        { "name": "Cardio",             "detail": "10 min" }
       ],
       "Día 5": [
         { "name": "Hip Thrust",          "detail": "3x12" },
@@ -160,7 +160,7 @@
         { "name": "Vuelos laterales",    "detail": "3x15" },
         { "name": "Bíceps en polea",     "detail": "3x15" },
         { "name": "Tríceps en polea",    "detail": "3x15" },
-        { "name": "ABC Abdominales",     "detail": "3x20" }
+        { "name": "Cardio",             "detail": "10 min" }
       ],
       "Día 5": [
         { "name": "Hip Thrust",          "detail": "3x15" },
