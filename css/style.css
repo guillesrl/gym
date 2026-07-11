@@ -44,7 +44,7 @@ body {
 .dark-toggle {
     position: absolute; top: 0; right: 0;
     width: 36px; height: 36px; border: 2px solid var(--border);
-    background: var(--card); cursor: pointer; display: flex;
+    background: var(--card); color: var(--foreground); cursor: pointer; display: flex;
     align-items: center; justify-content: center;
     transition: all 0.15s ease; padding: 0;
 }
@@ -97,7 +97,7 @@ body.dark .dark-toggle .icon-moon { display: none; }
 }
 .week-nav {
     width: 32px; height: 32px; border: 2px solid var(--border);
-    background: var(--card); display: flex; align-items: center;
+    background: var(--card); color: var(--foreground); display: flex; align-items: center;
     justify-content: center; cursor: pointer; font-size: 18px;
     font-weight: 600; transition: all 0.15s ease;
 }
@@ -246,7 +246,7 @@ body.dark .dark-toggle .icon-moon { display: none; }
 .modal-header h2 { font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
 .modal-close {
     width: 32px; height: 32px; border: 2px solid var(--border);
-    background: var(--card); cursor: pointer; font-size: 16px;
+    background: var(--card); color: var(--foreground); cursor: pointer; font-size: 16px;
     display: flex; align-items: center; justify-content: center;
     font-weight: 700; transition: all 0.15s ease;
 }
@@ -372,8 +372,8 @@ body.dark .dark-toggle .icon-moon { display: none; }
     font-family: inherit; font-size: 10px; font-weight: 800;
     cursor: pointer; background: var(--card); color: var(--foreground);
 }
-.btn-del-workout { border-color: #c00; color: #c00; }
-.btn-del-workout:hover { background: #c00; color: #fff; }
+.btn-del-workout { border-color: var(--destructive); color: var(--destructive); }
+.btn-del-workout:hover { background: var(--destructive); color: #fff; }
 .btn-edit-workout:hover { background: var(--accent); }
 .history-edit-row {
     width: 100%; display: flex; gap: 8px; align-items: flex-end;
@@ -419,10 +419,10 @@ body.dark .dark-toggle .icon-moon { display: none; }
     background: var(--card); color: var(--foreground); min-width: 0;
 }
 .history-edit-row .edit-ex-del {
-    flex: 0 0 auto; padding: 6px 10px; border: 2px solid #c00; color: #c00;
+    flex: 0 0 auto; padding: 6px 10px; border: 2px solid var(--destructive); color: var(--destructive);
     background: var(--card); font-family: inherit; font-size: 12px; font-weight: 800; cursor: pointer;
 }
-.history-edit-row .edit-ex-del:hover { background: #c00; color: #fff; }
+.history-edit-row .edit-ex-del:hover { background: var(--destructive); color: #fff; }
 .history-edit-row .edit-ex-add {
     flex: none; margin-top: 8px; padding: 8px 12px; border: 2px dashed var(--border);
     background: var(--card); color: var(--foreground);
