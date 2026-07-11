@@ -184,7 +184,6 @@
         { "name": "Jalón al pecho",    "detail": "3x10" },
         { "name": "Remo",              "detail": "3x10" },
         { "name": "Pullover en polea", "detail": "3x12" },
-        { "name": "Press francés",     "detail": "3x12" },
         { "name": "Tríceps en polea",  "detail": "3x12" },
         { "name": "Press de hombro",   "detail": "3x12" },
         { "name": "Vuelos laterales",  "detail": "3x15" },
@@ -194,7 +193,7 @@
         { "name": "Sentadilla",         "detail": "3x10" },
         { "name": "Prensa de piernas",  "detail": "3x12" },
         { "name": "Peso muerto",        "detail": "3x8" },
-        { "name": "Isquios en máquina", "detail": "3x12" },
+        { "name": "Gemelos",             "detail": "3x12" },
         { "name": "ABC Abdominales",    "detail": "3x15" }
       ]
     },
@@ -210,7 +209,6 @@
         { "name": "Jalón al pecho",    "detail": "3x12" },
         { "name": "Remo",              "detail": "3x12" },
         { "name": "Pullover en polea", "detail": "3x15" },
-        { "name": "Press francés",     "detail": "3x15" },
         { "name": "Tríceps en polea",  "detail": "3x15" },
         { "name": "Press de hombro",   "detail": "3x15" },
         { "name": "Vuelos laterales",  "detail": "3x20" },
@@ -220,7 +218,7 @@
         { "name": "Sentadilla",         "detail": "3x12" },
         { "name": "Prensa de piernas",  "detail": "3x15" },
         { "name": "Peso muerto",        "detail": "3x10" },
-        { "name": "Isquios en máquina", "detail": "3x15" },
+        { "name": "Gemelos",             "detail": "3x15" },
         { "name": "ABC Abdominales",    "detail": "3x20" }
       ]
     },
@@ -236,7 +234,6 @@
         { "name": "Jalón al pecho",    "detail": "3x10" },
         { "name": "Remo",              "detail": "3x10" },
         { "name": "Pullover en polea", "detail": "3x12" },
-        { "name": "Press francés",     "detail": "3x12" },
         { "name": "Tríceps en polea",  "detail": "3x12" },
         { "name": "Press de hombro",   "detail": "3x12" },
         { "name": "Vuelos laterales",  "detail": "3x15" },
@@ -246,7 +243,7 @@
         { "name": "Sentadilla",         "detail": "3x10" },
         { "name": "Prensa de piernas",  "detail": "3x12" },
         { "name": "Peso muerto",        "detail": "3x8" },
-        { "name": "Isquios en máquina", "detail": "3x12" },
+        { "name": "Gemelos",             "detail": "3x12" },
         { "name": "ABC Abdominales",    "detail": "3x15" }
       ]
     },
@@ -262,7 +259,6 @@
         { "name": "Jalón al pecho",    "detail": "3x12" },
         { "name": "Remo",              "detail": "3x12" },
         { "name": "Pullover en polea", "detail": "3x15" },
-        { "name": "Press francés",     "detail": "3x15" },
         { "name": "Tríceps en polea",  "detail": "3x15" },
         { "name": "Press de hombro",   "detail": "3x15" },
         { "name": "Vuelos laterales",  "detail": "3x20" },
@@ -272,7 +268,7 @@
         { "name": "Sentadilla",         "detail": "3x12" },
         { "name": "Prensa de piernas",  "detail": "3x15" },
         { "name": "Peso muerto",        "detail": "3x10" },
-        { "name": "Isquios en máquina", "detail": "3x15" },
+        { "name": "Gemelos",             "detail": "3x15" },
         { "name": "ABC Abdominales",    "detail": "3x20" }
       ]
     }

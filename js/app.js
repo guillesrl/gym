@@ -31,6 +31,9 @@ const exerciseImageMap = {
     'Cuádriceps en máquina':     'V07qpXy',
     'Pájaros con mancuernas':    'DsgkuIt',
     'Patada de glúteo':          'Kpajagk',
+    'Press de banca':            'EIeI8Vf',
+    'Press inclinado mancuernas':'ns0SIbU',
+    'Curl con barra':            '25GPyDY',
 };
 
 // Fallback estático (JPG) cuando no hay GIF en exercisedb.
@@ -45,10 +48,6 @@ const exerciseFallbackImageMap = {
     'Cuádriceps en máquina':           'Leg_Extensions',
     'Pájaros con mancuernas':          'Dumbbell_Rear_Lateral_Raise',
     'Prensa de piernas':               'Leg_Press',
-    'Press de banca':                  'Barbell_Bench_Press_-_Medium_Grip',
-    'Press inclinado mancuernas':      'Incline_Dumbbell_Press',
-    'Curl con barra':                  'Barbell_Curl',
-    'Press francés':                   'EZ-Bar_Skullcrusher',
 };
 
 // URLs directas a GIFs externos en alta resolución (720p)
