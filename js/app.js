@@ -56,6 +56,7 @@ const exerciseImageMap = {
     'Gemelos':                   'bOOdeyc',
     'Cardio':                    'oLrKqDH',
     'Prensa de piernas':         '10Z2DXU',
+    'Curl de muñeca':            '82LxxkW',
 };
 
 // Fallback estático (JPG) cuando no hay GIF en exercisedb.
@@ -593,7 +594,7 @@ document.querySelectorAll('.gender-btn').forEach(btn => {
 let routines = {};
 async function loadRoutines() {
     try {
-        const res = await fetch('./data/routines.json?v=46', { cache: 'no-store' });
+        const res = await fetch('./data/routines.json?v=48', { cache: 'no-store' });
         routines = await res.json();
     } catch (e) {
         console.warn('No se pudo cargar routines.json', e);
