@@ -799,28 +799,30 @@ function renderProgress() {
         prs.forEach(pr => {
             html += `<div class="pr-item"><span class="pr-item-name">${escapeHtml(pr.name)}</span><span class="pr-item-weight">${pr.weight} kg</span><span class="pr-item-date">${pr.date}</span></div>`;
         });
-        html += '</div>';
-    }
-
-    const allExercises = getAllExerciseNames();
-    const exercisesWithHistory = allExercises.filter(name => {
-        const history = JSON.parse(localStorage.getItem('peso-history:' + name) || '[]');
-        return history.length > 0;
-    });
-
-    if (exercisesWithHistory.length > 0) {
-        html += `<div class="section-label" style="margin-top:20px">Estado de Progreso</div><div class="progress-lights-section">`;
-        exercisesWithHistory.forEach((name, i) => {
-            const lightStatus = getProgressLightStatus(name);
-            const lightClass = lightStatus === 'green' ? 'progress-light-green' : lightStatus === 'orange' ? 'progress-light-orange' : 'progress-light-red';
-            const lightEmoji = lightStatus === 'green' ? '🟢' : lightStatus === 'orange' ? '🟠' : '🔴';
-            const lightText = lightStatus === 'green' ? 'Superado esta semana' : lightStatus === 'orange' ? 'Sin cambios' : '4 semanas estancado';
-            html += `
-            <div class="progress-light-item">
-                <span class="progress-light-name">${escapeHtml(name)}</span>
-                <span class="${lightClass}">${lightEmoji} ${lightText}</span>
-            </div>`;
+        
+        // Añadir semáforo de progreso dentro de Records Personales
+        const allExercises = getAllExerciseNames();
+        const exercisesWithHistory = allExercises.filter(name => {
+            const history = JSON.parse(localStorage.getItem('peso-history:' + name) || '[]');
+            return history.length > 0;
         });
+        
+        if (exercisesWithHistory.length > 0) {
+            html += `<div class="progress-lights-section" style="margin-top:16px">`;
+            exercisesWithHistory.forEach((name, i) => {
+                const lightStatus = getProgressLightStatus(name);
+                const lightClass = lightStatus === 'green' ? 'progress-light-green' : lightStatus === 'orange' ? 'progress-light-orange' : 'progress-light-red';
+                const lightEmoji = lightStatus === 'green' ? '🟢' : lightStatus === 'orange' ? '🟠' : '🔴';
+                const lightText = lightStatus === 'green' ? 'Superado esta semana' : lightStatus === 'orange' ? 'Sin cambios' : '4 semanas estancado';
+                html += `
+                <div class="progress-light-item">
+                    <span class="progress-light-name">${escapeHtml(name)}</span>
+                    <span class="${lightClass}">${lightEmoji} ${lightText}</span>
+                </div>`;
+            });
+            html += '</div>';
+        }
+        
         html += '</div>';
     }
 
