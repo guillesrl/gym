@@ -819,8 +819,6 @@ function renderProgress() {
             <div class="progress-light-item">
                 <span class="progress-light-name">${escapeHtml(name)}</span>
                 <span class="${lightClass}">${lightEmoji} ${lightText}</span>
-            </div>
-                </div>
             </div>`;
         });
         html += '</div>';
