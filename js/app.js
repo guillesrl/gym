@@ -226,8 +226,10 @@ function normalizeState(saved) {
 }
 
 function getCurrentWeekCount(workouts = state.workouts) {
-    const currentWeekStart = getWeekStartKey();
-    return workouts.filter(workout => getWeekStartKey(new Date(`${workout.date}T12:00:00`)) === currentWeekStart).length;
+    return workouts.filter(workout => {
+        const weekForWorkout = getWeekForDate(workout.date);
+        return weekForWorkout === currentWeek;
+    }).length;
 }
 
 function loadState() {
@@ -562,10 +564,18 @@ function renderDailyMotivation() {
 
 // --- Week ---
 document.getElementById('prev-week').addEventListener('click', () => {
-    if (currentWeek > 1) { currentWeek--; updateWeek(); }
+    if (currentWeek > 1) { 
+        currentWeek--; 
+        updateWeek(); 
+        localStorage.setItem('selected-week', currentWeek);
+    }
 });
 document.getElementById('next-week').addEventListener('click', () => {
-    if (currentWeek < 4) { currentWeek++; updateWeek(); }
+    if (currentWeek < 4) { 
+        currentWeek++; 
+        updateWeek(); 
+        localStorage.setItem('selected-week', currentWeek);
+    }
 });
 function updateWeek() {
     document.getElementById('week-number').textContent = currentWeek;
@@ -602,7 +612,9 @@ async function loadRoutines() {
     if (!localStorage.getItem('program-start-date')) {
         localStorage.setItem('program-start-date', getLocalDateKey());
     }
-    currentWeek = getAutoWeek();
+    // Cargar semana guardada o usar auto-semana como fallback inicial
+    const savedWeek = localStorage.getItem('selected-week');
+    currentWeek = savedWeek ? parseInt(savedWeek) : getAutoWeek();
     updateWeek();
     updateGenderUI();
     updateTodayBanner();
