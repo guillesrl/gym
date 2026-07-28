@@ -1003,16 +1003,17 @@ document.getElementById('backup-file-input').addEventListener('change', (e) => {
             Object.entries(backup.pesoCurrent || {}).forEach(([name, val]) => localStorage.setItem('peso:' + name, val));
             Object.entries(backup.setsReps || {}).forEach(([key, val]) => localStorage.setItem(key, val));
             alert('Backup restaurado correctamente.');
-            // Limpiar service worker cache y recargar desde servidor
-            if ('caches' in window) {
-                caches.keys().then(names => {
-                    names.forEach(name => caches.delete(name));
-                });
-            }
-            // Forzar recarga sin caché
-            setTimeout(() => {
-                location.reload(true);
-            }, 100);
+            // Forzar recarga totalmente limpia: borrar cachés, quitar el SW y
+            // navegar con un query nuevo para que el navegador pida un index.html
+            // fresco (location.reload(true) es ignorado en móviles).
+            const hardReload = () => location.replace(location.pathname + '?r=' + Date.now());
+            const clearCaches = ('caches' in window)
+                ? caches.keys().then(names => Promise.all(names.map(n => caches.delete(n))))
+                : Promise.resolve();
+            const unregisterSW = (navigator.serviceWorker)
+                ? navigator.serviceWorker.getRegistrations().then(rs => Promise.all(rs.map(r => r.unregister())))
+                : Promise.resolve();
+            Promise.all([clearCaches, unregisterSW]).catch(() => {}).then(hardReload);
         } catch (err) {
             alert('Error: archivo de backup invalido.');
         }

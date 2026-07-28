@@ -1,4 +1,4 @@
-const CACHE_NAME = 'entreno-brutal-v49';
+const CACHE_NAME = 'entreno-brutal-v50';
 const STATIC_ASSETS = [
   './manifest.webmanifest',
   './icon.svg'
@@ -9,18 +9,43 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('activate', event => {
-  // Limpiar TODAS las cachés antiguas
+  // Limpiar cachés antiguas de versiones anteriores
   event.waitUntil(
-    caches.keys().then(keys => 
-      Promise.all(keys.map(key => caches.delete(key)))
-    )
+    caches.keys()
+      .then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))))
+      .then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-// DESACTIVADO: No interceptar fetch, dejar que todo vaya a red
-// Esto evita problemas de caché en móviles
 self.addEventListener('fetch', event => {
-  // No hacer nada, dejar que el navegador maneje la petición normalmente
-  return;
+  const req = event.request;
+  if (req.method !== 'GET') return;
+
+  const url = new URL(req.url);
+  const isAppShell = req.mode === 'navigate' ||
+    /\.(html|css|js|json)$/i.test(url.pathname);
+
+  if (isAppShell) {
+    // Network-first: siempre intenta la red (cambios al instante).
+    // Solo usa la caché como respaldo si no hay conexión.
+    event.respondWith(
+      fetch(req)
+        .then(res => {
+          const copy = res.clone();
+          caches.open(CACHE_NAME).then(c => c.put(req, copy)).catch(() => {});
+          return res;
+        })
+        .catch(() => caches.match(req))
+    );
+    return;
+  }
+
+  // Imágenes y assets estáticos: cache-first (GIFs de ejercicios, iconos).
+  event.respondWith(
+    caches.match(req).then(cached => cached || fetch(req).then(res => {
+      const copy = res.clone();
+      caches.open(CACHE_NAME).then(c => c.put(req, copy)).catch(() => {});
+      return res;
+    }))
+  );
 });
