@@ -16,13 +16,13 @@ App web brutalista para registrar rutinas de gimnasio, hacer seguimiento de prog
 - **Registro de entrenos por día** — guarda duración por día directamente desde la rutina; el bloqueo de re-registro es por día (no global)
 - **Modificar entrenos registrados** — edita fecha, duración y día de cualquier entreno del historial
 - **Records personales** — detecta automáticamente cada vez que superas tu peso máximo en un ejercicio
+- **Semáforo de progreso** — indicador 🟢/🟠/🔴 en la misma fila que cada récord (🟢 superaste tu marca; 🟠 sin cambios; 🔴 4 semanas estancado), ordenado igual que la lista de récords
 - **Estadísticas en tiempo real** — racha de días consecutivos, entrenos de la semana y total histórico
-- **Gráfica de evolución de peso** — canvas con histórico por ejercicio
 - **Backup completo** — exporta/importa JSON con state, PRs, históricos, series/reps y preferencias
 - **Exportar historial** — descarga un `.html` con tabla completa y resumen de stats
 - **Frase motivacional diaria** — pool de 49 frases (7 por día) que rotan por semana del año
 - **Modo oscuro** — toggle persistente con detección automática de preferencia del sistema
-- **PWA offline-first** — Service Worker con cache de imágenes; HTML/CSS/JS siempre desde red para actualizaciones instantáneas
+- **PWA con actualización instantánea** — Service Worker network-first (`cache: no-store`) para HTML/CSS/JS/JSON, así los cambios se ven al instante; cache-first solo para imágenes/GIFs (offline)
 - **Diseño brutalista** — tipografía pesada, bordes duros, sombras offset, paleta negro/crema/rosa
 
 ---
@@ -63,17 +63,17 @@ Ambos programas siguen una progresión de 4 semanas: series y repeticiones suben
 
 ### Mujer — 5 días (Lun–Vie)
 
-- **Lunes · Glúteos y Piernas 🦵** — Hip Thrust, Zancadas, Prensa de piernas, Abducciones, ABC Abdominales
-- **Martes · Espalda y Hombros 💪** — Jalón al pecho, Remo, Face pull, Pullover en polea, ABC Abdominales
-- **Miércoles · Piernas y Glúteos 🍑** — Sentadilla, Peso muerto, Patada de glúteo, Isquios en máquina, Cuádriceps en máquina, ABC Abdominales
-- **Jueves · Hombros y Brazos 🔥** — Press de hombro, Vuelos frontales, Vuelos laterales, Bíceps en polea, Tríceps en polea, ABC Abdominales
-- **Viernes · Glúteos y Piernas 🦵** — Hip Thrust, Zancadas, Prensa de piernas, Abducciones, ABC Abdominales
+- **Lunes · Glúteos y Piernas 🦵** — Hip Thrust, Zancadas, Prensa de piernas, Abducciones, Plancha
+- **Martes · Espalda y Hombros 💪** — Jalón al pecho, Remo, Face pull, Pullover en polea, Plancha
+- **Miércoles · Piernas y Glúteos 🍑** — Sentadilla, Peso muerto, Patada de glúteo, Isquios en máquina, Cuádriceps en máquina, Plancha
+- **Jueves · Hombros y Brazos 🔥** — Press de hombro, Vuelos frontales, Vuelos laterales, Bíceps en polea, Tríceps en polea, Cardio
+- **Viernes · Glúteos y Piernas 🦵** — Hip Thrust, Zancadas, Prensa de piernas, Abducciones, Plancha
 
 ### Hombre — 3 días (Lun/Mié/Vie)
 
-- **Lunes · Pecho y Bíceps 💪** — Press de banca, Press inclinado mancuernas, Pecho en máquina, Curl con barra, Bíceps en polea
+- **Lunes · Pecho y Bíceps 💪** — Press de banca, Press inclinado mancuernas, Pecho en máquina, Curl con barra, Bíceps en polea, Curl de muñeca
 - **Miércoles · Espalda, Tríceps y Hombros 🔙** — Jalón al pecho, Remo, Pullover en polea, Tríceps en polea, Press de hombro, Vuelos laterales, Vuelos frontales
-- **Viernes · Pierna y ABS 🦵** — Sentadilla, Prensa de piernas, Peso muerto, Gemelos, ABC Abdominales
+- **Viernes · Pierna y ABS 🦵** — Sentadilla, Prensa de piernas, Peso muerto, Gemelos, Plancha
 
 ---
 
@@ -109,7 +109,7 @@ Todo se guarda en `localStorage`:
 |---|---|
 | `entreno-brutal` | Estado principal (workouts, racha, totales) |
 | `peso:<Ejercicio>` | Peso actual en kg |
-| `peso-history:<Ejercicio>` | Histórico para gráfica de evolución |
+| `peso-history:<Ejercicio>` | Histórico de pesos (alimenta el semáforo de progreso) |
 | `pr:<Ejercicio>` / `pr-date:<Ejercicio>` | Récord personal + fecha |
 | `series:w<N>:<Ejercicio>` / `reps:w<N>:<Ejercicio>` | Personalización por semana |
 | `program-start-date` | Fecha de inicio (para calcular semana actual) |
@@ -123,8 +123,10 @@ Usá los botones **Exportar / Importar backup** para sincronizar entre dispositi
 ## Actualizar la versión
 
 Al cambiar HTML/CSS/JS conviene bumpear:
-- `?v=N` en `index.html` para los assets (actualmente `style.css?v=26`, `app.js?v=39`)
-- `CACHE_NAME` en `sw.js` para forzar la activación del nuevo Service Worker (actualmente `entreno-brutal-v36`)
+- `?v=N` en `index.html` para los assets (actualmente `style.css?v=31`, `app.js?v=53`)
+- `CACHE_NAME` en `sw.js` para forzar la activación del nuevo Service Worker (actualmente `entreno-brutal-v53`)
+
+> La app se sirve en GitHub Pages (`https://guillesrl.github.io/gym/`), que cachea con `max-age=600`. El Service Worker network-first con `cache: no-store` evita ese retardo y sirve siempre la última versión.
 
 ---
 
