@@ -114,13 +114,9 @@ function getDayMap() {
     return getDayMapFor(currentTab);
 }
 
-const WEEKDAY_NAMES = { 0: 'Domingo', 1: 'Lunes', 2: 'Martes', 3: 'Miércoles', 4: 'Jueves', 5: 'Viernes', 6: 'Sábado' };
 function getDayLabelFor(program, dayKey) {
-    const map = getDayMapFor(program);
-    const num = Object.keys(map).find(k => map[k] === dayKey);
-    const weekday = num !== undefined ? WEEKDAY_NAMES[num] : '';
     const muscle = routines.labels?.[program]?.[dayKey];
-    const parts = [weekday, muscle].filter(Boolean);
+    const parts = [dayKey, muscle].filter(Boolean);
     return parts.length ? parts.join(' · ') : dayKey;
 }
 function getDayLabel(dayKey) {
