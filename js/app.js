@@ -1003,7 +1003,16 @@ document.getElementById('backup-file-input').addEventListener('change', (e) => {
             Object.entries(backup.pesoCurrent || {}).forEach(([name, val]) => localStorage.setItem('peso:' + name, val));
             Object.entries(backup.setsReps || {}).forEach(([key, val]) => localStorage.setItem(key, val));
             alert('Backup restaurado correctamente.');
-            location.reload();
+            // Limpiar service worker cache y recargar desde servidor
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    names.forEach(name => caches.delete(name));
+                });
+            }
+            // Forzar recarga sin caché
+            setTimeout(() => {
+                location.reload(true);
+            }, 100);
         } catch (err) {
             alert('Error: archivo de backup invalido.');
         }
