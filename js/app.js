@@ -559,23 +559,30 @@ function renderDailyMotivation() {
 }
 
 // --- Week ---
+// Guarda la semana elegida manualmente, marcada con la fecha de hoy
+// (solo se respeta durante el mismo día; al día siguiente vuelve a la automática).
+function rememberSelectedWeek() {
+    localStorage.setItem('selected-week', currentWeek);
+    localStorage.setItem('selected-week-date', getLocalDateKey());
+}
 document.getElementById('prev-week').addEventListener('click', () => {
-    if (currentWeek > 1) { 
-        currentWeek--; 
-        updateWeek(); 
-        localStorage.setItem('selected-week', currentWeek);
-    }
+    if (currentWeek > 1) { currentWeek--; updateWeek(); rememberSelectedWeek(); }
 });
 document.getElementById('next-week').addEventListener('click', () => {
-    if (currentWeek < 4) { 
-        currentWeek++; 
-        updateWeek(); 
-        localStorage.setItem('selected-week', currentWeek);
-    }
+    if (currentWeek < 4) { currentWeek++; updateWeek(); rememberSelectedWeek(); }
+});
+document.getElementById('week-today').addEventListener('click', () => {
+    currentWeek = getAutoWeek();
+    localStorage.removeItem('selected-week');
+    localStorage.removeItem('selected-week-date');
+    updateWeek();
 });
 function updateWeek() {
     document.getElementById('week-number').textContent = currentWeek;
     document.querySelectorAll('.week-ref').forEach(el => el.textContent = currentWeek);
+    // El botón "Volver a semana actual" solo aparece si no estás en la automática
+    const todayBtn = document.getElementById('week-today');
+    if (todayBtn) todayBtn.style.display = (currentWeek === getAutoWeek()) ? 'none' : '';
 }
 
 // --- Género (Mujer / Hombre) ---
@@ -608,9 +615,17 @@ async function loadRoutines() {
     if (!localStorage.getItem('program-start-date')) {
         localStorage.setItem('program-start-date', getLocalDateKey());
     }
-    // Cargar semana guardada o usar auto-semana como fallback inicial
+    // La semana automática manda. Solo se respeta una elección manual si es de HOY;
+    // si es de un día anterior, se descarta y se vuelve a la automática.
     const savedWeek = localStorage.getItem('selected-week');
-    currentWeek = savedWeek ? parseInt(savedWeek) : getAutoWeek();
+    const savedDate = localStorage.getItem('selected-week-date');
+    if (savedWeek && savedDate === getLocalDateKey()) {
+        currentWeek = parseInt(savedWeek);
+    } else {
+        localStorage.removeItem('selected-week');
+        localStorage.removeItem('selected-week-date');
+        currentWeek = getAutoWeek();
+    }
     updateWeek();
     updateGenderUI();
     updateTodayBanner();
