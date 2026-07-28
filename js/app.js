@@ -800,9 +800,9 @@ function renderProgress() {
             html += `<div class="pr-item"><span class="pr-item-name">${escapeHtml(pr.name)}</span><span class="pr-item-weight">${pr.weight} kg</span><span class="pr-item-date">${pr.date}</span></div>`;
         });
         
-        // Añadir semáforo de progreso dentro de Records Personales
-        const allExercises = getAllExerciseNames();
-        const exercisesWithHistory = allExercises.filter(name => {
+        // Añadir semáforo de progreso dentro de Records Personales.
+        // Mismo orden que los PRs (por peso) para que las dos listas coincidan.
+        const exercisesWithHistory = prs.map(p => p.name).filter(name => {
             const history = JSON.parse(localStorage.getItem('peso-history:' + name) || '[]');
             return history.length > 0;
         });
