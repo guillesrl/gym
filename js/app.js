@@ -2,23 +2,29 @@
 let currentWeek = 1, currentTab = localStorage.getItem('rutina-genero') === 'hombre' ? 'hombre' : 'tonificar';
 let state = loadState();
 
+// Semana del programa (1-4) que cicla: tras la 4 vuelve a la 1
+function programWeekFromDays(diffDays) {
+    if (diffDays < 0) return 1;
+    return (Math.floor(diffDays / 7) % 4) + 1;
+}
+
 function getAutoWeek() {
     const startDate = localStorage.getItem('program-start-date');
     if (!startDate) return 1;
     const start = new Date(startDate + 'T12:00:00');
     const now = new Date();
     const diffDays = Math.floor((now - start) / (1000 * 60 * 60 * 24));
-    return Math.max(1, Math.min(4, Math.floor(diffDays / 7) + 1));
+    return programWeekFromDays(diffDays);
 }
 
-// Semana del programa (1-4) a la que corresponde una fecha concreta
+// Semana del programa a la que corresponde una fecha concreta
 function getWeekForDate(dateStr) {
     const startDate = localStorage.getItem('program-start-date');
     if (!startDate || !dateStr) return 1;
     const start = new Date(startDate + 'T12:00:00');
     const d = new Date(dateStr + 'T12:00:00');
     const diffDays = Math.floor((d - start) / (1000 * 60 * 60 * 24));
-    return Math.max(1, Math.min(4, Math.floor(diffDays / 7) + 1));
+    return programWeekFromDays(diffDays);
 }
 
 // Ejercicios de una sesión: los guardados en el entreno o, si no, los del día de la rutina
