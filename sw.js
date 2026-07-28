@@ -1,4 +1,4 @@
-const CACHE_NAME = 'entreno-brutal-v50';
+const CACHE_NAME = 'entreno-brutal-v51';
 const STATIC_ASSETS = [
   './manifest.webmanifest',
   './icon.svg'
@@ -26,10 +26,11 @@ self.addEventListener('fetch', event => {
     /\.(html|css|js|json)$/i.test(url.pathname);
 
   if (isAppShell) {
-    // Network-first: siempre intenta la red (cambios al instante).
-    // Solo usa la caché como respaldo si no hay conexión.
+    // Network-first sin caché HTTP: pide siempre a la red saltándose el
+    // Cache-Control de GitHub Pages (max-age=600). Cambios al instante.
+    // Solo usa la caché del SW como respaldo si no hay conexión.
     event.respondWith(
-      fetch(req)
+      fetch(req, { cache: 'no-store' })
         .then(res => {
           const copy = res.clone();
           caches.open(CACHE_NAME).then(c => c.put(req, copy)).catch(() => {});
