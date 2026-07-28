@@ -577,6 +577,8 @@ body.dark .dark-toggle .icon-moon { display: none; }
 .pr-item-name { font-size: 13px; font-weight: 700; flex: 1; }
 .pr-item-weight { font-size: 18px; font-weight: 900; color: var(--sprout); min-width: 60px; text-align: right; }
 .pr-item-date { font-size: 11px; color: var(--muted-foreground); font-weight: 600; }
+.pr-item-light { font-size: 15px; min-width: 18px; text-align: center; line-height: 1; }
+.pr-legend { font-size: 11px; color: var(--muted-foreground); font-weight: 600; text-align: center; margin: -8px 0 20px; }
 
 /* --- Progress Lights (Semáforo) --- */
 .progress-lights-section {

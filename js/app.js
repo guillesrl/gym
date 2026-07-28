@@ -796,34 +796,26 @@ function renderProgress() {
 
     if (prs.length > 0) {
         html += `<div class="section-label" style="margin-top:20px">Records Personales</div><div style="margin-bottom:20px">`;
+        let hasLights = false;
         prs.forEach(pr => {
-            html += `<div class="pr-item"><span class="pr-item-name">${escapeHtml(pr.name)}</span><span class="pr-item-weight">${pr.weight} kg</span><span class="pr-item-date">${pr.date}</span></div>`;
-        });
-        
-        // Añadir semáforo de progreso dentro de Records Personales.
-        // Mismo orden que los PRs (por peso) para que las dos listas coincidan.
-        const exercisesWithHistory = prs.map(p => p.name).filter(name => {
-            const history = JSON.parse(localStorage.getItem('peso-history:' + name) || '[]');
-            return history.length > 0;
-        });
-        
-        if (exercisesWithHistory.length > 0) {
-            html += `<div class="progress-lights-section" style="margin-top:16px">`;
-            exercisesWithHistory.forEach((name, i) => {
-                const lightStatus = getProgressLightStatus(name);
+            // Semáforo en la misma fila que el récord (solo si hay historial de peso)
+            const history = JSON.parse(localStorage.getItem('peso-history:' + pr.name) || '[]');
+            let lightHtml = '';
+            if (history.length > 0) {
+                hasLights = true;
+                const lightStatus = getProgressLightStatus(pr.name);
                 const lightClass = lightStatus === 'green' ? 'progress-light-green' : lightStatus === 'orange' ? 'progress-light-orange' : 'progress-light-red';
                 const lightEmoji = lightStatus === 'green' ? '🟢' : lightStatus === 'orange' ? '🟠' : '🔴';
                 const lightText = lightStatus === 'green' ? 'Superado esta semana' : lightStatus === 'orange' ? 'Sin cambios' : '4 semanas estancado';
-                html += `
-                <div class="progress-light-item">
-                    <span class="progress-light-name">${escapeHtml(name)}</span>
-                    <span class="${lightClass}">${lightEmoji} ${lightText}</span>
-                </div>`;
-            });
-            html += '</div>';
-        }
-        
+                lightHtml = `<span class="pr-item-light ${lightClass}" title="${lightText}">${lightEmoji}</span>`;
+            }
+            html += `<div class="pr-item"><span class="pr-item-name">${escapeHtml(pr.name)}</span><span class="pr-item-weight">${pr.weight} kg</span><span class="pr-item-date">${pr.date}</span>${lightHtml}</div>`;
+        });
         html += '</div>';
+
+        if (hasLights) {
+            html += `<div class="pr-legend">🟢 Superado esta semana · 🟠 Sin cambios · 🔴 4 semanas estancado</div>`;
+        }
     }
 
     body.innerHTML = html;
