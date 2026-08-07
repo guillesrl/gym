@@ -1032,13 +1032,17 @@ document.getElementById('backup-file-input').addEventListener('change', (e) => {
 });
 
 if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location.protocol)) {
-    navigator.serviceWorker.register('./sw.js').then(reg => reg.update()).catch(() => {});
+    // Si al cargar no hay controller es la primera visita (o se acaba de borrar
+    // el SW): el claim inicial NO debe recargar. Solo recargamos cuando un SW
+    // nuevo releva a uno que ya controlaba la página, y una sola vez.
+    const hadController = !!navigator.serviceWorker.controller;
     let swRefreshing = false;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (swRefreshing) return;
+        if (!hadController || swRefreshing) return;
         swRefreshing = true;
         location.reload();
     });
+    navigator.serviceWorker.register('./sw.js').then(reg => reg.update()).catch(() => {});
 }
 
 function updateTodayBanner() { renderDailyMotivation(); }
