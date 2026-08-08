@@ -642,8 +642,8 @@ document.getElementById('date-strip').addEventListener('click', (e) => {
 // La semana del programa se deriva siempre de la fecha seleccionada
 function updateWeek() {
     currentWeek = getWeekForDate(selectedDate);
-    document.getElementById('week-number').textContent = currentWeek;
-    document.querySelectorAll('.week-ref').forEach(el => el.textContent = currentWeek);
+    // La semana del programa ya no se muestra en pantalla, pero se sigue usando
+    // internamente para elegir el bloque de rutina y contar los entrenos.
 
     const dayKey = getSelectedDayKey();
     const dayLabel = document.getElementById('date-day-label');
@@ -731,7 +731,6 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
 
 // --- Action: Rutina ---
 document.getElementById('btn-routine').addEventListener('click', () => {
-    document.getElementById('routine-week').textContent = currentWeek;
     const dateEl = document.getElementById('routine-date');
     if (dateEl) dateEl.textContent = formatSelectedDate();
     const body = document.getElementById('routine-body');
