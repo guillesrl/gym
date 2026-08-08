@@ -30,12 +30,19 @@
             <button class="tab gender-btn" data-gender="tonificar">Mujer</button>
             <button class="tab gender-btn" data-gender="hombre">Hombre</button>
         </div>
-        <div class="week-selector">
-            <button class="week-nav" id="prev-week">&#8249;</button>
-            <span class="week-label">Semana <span id="week-number">1</span></span>
-            <button class="week-nav" id="next-week">&#8250;</button>
+        <div class="date-selector">
+            <div class="date-selector-head">
+                <button class="week-nav" id="prev-month" aria-label="Mes anterior">&#8249;</button>
+                <span class="date-month-label" id="date-month"></span>
+                <button class="week-nav" id="next-month" aria-label="Mes siguiente">&#8250;</button>
+            </div>
+            <div class="date-strip" id="date-strip"></div>
+            <div class="date-context">
+                <span class="week-label">Semana <span id="week-number">1</span></span>
+                <span class="date-context-day" id="date-day-label"></span>
+            </div>
         </div>
-        <button class="week-today-btn" id="week-today" style="display:none">&#8617; Volver a semana actual</button>
+        <button class="week-today-btn" id="date-today" style="display:none">&#8617; Volver a hoy</button>
         <div class="stats-grid">
             <div class="stat-card">
                 <span class="stat-icon" aria-hidden="true">
@@ -115,7 +122,7 @@
     <div class="modal-overlay fullscreen-mobile" id="modal-routine">
         <div class="modal">
             <div class="modal-header">
-                <h2>Rutina Semana <span id="routine-week">1</span></h2>
+                <h2>Rutina <span id="routine-date"></span> · Semana <span id="routine-week">1</span></h2>
                 <button class="modal-close" data-close="modal-routine">X</button>
             </div>
             <div class="modal-body" id="routine-body"></div>
@@ -168,6 +175,6 @@
     <!-- El service worker se registra en js/app.js. No registrarlo aquí ni
          desregistrarlo en cada carga: eso provocaba un bucle infinito de
          recargas (unregister -> register -> claim -> controllerchange -> reload). -->
-    <script src="js/app.js?v=57"></script>
+    <script src="js/app.js?v=58"></script>
 </body>
 </html>

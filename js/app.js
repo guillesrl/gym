@@ -2,19 +2,16 @@
 let currentWeek = 1, currentTab = localStorage.getItem('rutina-genero') === 'hombre' ? 'hombre' : 'tonificar';
 let state = loadState();
 
+// Fecha con la que trabaja la app: por defecto hoy. La semana del programa ya no
+// se elige a mano, se deduce de esta fecha.
+let selectedDate = getLocalDateKey();
+// Mes que se está mostrando en la tira de días (día 1 del mes)
+let stripMonth = new Date();
+
 // Semana del programa (1-4) que cicla: tras la 4 vuelve a la 1
 function programWeekFromDays(diffDays) {
     if (diffDays < 0) return 1;
     return (Math.floor(diffDays / 7) % 4) + 1;
-}
-
-function getAutoWeek() {
-    const startDate = localStorage.getItem('program-start-date');
-    if (!startDate) return 1;
-    const start = new Date(startDate + 'T12:00:00');
-    const now = new Date();
-    const diffDays = Math.floor((now - start) / (1000 * 60 * 60 * 24));
-    return programWeekFromDays(diffDays);
 }
 
 // Semana del programa a la que corresponde una fecha concreta
@@ -194,6 +191,19 @@ function getWeekStartKey(date = new Date()) {
     return getLocalDateKey(weekStart);
 }
 
+// Día anterior a una fecha dada (clave YYYY-MM-DD)
+function getPrevDayKey(dateKey) {
+    const d = new Date(dateKey + 'T12:00:00');
+    d.setDate(d.getDate() - 1);
+    return getLocalDateKey(d);
+}
+
+// "vie 8 ago" — etiqueta corta de la fecha seleccionada
+function formatSelectedDate() {
+    const d = getSelectedDateObj();
+    return d.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' });
+}
+
 function getYesterdayKey() {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
@@ -358,9 +368,9 @@ function hasTodayWorkout() {
     const today = getLocalDateKey();
     return state.workouts.some(w => w.date === today);
 }
-function isDayRegisteredToday(day) {
-    const today = getLocalDateKey();
-    return state.workouts.some(w => w.date === today && w.notes === day && w.type === currentTab);
+// ¿Ya hay un entreno registrado de ese día de rutina en la fecha seleccionada?
+function isDayRegisteredToday(day, dateKey = selectedDate) {
+    return state.workouts.some(w => w.date === dateKey && w.notes === day && w.type === currentTab);
 }
 
 function getExplosionRoot() {
@@ -564,31 +574,85 @@ function renderDailyMotivation() {
     el.textContent = pool[getWeekOfYear(now) % pool.length];
 }
 
-// --- Week ---
-// Guarda la semana elegida manualmente, marcada con la fecha de hoy
-// (solo se respeta durante el mismo día; al día siguiente vuelve a la automática).
-function rememberSelectedWeek() {
-    localStorage.setItem('selected-week', currentWeek);
-    localStorage.setItem('selected-week-date', getLocalDateKey());
+// --- Calendario: selección por fecha ---
+const DAY_INITIALS = ['D', 'L', 'M', 'X', 'J', 'V', 'S'];
+const MONTH_NAMES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+                     'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+function dateFromKey(key) { return new Date(key + 'T12:00:00'); }
+function isSelectedToday() { return selectedDate === getLocalDateKey(); }
+function getSelectedDateObj() { return dateFromKey(selectedDate); }
+
+// Día de rutina (Día 1/2/3...) que toca en la fecha seleccionada, o null si es descanso
+function getSelectedDayKey() {
+    return getDayMap()[getSelectedDateObj().getDay()] || null;
 }
-document.getElementById('prev-week').addEventListener('click', () => {
-    if (currentWeek > 1) { currentWeek--; updateWeek(); rememberSelectedWeek(); }
-});
-document.getElementById('next-week').addEventListener('click', () => {
-    if (currentWeek < 4) { currentWeek++; updateWeek(); rememberSelectedWeek(); }
-});
-document.getElementById('week-today').addEventListener('click', () => {
-    currentWeek = getAutoWeek();
-    localStorage.removeItem('selected-week');
-    localStorage.removeItem('selected-week-date');
+
+function setSelectedDate(key) {
+    if (key > getLocalDateKey()) return;   // no se puede ir al futuro
+    selectedDate = key;
+    const d = dateFromKey(key);
+    stripMonth = new Date(d.getFullYear(), d.getMonth(), 1);
     updateWeek();
+    updateUI();
+}
+
+// Pinta los días del mes visible. El seleccionado queda marcado y centrado.
+function renderDateStrip() {
+    const strip = document.getElementById('date-strip');
+    if (!strip) return;
+    const year = stripMonth.getFullYear(), month = stripMonth.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const todayKey = getLocalDateKey();
+
+    document.getElementById('date-month').textContent = `${MONTH_NAMES[month]} ${year}`;
+
+    let html = '';
+    for (let day = 1; day <= daysInMonth; day++) {
+        const d = new Date(year, month, day);
+        const key = getLocalDateKey(d);
+        const classes = ['date-cell'];
+        if (key === selectedDate) classes.push('selected');
+        if (key === todayKey) classes.push('today');
+        if (key > todayKey) classes.push('future');
+        html += `<button type="button" class="${classes.join(' ')}" data-date="${key}"${key > todayKey ? ' disabled' : ''}>
+            <span class="date-cell-dow">${DAY_INITIALS[d.getDay()]}</span>
+            <span class="date-cell-num">${day}</span>
+        </button>`;
+    }
+    strip.innerHTML = html;
+
+    const sel = strip.querySelector('.date-cell.selected');
+    if (sel) strip.scrollLeft = sel.offsetLeft - (strip.clientWidth / 2) + (sel.clientWidth / 2);
+}
+
+function shiftStripMonth(delta) {
+    stripMonth = new Date(stripMonth.getFullYear(), stripMonth.getMonth() + delta, 1);
+    renderDateStrip();
+}
+
+document.getElementById('prev-month').addEventListener('click', () => shiftStripMonth(-1));
+document.getElementById('next-month').addEventListener('click', () => shiftStripMonth(1));
+document.getElementById('date-today').addEventListener('click', () => setSelectedDate(getLocalDateKey()));
+document.getElementById('date-strip').addEventListener('click', (e) => {
+    const cell = e.target.closest('.date-cell');
+    if (cell && !cell.disabled) setSelectedDate(cell.dataset.date);
 });
+
+// La semana del programa se deriva siempre de la fecha seleccionada
 function updateWeek() {
+    currentWeek = getWeekForDate(selectedDate);
     document.getElementById('week-number').textContent = currentWeek;
     document.querySelectorAll('.week-ref').forEach(el => el.textContent = currentWeek);
-    // El botón "Volver a semana actual" solo aparece si no estás en la automática
-    const todayBtn = document.getElementById('week-today');
-    if (todayBtn) todayBtn.style.display = (currentWeek === getAutoWeek()) ? 'none' : '';
+
+    const dayKey = getSelectedDayKey();
+    const dayLabel = document.getElementById('date-day-label');
+    if (dayLabel) dayLabel.textContent = dayKey ? getDayLabel(dayKey) : 'Descanso';
+
+    const todayBtn = document.getElementById('date-today');
+    if (todayBtn) todayBtn.style.display = isSelectedToday() ? 'none' : '';
+
+    renderDateStrip();
 }
 
 // --- Género (Mujer / Hombre) ---
@@ -621,17 +685,11 @@ async function loadRoutines() {
     if (!localStorage.getItem('program-start-date')) {
         localStorage.setItem('program-start-date', getLocalDateKey());
     }
-    // La semana automática manda. Solo se respeta una elección manual si es de HOY;
-    // si es de un día anterior, se descarta y se vuelve a la automática.
-    const savedWeek = localStorage.getItem('selected-week');
-    const savedDate = localStorage.getItem('selected-week-date');
-    if (savedWeek && savedDate === getLocalDateKey()) {
-        currentWeek = parseInt(savedWeek);
-    } else {
-        localStorage.removeItem('selected-week');
-        localStorage.removeItem('selected-week-date');
-        currentWeek = getAutoWeek();
-    }
+    // Cada arranque empieza en el día de hoy; la semana se deduce de la fecha.
+    localStorage.removeItem('selected-week');
+    localStorage.removeItem('selected-week-date');
+    selectedDate = getLocalDateKey();
+    stripMonth = new Date();
     updateWeek();
     updateGenderUI();
     updateTodayBanner();
@@ -674,17 +732,20 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
 // --- Action: Rutina ---
 document.getElementById('btn-routine').addEventListener('click', () => {
     document.getElementById('routine-week').textContent = currentWeek;
+    const dateEl = document.getElementById('routine-date');
+    if (dateEl) dateEl.textContent = formatSelectedDate();
     const body = document.getElementById('routine-body');
     const days = getRoutines();
-    const dayMap = getDayMap();
-    const todayName = dayMap[new Date().getDay()];
+    // El día que se despliega es el que toca en la FECHA seleccionada, no en hoy
+    const todayName = getSelectedDayKey();
+    const marker = isSelectedToday() ? ' (Hoy)' : ` (${formatSelectedDate()})`;
     body.innerHTML = Object.entries(days).map(([day, exercises]) => {
         const isToday = day === todayName;
         const alreadyDone = isDayRegisteredToday(day);
         return `
         <div class="routine-day">
             <div class="routine-day-header${isToday ? ' open' : ''}" onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('open')">
-                <span>${getDayLabel(day)}${isToday ? ' (Hoy)' : ''}</span>
+                <span>${getDayLabel(day)}${isToday ? marker : ''}</span>
                 <span class="arrow">&#8250;</span>
             </div>
             <div class="routine-day-content${isToday ? ' open' : ''}">
@@ -706,7 +767,7 @@ document.getElementById('btn-routine').addEventListener('click', () => {
                 `).join('')}
                 <div class="day-register-row">
                     <input type="number" class="day-duration-input" placeholder="Minutos" min="5" max="180" data-day="${day}"${alreadyDone ? ' disabled' : ''}>
-                    <button class="day-register-btn${alreadyDone ? ' done' : ''}" data-day="${day}"${alreadyDone ? ' disabled' : ''}>${alreadyDone ? '&#10003; Entrenado hoy' : '&#10003; Registrar entreno'}</button>
+                    <button class="day-register-btn${alreadyDone ? ' done' : ''}" data-day="${day}"${alreadyDone ? ' disabled' : ''}>${alreadyDone ? (isSelectedToday() ? '&#10003; Entrenado hoy' : '&#10003; Entrenado el ' + formatSelectedDate()) : '&#10003; Registrar entreno'}</button>
                 </div>
             </div>
         </div>
@@ -727,10 +788,12 @@ document.getElementById('routine-body').addEventListener('click', (e) => {
         if (!duration || duration < 5) { input.focus(); input.style.borderColor = 'red'; return; }
         input.style.borderColor = '';
 
-        const today = getLocalDateKey();
+        // El entreno se registra en la FECHA SELECCIONADA, no necesariamente hoy
+        const today = selectedDate;
         const prev = state.workouts.length > 0 ? state.workouts[state.workouts.length - 1] : null;
-        if (state.lastDate !== today) {
-            state.streak = (state.lastDate === getYesterdayKey()) ? state.streak + 1 : 1;
+        // La racha solo avanza si el registro es más reciente que el último
+        if (!state.lastDate || today > state.lastDate) {
+            state.streak = (state.lastDate === getPrevDayKey(today)) ? state.streak + 1 : 1;
             state.lastDate = today;
         }
         document.querySelectorAll('.exercise-weight input').forEach(inp => {
@@ -753,7 +816,7 @@ document.getElementById('routine-body').addEventListener('click', (e) => {
         regBtn.disabled = true;
         input.disabled = true;
         setTimeout(() => {
-            regBtn.innerHTML = '&#10003; Entrenado hoy';
+            regBtn.innerHTML = isSelectedToday() ? '&#10003; Entrenado hoy' : '&#10003; Entrenado el ' + formatSelectedDate();
             regBtn.classList.add('done');
             input.value = '';
         }, 1200);
