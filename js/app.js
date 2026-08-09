@@ -656,12 +656,26 @@ function updateWeek() {
 }
 
 // --- Género (Mujer / Hombre) ---
+// La paleta depende del programa: mujer mantiene la original, hombre pasa a
+// azul sobre blanco (claro) y verde sobre negro (oscuro). Ver css/style.css.
+function applyGenderTheme() {
+    document.body.classList.toggle('hombre', currentTab === 'hombre');
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) {
+        const dark = document.body.classList.contains('dark');
+        meta.setAttribute('content',
+            currentTab === 'hombre' ? (dark ? '#060a07' : '#f2f6fd')
+                                    : (dark ? '#14101c' : '#fafaf7'));
+    }
+}
 function updateGenderUI() {
     document.querySelectorAll('.gender-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.gender === currentTab);
     });
+    applyGenderTheme();
     updateUI();
 }
+applyGenderTheme();   // cuanto antes, para no pintar con la paleta equivocada
 function setGender(gender) {
     if (gender !== 'hombre' && gender !== 'tonificar') return;
     if (gender === currentTab) return;
@@ -1122,6 +1136,7 @@ updateUI();
         btn.addEventListener('click', () => {
             document.body.classList.toggle('dark');
             localStorage.setItem('dark-mode', document.body.classList.contains('dark') ? '1' : '0');
+            applyGenderTheme();   // refresca el theme-color del navegador
         });
     }
 })();

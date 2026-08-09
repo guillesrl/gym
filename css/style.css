@@ -28,6 +28,38 @@ body.dark {
     --shadow-hard: 8px 8px 0 #b388ff;
     --shadow-small: 5px 5px 0 #b388ff;
 }
+/* Programa HOMBRE: azul sobre blanco en claro, verde sobre negro en oscuro.
+   La clase la pone js/app.js según el género seleccionado. */
+body.hombre {
+    --background: #f2f6fd;
+    --foreground: #0a1a33;
+    --card: #fff;
+    --muted: #dde8fa;
+    --muted-foreground: #4c5f7e;
+    --accent: #cadefc;
+    --destructive: #d92d20;
+    --border: #0b3d91;
+    --primary: #0b57d0;
+    --primary-foreground: #fff;
+    --sprout: #0b8a4a;
+    --shadow-hard: 8px 8px 0 #0b3d91;
+    --shadow-small: 5px 5px 0 #0b3d91;
+}
+body.dark.hombre {
+    --background: #060a07;
+    --foreground: #e6ffe9;
+    --card: #101710;
+    --muted: #17231a;
+    --muted-foreground: #85a88f;
+    --accent: #0d3d25;
+    --destructive: #ff6b5a;
+    --border: #00e676;
+    --primary: #00e676;
+    --primary-foreground: #060a07;
+    --sprout: #66ffa6;
+    --shadow-hard: 8px 8px 0 #00e676;
+    --shadow-small: 5px 5px 0 #00e676;
+}
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
