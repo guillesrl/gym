@@ -224,7 +224,9 @@ body.dark .dark-toggle .icon-moon { display: none; }
     margin-bottom: 20px; padding: 10px; background: var(--card);
     border: 2px solid var(--border); box-shadow: var(--shadow-small);
 }
+.week-progress { justify-content: space-between; }
 .week-progress-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted-foreground); }
+.week-progress-count { font-size: 12px; font-weight: 800; letter-spacing: 0.5px; }
 .week-dots { display: flex; gap: 6px; }
 .week-dot {
     width: 12px; height: 12px; border: 2px solid var(--border);

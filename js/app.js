@@ -204,6 +204,23 @@ function formatSelectedDate() {
     return d.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' });
 }
 
+function getWeekEndKey(date = new Date()) {
+    const weekEnd = new Date(date);
+    const day = weekEnd.getDay() || 7;
+    weekEnd.setDate(weekEnd.getDate() + (7 - day));
+    return getLocalDateKey(weekEnd);
+}
+
+// "3 - 9 ago": el rango de la semana natural de la fecha seleccionada
+function getWeekRangeLabel() {
+    const from = dateFromKey(getWeekStartKey(getSelectedDateObj()));
+    const to = dateFromKey(getWeekEndKey(getSelectedDateObj()));
+    const fmt = (d, withMonth) => d.toLocaleDateString('es-ES',
+        withMonth ? { day: 'numeric', month: 'short' } : { day: 'numeric' });
+    const sameMonth = from.getMonth() === to.getMonth();
+    return `${fmt(from, !sameMonth)} - ${fmt(to, true)}`;
+}
+
 function getYesterdayKey() {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
@@ -237,11 +254,13 @@ function normalizeState(saved) {
     return next;
 }
 
+// Entrenos hechos en la semana natural (lunes-domingo) de la fecha seleccionada.
+// Antes se contaba por semana del programa (1-4), que dura lo mismo pero no
+// empieza en lunes: el número no cuadraba con lo que uno tiene en la cabeza.
 function getCurrentWeekCount(workouts = state.workouts) {
-    return workouts.filter(workout => {
-        const weekForWorkout = getWeekForDate(workout.date);
-        return weekForWorkout === currentWeek;
-    }).length;
+    const from = getWeekStartKey(getSelectedDateObj());
+    const to = getWeekEndKey(getSelectedDateObj());
+    return workouts.filter(w => w.date >= from && w.date <= to).length;
 }
 
 function loadState() {
@@ -273,7 +292,9 @@ function updateWeekProgress() {
     for (let i = 0; i < totalDays; i++) {
         dots += `<div class="week-dot${i < done ? ' filled' : ''}"></div>`;
     }
-    el.innerHTML = `<span class="week-progress-label">${done}/${totalDays}</span><div class="week-dots">${dots}</div>`;
+    el.innerHTML = `<span class="week-progress-label">Entrenos ${getWeekRangeLabel()}</span>`
+        + `<div class="week-dots">${dots}</div>`
+        + `<span class="week-progress-count">${done}/${totalDays}</span>`;
 }
 
 function buildHistoryHtml() {
