@@ -385,10 +385,6 @@ function downloadHistory() {
 }
 
 // --- Utils ---
-function hasTodayWorkout() {
-    const today = getLocalDateKey();
-    return state.workouts.some(w => w.date === today);
-}
 // ¿Ya hay un entreno registrado de ese día de rutina en la fecha seleccionada?
 function isDayRegisteredToday(day, dateKey = selectedDate) {
     return state.workouts.some(w => w.date === dateKey && w.notes === day && w.type === currentTab);
