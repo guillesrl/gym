@@ -665,7 +665,7 @@ function applyGenderTheme() {
         const dark = document.body.classList.contains('dark');
         meta.setAttribute('content',
             currentTab === 'hombre' ? (dark ? '#060a07' : '#f2f6fd')
-                                    : (dark ? '#14101c' : '#fafaf7'));
+                                    : (dark ? '#14101c' : '#fdf3f7'));
     }
 }
 function updateGenderUI() {

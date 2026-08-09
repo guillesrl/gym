@@ -1,15 +1,18 @@
+/* Programa MUJER (por defecto): blanco y rosa, con la misma estructura de
+   paleta que .hombre usa en azul. */
 :root {
-    --background: #fafaf7;
-    --foreground: #000;
+    --background: #fdf3f7;
+    --foreground: #33091d;
     --card: #fff;
-    --muted: #e8e6dd;
-    --muted-foreground: #6b6b62;
+    --muted: #fadde8;
+    --muted-foreground: #7e4c62;
     --accent: #f9c4d2;
-    --destructive: #ff2d00;
-    --border: #000;
-    --primary: #000;
+    --destructive: #d92d20;
+    --border: #9c1450;
+    --primary: #d0246c;
     --primary-foreground: #fff;
     --sprout: #00a859;
+    --shadow-color: #000;
     --shadow-hard: 8px 8px 0 #000;
     --shadow-small: 5px 5px 0 #000;
 }
@@ -25,6 +28,7 @@ body.dark {
     --primary: #b388ff;
     --primary-foreground: #14101c;
     --sprout: #35d68a;
+    --shadow-color: #b388ff;
     --shadow-hard: 8px 8px 0 #b388ff;
     --shadow-small: 5px 5px 0 #b388ff;
 }
@@ -42,6 +46,7 @@ body.hombre {
     --primary: #0b57d0;
     --primary-foreground: #fff;
     --sprout: #0b8a4a;
+    --shadow-color: #000;
     --shadow-hard: 8px 8px 0 #000;
     --shadow-small: 5px 5px 0 #000;
 }
@@ -57,6 +62,7 @@ body.dark.hombre {
     --primary: #00e676;
     --primary-foreground: #060a07;
     --sprout: #66ffa6;
+    --shadow-color: #00e676;
     --shadow-hard: 8px 8px 0 #00e676;
     --shadow-small: 5px 5px 0 #00e676;
 }
@@ -249,7 +255,7 @@ body.dark .dark-toggle .icon-moon { display: none; }
     margin-bottom: 14px;
     position: relative; z-index: 1; box-shadow: var(--shadow-hard);
 }
-.action-card:hover { background: var(--accent); z-index: 2; transform: translate(-3px, -3px); box-shadow: 11px 11px 0 #000; }
+.action-card:hover { background: var(--accent); z-index: 2; transform: translate(-3px, -3px); box-shadow: 11px 11px 0 var(--shadow-color); }
 .action-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
 .action-icon {
     width: 40px; height: 40px; border: 2px solid var(--border);
@@ -288,7 +294,7 @@ body.dark .dark-toggle .icon-moon { display: none; }
     text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
     box-shadow: var(--shadow-hard); transition: all 0.15s ease;
 }
-.btn-export:hover { background: var(--accent); transform: translate(-3px, -3px); box-shadow: 11px 11px 0 #000; }
+.btn-export:hover { background: var(--accent); transform: translate(-3px, -3px); box-shadow: 11px 11px 0 var(--shadow-color); }
 .btn-export svg {
     width: 20px; height: 20px; fill: none; stroke: currentColor;
     stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
