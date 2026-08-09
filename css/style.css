@@ -152,7 +152,9 @@ body.dark .dark-toggle .icon-moon { display: none; }
 }
 .date-cell-dow { font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.65; }
 .date-cell-num { font-size: 17px; font-weight: 800; line-height: 1; }
-.date-cell.today { border-color: var(--primary); }
+/* El día de hoy, cuando no es el seleccionado, va en el color de acento
+   (rosa en Mujer, azul claro en Hombre): es el detalle de color de la home. */
+.date-cell.today { background: var(--accent); }
 .date-cell.today .date-cell-num { text-decoration: underline; }
 .date-cell.selected {
     background: var(--primary); color: var(--primary-foreground);
@@ -165,8 +167,10 @@ body.dark .dark-toggle .icon-moon { display: none; }
     gap: 10px; flex-wrap: wrap;
 }
 .date-context-day {
-    font-size: 12px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.5px; opacity: 0.75;
+    background: var(--accent); border: 2px solid var(--border);
+    padding: 8px 14px; font-size: 13px; font-weight: 800;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    box-shadow: var(--shadow-small);
 }
 .week-nav {
     width: 32px; height: 32px; border: 2px solid var(--border);
