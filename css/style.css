@@ -42,8 +42,8 @@ body.hombre {
     --primary: #0b57d0;
     --primary-foreground: #fff;
     --sprout: #0b8a4a;
-    --shadow-hard: 8px 8px 0 #0b3d91;
-    --shadow-small: 5px 5px 0 #0b3d91;
+    --shadow-hard: 8px 8px 0 #000;
+    --shadow-small: 5px 5px 0 #000;
 }
 body.dark.hombre {
     --background: #060a07;
