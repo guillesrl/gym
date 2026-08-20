@@ -1043,10 +1043,19 @@ document.getElementById('btn-historial').addEventListener('click', () => {
 
 document.getElementById('btn-export-history').addEventListener('click', downloadHistory);
 
+function getBackupUserName() {
+    let name = localStorage.getItem('backup-user-name');
+    if (name) return name;
+    name = (prompt('¿Cómo te llamas? (para identificar tus backups en el servidor)') || '').trim();
+    if (name) localStorage.setItem('backup-user-name', name);
+    return name;
+}
+
 function buildBackup() {
     const backup = {
         version: 1,
         date: getLocalDateKey(),
+        user: getBackupUserName(),
         state: state,
         prs: {},
         prDates: {},
@@ -1075,12 +1084,19 @@ function buildBackup() {
     return backup;
 }
 
-// Backup automático: manda una copia al servidor una vez al día si hubo cambios.
-// No bloquea la UI ni avisa al usuario; si falla (sin red, servidor caído), se reintenta al día siguiente.
+// Backup automático: manda una copia al servidor una vez por semana (7+ días desde la última).
+// No bloquea la UI ni avisa al usuario; si falla (sin red, servidor caído), se reintenta la próxima vez.
 const AUTO_BACKUP_URL = 'https://n8n.guillers.es/webhook/entreno-brutal-backup?token=f9f6ec0a924a28a4497df6d789dd6f53';
+const AUTO_BACKUP_INTERVAL_DAYS = 7;
 function autoBackupIfNeeded() {
+    const lastRaw = localStorage.getItem('auto-backup-last');
+    if (lastRaw) {
+        const daysSince = (dateFromKey(getLocalDateKey()) - dateFromKey(lastRaw)) / 86400000;
+        if (daysSince < AUTO_BACKUP_INTERVAL_DAYS) return;
+    }
+    const user = getBackupUserName();
+    if (!user) return;
     const today = getLocalDateKey();
-    if (localStorage.getItem('auto-backup-last') === today) return;
     fetch(AUTO_BACKUP_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
