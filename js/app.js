@@ -708,7 +708,7 @@ document.querySelectorAll('.gender-btn').forEach(btn => {
 let routines = {};
 async function loadRoutines() {
     try {
-        const res = await fetch('./data/routines.json?v=48', { cache: 'no-store' });
+        const res = await fetch('./data/routines.json?v=49', { cache: 'no-store' });
         routines = await res.json();
     } catch (e) {
         console.warn('No se pudo cargar routines.json', e);
@@ -725,6 +725,7 @@ async function loadRoutines() {
     updateGenderUI();
     updateTodayBanner();
     prefetchExerciseImages();
+    autoBackupIfNeeded();
 }
 loadRoutines();
 
@@ -839,6 +840,7 @@ document.getElementById('routine-body').addEventListener('click', (e) => {
         state.total = state.workouts.length;
         state.weekCount = getCurrentWeekCount();
         saveState();
+        autoBackupIfNeeded();
         updateUI();
         triggerWorkoutExplosion(regBtn);
 
@@ -1041,7 +1043,7 @@ document.getElementById('btn-historial').addEventListener('click', () => {
 
 document.getElementById('btn-export-history').addEventListener('click', downloadHistory);
 
-document.getElementById('btn-backup-export').addEventListener('click', () => {
+function buildBackup() {
     const backup = {
         version: 1,
         date: getLocalDateKey(),
@@ -1070,6 +1072,26 @@ document.getElementById('btn-backup-export').addEventListener('click', () => {
             backup.setsReps[k] = localStorage.getItem(k);
         }
     }
+    return backup;
+}
+
+// Backup automático: manda una copia al servidor una vez al día si hubo cambios.
+// No bloquea la UI ni avisa al usuario; si falla (sin red, servidor caído), se reintenta al día siguiente.
+const AUTO_BACKUP_URL = 'https://n8n.guillers.es/webhook/entreno-brutal-backup?token=f9f6ec0a924a28a4497df6d789dd6f53';
+function autoBackupIfNeeded() {
+    const today = getLocalDateKey();
+    if (localStorage.getItem('auto-backup-last') === today) return;
+    fetch(AUTO_BACKUP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(buildBackup())
+    }).then(res => {
+        if (res.ok) localStorage.setItem('auto-backup-last', today);
+    }).catch(() => {});
+}
+
+document.getElementById('btn-backup-export').addEventListener('click', () => {
+    const backup = buildBackup();
     const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
