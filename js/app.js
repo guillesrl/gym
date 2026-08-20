@@ -862,7 +862,7 @@ document.getElementById('routine-body').addEventListener('click', (e) => {
         state.total = state.workouts.length;
         state.weekCount = getCurrentWeekCount();
         saveState();
-        autoBackupIfNeeded();
+        sendBackup();
         updateUI();
         triggerWorkoutExplosion(regBtn);
 
@@ -1106,26 +1106,35 @@ function buildBackup() {
     return backup;
 }
 
-// Backup automático: manda una copia al servidor una vez por semana (7+ días desde la última).
-// No bloquea la UI ni avisa al usuario; si falla (sin red, servidor caído), se reintenta la próxima vez.
+// Backup automático. No bloquea la UI ni avisa al usuario; si falla (sin red,
+// servidor caído), no pasa nada grave porque se reintenta en la próxima ocasión.
 const AUTO_BACKUP_URL = 'https://n8n.guillers.es/webhook/entreno-brutal-backup?token=f9f6ec0a924a28a4497df6d789dd6f53';
 const AUTO_BACKUP_INTERVAL_DAYS = 7;
+
+// keepalive: true evita que el navegador cancele el POST si la app pasa a
+// segundo plano justo después de registrar (muy común en PWA en móvil).
+function sendBackup() {
+    const user = getBackupUserName();
+    if (!user) return;
+    fetch(AUTO_BACKUP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(buildBackup()),
+        keepalive: true
+    }).then(res => {
+        if (res.ok) localStorage.setItem('auto-backup-last', getLocalDateKey());
+    }).catch(() => {});
+}
+
+// Al abrir la app: backup semanal (7+ días desde el último), para no golpear
+// el servidor en cada apertura si no hay nada nuevo.
 function autoBackupIfNeeded() {
     const lastRaw = localStorage.getItem('auto-backup-last');
     if (lastRaw) {
         const daysSince = (dateFromKey(getLocalDateKey()) - dateFromKey(lastRaw)) / 86400000;
         if (daysSince < AUTO_BACKUP_INTERVAL_DAYS) return;
     }
-    const user = getBackupUserName();
-    if (!user) return;
-    const today = getLocalDateKey();
-    fetch(AUTO_BACKUP_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(buildBackup())
-    }).then(res => {
-        if (res.ok) localStorage.setItem('auto-backup-last', today);
-    }).catch(() => {});
+    sendBackup();
 }
 
 document.getElementById('btn-backup-export').addEventListener('click', () => {
