@@ -1,0 +1,184 @@
+{
+  "name": "Entreno Brutal - Backup automático",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": ["POST", "OPTIONS"],
+        "path": "entreno-brutal-backup",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "https://guillesrl.github.io"
+        }
+      },
+      "id": "webhook-node",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-400, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-method",
+              "leftValue": "={{ $json.headers.method || $request.method }}",
+              "rightValue": "OPTIONS",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-options",
+      "name": "Es preflight OPTIONS",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [-160, 0]
+    },
+    {
+      "parameters": {
+        "respondWith": "noData",
+        "options": {
+          "responseCode": 204,
+          "responseHeaders": {
+            "entries": [
+              { "name": "Access-Control-Allow-Origin", "value": "https://guillesrl.github.io" },
+              { "name": "Access-Control-Allow-Methods", "value": "POST, OPTIONS" },
+              { "name": "Access-Control-Allow-Headers", "value": "Content-Type" }
+            ]
+          }
+        }
+      },
+      "id": "respond-options",
+      "name": "Responder OPTIONS",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [80, -160]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-token",
+              "leftValue": "={{ $json.query.token }}",
+              "rightValue": "f9f6ec0a924a28a4497df6d789dd6f53",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-token",
+      "name": "Token válido",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [80, 160]
+    },
+    {
+      "parameters": {
+        "operation": "toJson",
+        "options": {
+          "fileName": "=backup-{{ $now.format('yyyy-MM-dd') }}.json"
+        }
+      },
+      "id": "convert-to-file",
+      "name": "Convertir a archivo",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [340, 60]
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/home/node/.n8n/backups/entreno-brutal/backup-{{ $now.format('yyyy-MM-dd') }}.json",
+        "options": {}
+      },
+      "id": "write-file",
+      "name": "Guardar en disco",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [560, 60]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true } }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              { "name": "Access-Control-Allow-Origin", "value": "https://guillesrl.github.io" }
+            ]
+          }
+        }
+      },
+      "id": "respond-ok",
+      "name": "Responder OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [780, 60]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: false, error: 'invalid token' } }}",
+        "options": {
+          "responseCode": 401,
+          "responseHeaders": {
+            "entries": [
+              { "name": "Access-Control-Allow-Origin", "value": "https://guillesrl.github.io" }
+            ]
+          }
+        }
+      },
+      "id": "respond-unauthorized",
+      "name": "Responder 401",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [340, 260]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{ "node": "Es preflight OPTIONS", "type": "main", "index": 0 }]]
+    },
+    "Es preflight OPTIONS": {
+      "main": [
+        [{ "node": "Responder OPTIONS", "type": "main", "index": 0 }],
+        [{ "node": "Token válido", "type": "main", "index": 0 }]
+      ]
+    },
+    "Token válido": {
+      "main": [
+        [{ "node": "Convertir a archivo", "type": "main", "index": 0 }],
+        [{ "node": "Responder 401", "type": "main", "index": 0 }]
+      ]
+    },
+    "Convertir a archivo": {
+      "main": [[{ "node": "Guardar en disco", "type": "main", "index": 0 }]]
+    },
+    "Guardar en disco": {
+      "main": [[{ "node": "Responder OK", "type": "main", "index": 0 }]]
+    }
+  }
+}
