@@ -263,15 +263,35 @@ function getCurrentWeekCount(workouts = state.workouts) {
     return workouts.filter(w => w.date >= from && w.date <= to).length;
 }
 
+// Se detectaron casos (algunos móviles/navegadores) donde la clave principal
+// 'entreno-brutal' se vacía sola sin tocar el resto de localStorage. Como red
+// de seguridad local (sin depender de red), se mantiene una copia espejo en
+// otra clave; si la principal aparece vacía pero el espejo tiene datos reales,
+// se restaura desde ahí automáticamente.
+const STATE_KEY = 'entreno-brutal';
+const STATE_MIRROR_KEY = 'entreno-brutal-mirror';
+
 function loadState() {
-    try {
-        const s = JSON.parse(localStorage.getItem('entreno-brutal'));
-        return normalizeState(s);
-    } catch { return defaultState(); }
+    let primary = null;
+    try { primary = JSON.parse(localStorage.getItem(STATE_KEY)); } catch { primary = null; }
+
+    if (!primary || !Array.isArray(primary.workouts) || primary.workouts.length === 0) {
+        let mirror = null;
+        try { mirror = JSON.parse(localStorage.getItem(STATE_MIRROR_KEY)); } catch { mirror = null; }
+        if (mirror && Array.isArray(mirror.workouts) && mirror.workouts.length > 0) {
+            const restored = normalizeState(mirror);
+            localStorage.setItem(STATE_KEY, JSON.stringify(restored));
+            localStorage.setItem(STATE_MIRROR_KEY, JSON.stringify(restored));
+            return restored;
+        }
+    }
+    return normalizeState(primary);
 }
 
 function saveState() {
-    localStorage.setItem('entreno-brutal', JSON.stringify(state));
+    const json = JSON.stringify(state);
+    localStorage.setItem(STATE_KEY, json);
+    localStorage.setItem(STATE_MIRROR_KEY, json);
 }
 
 function updateUI() {
@@ -1163,7 +1183,8 @@ document.getElementById('backup-file-input').addEventListener('change', (e) => {
             const backup = JSON.parse(ev.target.result);
             if (!backup.state || !backup.state.workouts) throw new Error('Invalid backup');
             if (!confirm('Esto reemplazara todos tus datos actuales. ¿Continuar?')) return;
-            localStorage.setItem('entreno-brutal', JSON.stringify(backup.state));
+            localStorage.setItem(STATE_KEY, JSON.stringify(backup.state));
+            localStorage.setItem(STATE_MIRROR_KEY, JSON.stringify(backup.state));
             state = loadState();
             updateUI();
             if (backup.programStartDate) localStorage.setItem('program-start-date', backup.programStartDate);
