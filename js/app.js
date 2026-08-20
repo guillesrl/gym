@@ -466,21 +466,43 @@ function checkAndSetPR(name, weight) {
     }
     return false;
 }
+let toastTimeout = null;
+function showToast(message) {
+    let toast = document.getElementById('toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toast';
+        toast.className = 'toast';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.classList.add('show');
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => toast.classList.remove('show'), 3200);
+}
+
 window.handleWeightChange = function(input) {
     const name = input.dataset.exercise;
     const weight = parseFloat(input.value);
     localStorage.setItem('peso:' + name, input.value);
     const isNewPR = checkAndSetPR(name, weight);
     const badge = input.closest('.exercise-weight').querySelector('.pr-badge');
-    if (!badge) return;
-    const pr = getPR(name);
-    if (pr !== null) {
-        badge.style.display = '';
-        badge.textContent = isNewPR ? '🏆 NUEVO PR!' : 'PR: ' + pr + 'kg';
-        if (isNewPR) {
-            badge.classList.add('pr-new');
-            setTimeout(() => { badge.classList.remove('pr-new'); badge.textContent = 'PR: ' + pr + 'kg'; }, 2500);
+    if (badge) {
+        const pr = getPR(name);
+        if (pr !== null) {
+            badge.style.display = '';
+            badge.textContent = isNewPR ? '🏆 NUEVO PR!' : 'PR: ' + pr + 'kg';
+            if (isNewPR) {
+                badge.classList.add('pr-new');
+                setTimeout(() => { badge.classList.remove('pr-new'); badge.textContent = 'PR: ' + pr + 'kg'; }, 2500);
+            }
         }
+    }
+    // Cambiar un peso no registra el entreno: avisar si el día aún no está registrado,
+    // para que no crean que ya quedó guardado en el Historial.
+    const registerBtn = input.closest('.routine-day')?.querySelector('.day-register-btn');
+    if (registerBtn && !registerBtn.classList.contains('done')) {
+        showToast('Peso guardado. No olvides "Registrar entreno" para que quede en el Historial.');
     }
 };
 function getAllExerciseNames() {
