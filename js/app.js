@@ -1,12 +1,24 @@
 // --- State ---
+// Se detectaron casos (algunos móviles/navegadores) donde la clave principal
+// 'entreno-brutal' se vacía sola sin tocar el resto de localStorage. Como red
+// de seguridad local (sin depender de red), se mantiene una copia espejo en
+// otra clave; si la principal aparece vacía pero el espejo tiene datos reales,
+// se restaura desde ahí automáticamente.
+const STATE_KEY = 'entreno-brutal';
+const STATE_MIRROR_KEY = 'entreno-brutal-mirror';
+
 let currentWeek = 1, currentTab = localStorage.getItem('rutina-genero') === 'hombre' ? 'hombre' : 'tonificar';
-let state = loadState();
 
 // Fecha con la que trabaja la app: por defecto hoy. La semana del programa ya no
 // se elige a mano, se deduce de esta fecha.
+// IMPORTANTE: selectedDate se declara ANTES de loadState() porque loadState()
+// -> normalizeState() -> getCurrentWeekCount() la necesita para calcular la
+// semana. Si se declara después, la lectura ocurre en temporal dead zone.
 let selectedDate = getLocalDateKey();
 // Mes que se está mostrando en la tira de días (día 1 del mes)
 let stripMonth = new Date();
+
+let state = loadState();
 
 // Semana del programa (1-4) que cicla: tras la 4 vuelve a la 1
 function programWeekFromDays(diffDays) {
@@ -262,14 +274,6 @@ function getCurrentWeekCount(workouts = state.workouts) {
     const to = getWeekEndKey(getSelectedDateObj());
     return workouts.filter(w => w.date >= from && w.date <= to).length;
 }
-
-// Se detectaron casos (algunos móviles/navegadores) donde la clave principal
-// 'entreno-brutal' se vacía sola sin tocar el resto de localStorage. Como red
-// de seguridad local (sin depender de red), se mantiene una copia espejo en
-// otra clave; si la principal aparece vacía pero el espejo tiene datos reales,
-// se restaura desde ahí automáticamente.
-const STATE_KEY = 'entreno-brutal';
-const STATE_MIRROR_KEY = 'entreno-brutal-mirror';
 
 function loadState() {
     let primary = null;
