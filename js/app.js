@@ -1132,7 +1132,10 @@ function buildBackup() {
 
 // Backup automático. No bloquea la UI ni avisa al usuario; si falla (sin red,
 // servidor caído), no pasa nada grave porque se reintenta en la próxima ocasión.
-const AUTO_BACKUP_URL = 'https://n8n.guillers.es/webhook/entreno-brutal-backup?token=f9f6ec0a924a28a4497df6d789dd6f53';
+// El servidor guarda un archivo por usuario (nombre saneado), así que el mismo
+// nombre que se manda al hacer backup es el que hay que usar para recuperarlo.
+const AUTO_BACKUP_BASE_URL = 'https://n8n.guillers.es/webhook/entreno-brutal-backup';
+const AUTO_BACKUP_TOKEN = 'f9f6ec0a924a28a4497df6d789dd6f53';
 const AUTO_BACKUP_INTERVAL_DAYS = 7;
 
 // keepalive: true evita que el navegador cancele el POST si la app pasa a
@@ -1140,7 +1143,7 @@ const AUTO_BACKUP_INTERVAL_DAYS = 7;
 function sendBackup() {
     const user = getBackupUserName();
     if (!user) return;
-    fetch(AUTO_BACKUP_URL, {
+    fetch(`${AUTO_BACKUP_BASE_URL}?token=${AUTO_BACKUP_TOKEN}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(buildBackup()),
@@ -1178,6 +1181,50 @@ document.getElementById('btn-backup-import').addEventListener('click', () => {
     document.getElementById('backup-file-input').click();
 });
 
+// Aplica un objeto de backup (venga de un archivo importado o del servidor) y
+// recarga la app en limpio. Usado por la importación manual y por la
+// restauración desde servidor.
+function applyBackup(backup) {
+    if (!backup.state || !backup.state.workouts) throw new Error('Invalid backup');
+    localStorage.setItem(STATE_KEY, JSON.stringify(backup.state));
+    localStorage.setItem(STATE_MIRROR_KEY, JSON.stringify(backup.state));
+    state = loadState();
+    updateUI();
+    if (backup.programStartDate) localStorage.setItem('program-start-date', backup.programStartDate);
+    if (backup.darkMode !== null) localStorage.setItem('dark-mode', backup.darkMode);
+    Object.entries(backup.prs || {}).forEach(([name, val]) => localStorage.setItem('pr:' + name, val));
+    Object.entries(backup.prDates || {}).forEach(([name, val]) => localStorage.setItem('pr-date:' + name, val));
+    Object.entries(backup.pesoHistory || {}).forEach(([name, val]) => localStorage.setItem('peso-history:' + name, val));
+    Object.entries(backup.pesoCurrent || {}).forEach(([name, val]) => localStorage.setItem('peso:' + name, val));
+    Object.entries(backup.setsReps || {}).forEach(([key, val]) => localStorage.setItem(key, val));
+    alert('Backup restaurado correctamente.');
+    // Forzar recarga totalmente limpia: borrar cachés, quitar el SW y
+    // navegar con un query nuevo para que el navegador pida un index.html
+    // fresco (location.reload(true) es ignorado en móviles).
+    const hardReload = () => location.replace(location.pathname + '?r=' + Date.now());
+    const clearCaches = ('caches' in window)
+        ? caches.keys().then(names => Promise.all(names.map(n => caches.delete(n))))
+        : Promise.resolve();
+    const unregisterSW = (navigator.serviceWorker)
+        ? navigator.serviceWorker.getRegistrations().then(rs => Promise.all(rs.map(r => r.unregister())))
+        : Promise.resolve();
+    Promise.all([clearCaches, unregisterSW]).catch(() => {}).then(hardReload);
+}
+
+document.getElementById('btn-backup-restore').addEventListener('click', () => {
+    const user = getBackupUserName();
+    if (!user) return;
+    if (!confirm(`Esto reemplazara todos tus datos actuales con el ultimo backup guardado en el servidor para "${user}". ¿Continuar?`)) return;
+    fetch(`${AUTO_BACKUP_BASE_URL}?token=${AUTO_BACKUP_TOKEN}&user=${encodeURIComponent(user)}`)
+        .then(res => {
+            if (res.status === 404) throw new Error('No hay ningun backup guardado en el servidor para este usuario.');
+            if (!res.ok) throw new Error('El servidor no respondio correctamente.');
+            return res.json();
+        })
+        .then(backup => applyBackup(backup))
+        .catch(err => alert('Error: ' + err.message));
+});
+
 document.getElementById('backup-file-input').addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -1185,31 +1232,8 @@ document.getElementById('backup-file-input').addEventListener('change', (e) => {
     reader.onload = (ev) => {
         try {
             const backup = JSON.parse(ev.target.result);
-            if (!backup.state || !backup.state.workouts) throw new Error('Invalid backup');
             if (!confirm('Esto reemplazara todos tus datos actuales. ¿Continuar?')) return;
-            localStorage.setItem(STATE_KEY, JSON.stringify(backup.state));
-            localStorage.setItem(STATE_MIRROR_KEY, JSON.stringify(backup.state));
-            state = loadState();
-            updateUI();
-            if (backup.programStartDate) localStorage.setItem('program-start-date', backup.programStartDate);
-            if (backup.darkMode !== null) localStorage.setItem('dark-mode', backup.darkMode);
-            Object.entries(backup.prs || {}).forEach(([name, val]) => localStorage.setItem('pr:' + name, val));
-            Object.entries(backup.prDates || {}).forEach(([name, val]) => localStorage.setItem('pr-date:' + name, val));
-            Object.entries(backup.pesoHistory || {}).forEach(([name, val]) => localStorage.setItem('peso-history:' + name, val));
-            Object.entries(backup.pesoCurrent || {}).forEach(([name, val]) => localStorage.setItem('peso:' + name, val));
-            Object.entries(backup.setsReps || {}).forEach(([key, val]) => localStorage.setItem(key, val));
-            alert('Backup restaurado correctamente.');
-            // Forzar recarga totalmente limpia: borrar cachés, quitar el SW y
-            // navegar con un query nuevo para que el navegador pida un index.html
-            // fresco (location.reload(true) es ignorado en móviles).
-            const hardReload = () => location.replace(location.pathname + '?r=' + Date.now());
-            const clearCaches = ('caches' in window)
-                ? caches.keys().then(names => Promise.all(names.map(n => caches.delete(n))))
-                : Promise.resolve();
-            const unregisterSW = (navigator.serviceWorker)
-                ? navigator.serviceWorker.getRegistrations().then(rs => Promise.all(rs.map(r => r.unregister())))
-                : Promise.resolve();
-            Promise.all([clearCaches, unregisterSW]).catch(() => {}).then(hardReload);
+            applyBackup(backup);
         } catch (err) {
             alert('Error: archivo de backup invalido.');
         }

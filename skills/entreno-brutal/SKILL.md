@@ -14,7 +14,8 @@ Playbook de "Entreno Brutal" (`/opt/proyectos/entreno-brutal`, repo `guillesrl/g
 - Dos programas (Mujer 5 días / Hombre 3 días) definidos en `data/routines.json`, con progresión de 4 semanas que se deduce de `selectedDate`, no se elige a mano.
 - Backup en dos capas, ninguna bloquea la UI:
   - Copia espejo local: `entreno-brutal` (principal) se duplica en `entreno-brutal-mirror`; si la principal aparece vacía, `loadState()` restaura desde el espejo.
-  - Backup remoto a n8n: `sendBackup()` hace POST con `keepalive: true` a `AUTO_BACKUP_URL` (webhook en `n8n.guillers.es`, definido en `n8n/backup-workflow.json`), que separa por usuario en Postgres. Se dispara al registrar un entreno y, si pasaron 7+ días, al abrir la app (`autoBackupIfNeeded()`). Si falla (sin red, servidor caído), se traga el error y se reintenta la próxima vez — nunca debe interrumpir el registro del entreno.
+  - Backup remoto a n8n: `sendBackup()` hace POST con `keepalive: true` a `AUTO_BACKUP_BASE_URL` (webhook en `n8n.guillers.es`, definido en `n8n/backup-workflow.json`). El servidor guarda un archivo JSON en disco por usuario (`backup-<usuario-saneado>.json`, no Postgres — el mensaje de un commit viejo decía Postgres pero nunca fue así). Se dispara al registrar un entreno y, si pasaron 7+ días, al abrir la app (`autoBackupIfNeeded()`). Si falla (sin red, servidor caído), se traga el error y se reintenta la próxima vez — nunca debe interrumpir el registro del entreno.
+  - Restauración: el botón "Restaurar desde servidor" hace GET al mismo webhook con `?user=<nombre>` y aplica el JSON recibido con `applyBackup()` (compartida con la importación manual de archivo). El nombre de usuario se sanea igual en el cliente y en n8n (solo alfanumérico/espacio/guion, máx. 50 chars) — si algún día cambia esa lógica de saneo, tiene que cambiar en los dos lados a la vez o un usuario deja de encontrar su propio backup.
 - PWA con Service Worker network-first (`sw.js`, `cache: no-store` para HTML/CSS/JS/JSON) para esquivar el `max-age=600` de GitHub Pages; cache-first solo para imágenes/GIFs.
 
 ## Orden de inicialización de app.js (la trampa que más ha costado)
@@ -34,6 +35,10 @@ GitHub Pages cachea con `max-age=600`; el Service Worker es network-first así q
 - `CACHE_NAME` en `sw.js` (ej. `entreno-brutal-v64`) — si no se sube, el Service Worker no se reactiva y algunos clientes quedan pegados a la versión anterior
 
 Los tres commits recientes de backup (`4fcbe79`, `ef49d1f`, `f14ca31`) y el fix del TDZ (`71ebee3`) tocan estos tres archivos en cada uno precisamente por esto — es el patrón esperado, no ruido.
+
+## Desplegar cambios en n8n/backup-workflow.json
+
+Ese archivo es solo la definición versionada; el workflow real corre en `n8n.guillers.es` y hay que reimportarlo ahí a mano tras cada cambio (el MCP de n8n de este entorno no autentica contra esa instancia — `n8n_list_workflows` devuelve `AUTHENTICATION_ERROR` aunque el health check diga `connected: true`). Verificar tras importar que el nombre del workflow coincide (para no duplicarlo) y que sigue activo.
 
 ## No registrar el Service Worker más de una vez
 

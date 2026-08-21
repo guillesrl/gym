@@ -3,7 +3,7 @@
   "nodes": [
     {
       "parameters": {
-        "httpMethod": ["POST", "OPTIONS"],
+        "httpMethod": ["POST", "GET", "OPTIONS"],
         "path": "entreno-brutal-backup",
         "responseMode": "responseNode",
         "options": {
@@ -53,7 +53,7 @@
           "responseHeaders": {
             "entries": [
               { "name": "Access-Control-Allow-Origin", "value": "https://guillesrl.github.io" },
-              { "name": "Access-Control-Allow-Methods", "value": "POST, OPTIONS" },
+              { "name": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" },
               { "name": "Access-Control-Allow-Headers", "value": "Content-Type" }
             ]
           }
@@ -96,28 +96,57 @@
     },
     {
       "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-get",
+              "leftValue": "={{ $json.headers.method || $request.method }}",
+              "rightValue": "GET",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-get",
+      "name": "Es GET",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [340, 160]
+    },
+    {
+      "parameters": {
         "operation": "toJson",
         "options": {
-          "fileName": "=backup-{{ $now.format('yyyy-MM-dd') }}.json"
+          "fileName": "=backup-{{ ((($('Webhook').item.json.body && $('Webhook').item.json.body.user) || $('Webhook').item.json.query.user || 'anonimo')).toString().trim().replace(/[^a-zA-Z0-9 _-]/g, '').slice(0, 50) || 'anonimo' }}.json"
         }
       },
       "id": "convert-to-file",
       "name": "Convertir a archivo",
       "type": "n8n-nodes-base.convertToFile",
       "typeVersion": 1.1,
-      "position": [340, 60]
+      "position": [560, 320]
     },
     {
       "parameters": {
         "operation": "write",
-        "fileName": "=/home/node/.n8n/backups/entreno-brutal/backup-{{ $now.format('yyyy-MM-dd') }}.json",
+        "fileName": "=/home/node/.n8n/backups/entreno-brutal/backup-{{ ((($('Webhook').item.json.body && $('Webhook').item.json.body.user) || $('Webhook').item.json.query.user || 'anonimo')).toString().trim().replace(/[^a-zA-Z0-9 _-]/g, '').slice(0, 50) || 'anonimo' }}.json",
         "options": {}
       },
       "id": "write-file",
       "name": "Guardar en disco",
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
-      "position": [560, 60]
+      "position": [780, 320]
     },
     {
       "parameters": {
@@ -136,7 +165,7 @@
       "name": "Responder OK",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
-      "position": [780, 60]
+      "position": [1000, 320]
     },
     {
       "parameters": {
@@ -155,7 +184,58 @@
       "name": "Responder 401",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
-      "position": [340, 260]
+      "position": [340, 420]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "fileSelector": "=/home/node/.n8n/backups/entreno-brutal/backup-{{ (($json.query.user) || 'anonimo').toString().trim().replace(/[^a-zA-Z0-9 _-]/g, '').slice(0, 50) || 'anonimo' }}.json",
+        "options": {}
+      },
+      "id": "read-file",
+      "name": "Leer de disco",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "onError": "continueErrorOutput",
+      "position": [560, 0]
+    },
+    {
+      "parameters": {
+        "respondWith": "binary",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              { "name": "Access-Control-Allow-Origin", "value": "https://guillesrl.github.io" },
+              { "name": "Content-Type", "value": "application/json" }
+            ]
+          }
+        }
+      },
+      "id": "respond-backup",
+      "name": "Responder Backup",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [780, 0]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: false, error: 'no hay backup guardado para este usuario' } }}",
+        "options": {
+          "responseCode": 404,
+          "responseHeaders": {
+            "entries": [
+              { "name": "Access-Control-Allow-Origin", "value": "https://guillesrl.github.io" }
+            ]
+          }
+        }
+      },
+      "id": "respond-not-found",
+      "name": "Responder 404",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [780, 140]
     }
   ],
   "connections": {
@@ -170,8 +250,20 @@
     },
     "Token válido": {
       "main": [
-        [{ "node": "Convertir a archivo", "type": "main", "index": 0 }],
+        [{ "node": "Es GET", "type": "main", "index": 0 }],
         [{ "node": "Responder 401", "type": "main", "index": 0 }]
+      ]
+    },
+    "Es GET": {
+      "main": [
+        [{ "node": "Leer de disco", "type": "main", "index": 0 }],
+        [{ "node": "Convertir a archivo", "type": "main", "index": 0 }]
+      ]
+    },
+    "Leer de disco": {
+      "main": [
+        [{ "node": "Responder Backup", "type": "main", "index": 0 }],
+        [{ "node": "Responder 404", "type": "main", "index": 0 }]
       ]
     },
     "Convertir a archivo": {

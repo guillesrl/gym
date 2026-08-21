@@ -107,6 +107,10 @@
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="M12 10l-5-5 5-5"></path><path d="M16 5H3"></path><path d="M21 15V3"></path></svg>
                 Importar backup
             </button>
+            <button class="btn-backup" id="btn-backup-restore">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"></path><path d="M21 3v6h-6"></path></svg>
+                Restaurar desde servidor
+            </button>
             <input type="file" id="backup-file-input" accept=".json" style="display:none">
         </div>
         <div class="export-area">
@@ -174,6 +178,6 @@
     <!-- El service worker se registra en js/app.js. No registrarlo aquí ni
          desregistrarlo en cada carga: eso provocaba un bucle infinito de
          recargas (unregister -> register -> claim -> controllerchange -> reload). -->
-    <script src="js/app.js?v=67"></script>
+    <script src="js/app.js?v=68"></script>
 </body>
 </html>
