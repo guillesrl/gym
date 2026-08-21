@@ -20,7 +20,9 @@ App web brutalista para registrar rutinas de gimnasio, hacer seguimiento de prog
 - **Records personales** — detecta automáticamente cada vez que superas tu peso máximo en un ejercicio
 - **Semáforo de progreso** — indicador 🟢/🟠/🔴 en la misma fila que cada récord (🟢 superaste tu marca; 🟠 sin cambios; 🔴 4 semanas estancado), ordenado igual que la lista de récords
 - **Estadísticas en tiempo real** — racha de días consecutivos, entrenos de la semana y total histórico
-- **Backup completo** — exporta/importa JSON con state, PRs, históricos, series/reps y preferencias
+- **Backup automático a n8n** — al abrir la app (si pasaron 7+ días desde el último envío) y también justo al registrar un entreno, se manda un POST con `keepalive` al webhook de n8n (`n8n/backup-workflow.json`), que separa los datos por usuario en Postgres; el nombre se pide una sola vez y se recuerda
+- **Copia espejo del historial** — el estado principal se duplica en otra clave de `localStorage`; si la principal aparece vacía (visto en algunos móviles/navegadores), se restaura sola desde la copia
+- **Backup manual completo** — exporta/importa JSON con state, PRs, históricos, series/reps y preferencias
 - **Exportar historial** — descarga un `.html` con tabla completa y resumen de stats
 - **Frase motivacional diaria** — pool de 49 frases (7 por día) que rotan por semana del año
 - **Modo oscuro** — toggle persistente con detección automática de preferencia del sistema
@@ -53,6 +55,7 @@ gym/
 ├── icon.svg                # Icono PWA
 ├── manifest.webmanifest    # Configuración PWA
 ├── sw.js                   # Service Worker
+├── n8n/backup-workflow.json # Workflow n8n que recibe el backup automático (Postgres)
 ├── MEMORY.md               # Notas internas
 └── README.md
 ```
@@ -110,6 +113,7 @@ Todo se guarda en `localStorage`:
 | Clave | Contenido |
 |---|---|
 | `entreno-brutal` | Estado principal (workouts, racha, totales) |
+| `entreno-brutal-mirror` | Copia espejo del estado principal, para recuperación automática |
 | `peso:<Ejercicio>` | Peso actual en kg |
 | `peso-history:<Ejercicio>` | Histórico de pesos (alimenta el semáforo de progreso) |
 | `pr:<Ejercicio>` / `pr-date:<Ejercicio>` | Récord personal + fecha |
@@ -117,17 +121,19 @@ Todo se guarda en `localStorage`:
 | `program-start-date` | Fecha de inicio (para calcular la semana 1-4 del programa) |
 | `rutina-genero` | Programa activo (`tonificar` = Mujer / `hombre`) |
 | `dark-mode` | Preferencia de tema |
+| `backup-user-name` | Nombre con el que se identifica el backup automático en Postgres |
+| `auto-backup-last` | Fecha del último backup automático enviado (controla el intervalo de 7 días) |
 
-Usá los botones **Exportar / Importar backup** para sincronizar entre dispositivos con un JSON.
+Usá los botones **Exportar / Importar backup** para sincronizar entre dispositivos con un JSON, o esperá al backup automático semanal a n8n.
 
 ---
 
 ## Actualizar la versión
 
 Al cambiar HTML/CSS/JS conviene bumpear:
-- `?v=N` en `index.html` para los assets (actualmente `style.css?v=37`, `app.js?v=61`)
+- `?v=N` en `index.html` para los assets (actualmente `style.css?v=38`, `app.js?v=67`)
 - `?v=N` en la llamada a `fetch('./data/routines.json?v=N', ...)` dentro de `js/app.js` si cambia `routines.json`
-- `CACHE_NAME` en `sw.js` para forzar la activación del nuevo Service Worker (actualmente `entreno-brutal-v57`)
+- `CACHE_NAME` en `sw.js` para forzar la activación del nuevo Service Worker (actualmente `entreno-brutal-v63`)
 
 > La app se sirve en GitHub Pages (`https://guillesrl.github.io/gym/`), que cachea con `max-age=600`. El Service Worker network-first con `cache: no-store` evita ese retardo y sirve siempre la última versión.
 
