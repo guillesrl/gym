@@ -6,35 +6,39 @@ trigger: /entreno-brutal
 
 # /entreno-brutal
 
-Playbook de "Entreno Brutal" (`/opt/proyectos/entreno-brutal`, repo `guillesrl/gym`, servido en `https://guillesrl.github.io/gym/`). App vanilla HTML/CSS/JS sin build ni frameworks. Cada trampa de abajo costó una ronda de debugging real.
+Playbook de "Entreno Brutal" (`/opt/proyectos/entreno-brutal`, repo `guillesrl/gym`, servido en `https://guillesrl.github.io/gym/`). App vanilla HTML/CSS/JS sin build ni frameworks, un único `js/app.js` con toda la lógica.
 
 ## Arquitectura
 
-- Todo el estado vive en `localStorage` del navegador, no hay backend propio. `js/app.js` es un único archivo con toda la lógica (~1200 líneas).
+- Todo el estado vive en `localStorage` del navegador, no hay backend propio.
 - Dos programas (Mujer 5 días / Hombre 3 días) definidos en `data/routines.json`, con progresión de 4 semanas que se deduce de `selectedDate`, no se elige a mano.
 - Backup en dos capas, ninguna bloquea la UI:
   - Copia espejo local: `entreno-brutal` (principal) se duplica en `entreno-brutal-mirror`; si la principal aparece vacía, `loadState()` restaura desde el espejo.
-  - Backup remoto a n8n: `sendBackup()` hace POST con `keepalive: true` a `AUTO_BACKUP_BASE_URL` (webhook en `n8n.guillers.es`, definido en `n8n/backup-workflow.json`). El servidor guarda un archivo JSON en disco por usuario (`backup-<usuario-saneado>.json`, no Postgres — el mensaje de un commit viejo decía Postgres pero nunca fue así). Se dispara al registrar un entreno y, si pasaron 7+ días, al abrir la app (`autoBackupIfNeeded()`). Si falla (sin red, servidor caído), se traga el error y se reintenta la próxima vez — nunca debe interrumpir el registro del entreno.
-  - Restauración: el botón "Restaurar desde servidor" hace GET al mismo webhook con `?user=<nombre>` y aplica el JSON recibido con `applyBackup()` (compartida con la importación manual de archivo). El nombre de usuario se sanea igual en el cliente y en n8n (solo alfanumérico/espacio/guion, máx. 50 chars) — si algún día cambia esa lógica de saneo, tiene que cambiar en los dos lados a la vez o un usuario deja de encontrar su propio backup.
+  - Backup remoto a n8n: `sendBackup()` hace POST con `keepalive: true` a `AUTO_BACKUP_BASE_URL` (webhook en `n8n.guillers.es`, definido en `n8n/backup-workflow.json`). El servidor guarda un archivo JSON en disco por usuario (`backup-<usuario-saneado>.json`). Se dispara al registrar un entreno y, si pasaron 7+ días, al abrir la app (`autoBackupIfNeeded()`). Si falla (sin red, servidor caído), se traga el error y se reintenta la próxima vez — nunca debe interrumpir el registro del entreno.
+  - Restauración: el botón "Restaurar desde servidor" hace GET al mismo webhook con `?user=<nombre>` y aplica el JSON recibido con `applyBackup()` (compartida con la importación manual de archivo).
 - PWA con Service Worker network-first (`sw.js`, `cache: no-store` para HTML/CSS/JS/JSON) para esquivar el `max-age=600` de GitHub Pages; cache-first solo para imágenes/GIFs.
 
-## Orden de inicialización de app.js (la trampa que más ha costado)
+## El nombre de usuario NO se sanea en el cliente — solo en n8n
 
-`js/app.js` ejecuta código de módulo de arriba a abajo apenas se carga el script — no hay un `init()` que se llame al final, las primeras líneas del archivo corren inmediatamente. Eso significa que **toda variable `let`/`const` que se use en esas primeras líneas (directa o indirectamente) tiene que estar declarada ANTES**, o revienta por temporal dead zone (TDZ): `ReferenceError: Cannot access 'x' before initialization`.
+`getBackupUserName()` solo hace `.trim()` sobre lo que el usuario escribe en el prompt; no quita tildes, símbolos ni nada raro. El que sanea (a alfanumérico/espacio/guion, máx. 50 chars) es siempre el workflow de n8n, tanto al guardar como al leer — por eso el POST y el GET siguen encontrando el mismo archivo aunque el nombre crudo tenga caracteres especiales. **Si se cambia la lógica de saneo, solo hay que tocarla en `n8n/backup-workflow.json`, en los dos nodos (guardar y leer) a la vez** — no hace falta ni conviene replicarla en `app.js`.
 
-Esto pasó de verdad (commit `71ebee3`, "Fix crítico: orden de inicialización rompía el historial en cada carga"): `let state = loadState();` estaba en la línea 2. `loadState()` llama a `normalizeState()` que llama a `getCurrentWeekCount()`, la cual lee `selectedDate` — pero `selectedDate` se declaraba varias líneas más abajo. Cada carga de página lanzaba el `ReferenceError` en mitad de `loadState()`, el historial se veía vacío, y no había ningún mensaje de error visible en la UI (solo en la consola del navegador). Se coló porque el commit anterior (`f14ca31`, la copia espejo) añadió `STATE_KEY`/`STATE_MIRROR_KEY` usadas dentro de `loadState()` pero declaradas después de la llamada, mismo problema.
+## El webhook de backup pide un token hardcodeado, visible para cualquiera
 
-Regla para no reintroducirlo: **todo lo que `loadState()` toca — directa o transitivamente — va declarado antes de la línea `let state = loadState();`**. Hoy eso es `selectedDate`, `stripMonth`, `STATE_KEY`, `STATE_MIRROR_KEY`. Si se añade una variable module-level nueva y `loadState()`/`normalizeState()`/`getCurrentWeekCount()` empieza a usarla, revisar que quede por encima de esa línea. Ante cualquier cambio en la zona de inicialización, probar recargando con datos reales en `localStorage` (no solo con `localStorage` vacío) — el bug solo se manifestaba cuando ya había historial que cargar.
+`AUTO_BACKUP_TOKEN` (`f9f6ec0a924a28a4497df6d789dd6f53` en `js/app.js`) se manda como `?token=...` en cada POST/GET, y el workflow de n8n lo valida antes de tocar el archivo (nodo `Token válido`, si no coincide responde 401). Como el sitio es una PWA estática en GitHub Pages, **ese token es público** — cualquiera puede verlo con "ver código fuente" y llamar al webhook directamente. No es una medida de seguridad real, es solo un filtro contra bots/escaneos automáticos que prueban URLs al azar. No tratar este token como secreto ni asumir que protege los backups de otra persona: cualquiera que lo tenga puede leer o sobrescribir el backup de cualquier nombre de usuario.
+
+## Orden de inicialización de app.js
+
+`js/app.js` ejecuta código de módulo de arriba a abajo apenas se carga el script — no hay un `init()` que se llame al final. Eso significa que **toda variable `let`/`const` que use `loadState()` (directa o transitivamente) tiene que estar declarada ANTES de `let state = loadState();`**, o revienta por temporal dead zone (TDZ): `ReferenceError: Cannot access 'x' before initialization`, con el historial viéndose vacío y sin ningún error visible en la UI (solo en consola).
+
+Hoy eso es `selectedDate`, `stripMonth`, `STATE_KEY`, `STATE_MIRROR_KEY` — ya hay un comentario en el propio archivo (arriba de `selectedDate`) recordándolo. Si se añade una variable module-level nueva y `loadState()`/`normalizeState()`/`getCurrentWeekCount()` empieza a usarla, verificar que quede declarada por encima de esa línea. Ante cualquier cambio en la zona de inicialización, probar recargando con datos reales en `localStorage` (no solo vacío) — el bug solo se manifiesta cuando ya hay historial que cargar.
 
 ## Bump de versión en cada cambio de HTML/CSS/JS
 
-GitHub Pages cachea con `max-age=600`; el Service Worker es network-first así que en teoría no depende del query string, pero el query string sigue siendo lo que fuerza a los navegadores/CDNs intermedios a no servir una copia vieja. En cada commit que toque `index.html`, `css/style.css` o `js/app.js`:
+GitHub Pages cachea con `max-age=600`; el Service Worker es network-first así que en teoría no depende del query string, pero el query string sigue siendo lo que fuerza a navegadores/CDNs intermedios a no servir una copia vieja. En cada commit que toque `index.html`, `css/style.css` o `js/app.js`:
 
 - `?v=N` en `index.html` para el asset que cambió (`style.css?v=N`, `app.js?v=N`)
 - Si cambia `data/routines.json`, el `?v=N` de su `fetch(...)` dentro de `js/app.js`
-- `CACHE_NAME` en `sw.js` (ej. `entreno-brutal-v64`) — si no se sube, el Service Worker no se reactiva y algunos clientes quedan pegados a la versión anterior
-
-Los tres commits recientes de backup (`4fcbe79`, `ef49d1f`, `f14ca31`) y el fix del TDZ (`71ebee3`) tocan estos tres archivos en cada uno precisamente por esto — es el patrón esperado, no ruido.
+- `CACHE_NAME` en `sw.js` (formato `entreno-brutal-vNN`) — si no se sube, el Service Worker no se reactiva y algunos clientes quedan pegados a la versión anterior
 
 ## Desplegar cambios en n8n/backup-workflow.json
 
