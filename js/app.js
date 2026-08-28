@@ -71,7 +71,6 @@ const exerciseImageMap = {
     'Gemelos':                   'bOOdeyc',
     'Cardio':                    'oLrKqDH',
     'Prensa de piernas':         '10Z2DXU',
-    'Curl de muñeca':            '82LxxkW',
 };
 
 // Fallback estático (JPG) cuando no hay GIF en exercisedb.
@@ -106,6 +105,7 @@ const exerciseDirectImageMap = {
     'Vuelos laterales':                'https://fitcron.com/wp-content/uploads/2021/04/33431301-Lever-Lateral-Raise-VERSION-2_Shoulders_720.gif',
     'Press de hombro':                 'https://fitcron.com/wp-content/uploads/2021/04/11651301-Barbell-Standing-Military-Press-without-rack_Shoulders_720.gif',
     'Bíceps en polea':                 'https://fitcron.com/wp-content/uploads/2021/04/01951301-Cable-Preacher-Curl_Upper-Arms_720.gif',
+    'Bíceps con mancuernas':            'https://fitcron.com/wp-content/uploads/2021/04/01101301-Dumbbell-Alternate-Biceps-Curl_Upper-Arms_720.gif',
     'Tríceps en polea':                'https://fitcron.com/wp-content/uploads/2021/04/37191301-Cable-Standing-High-Cross-Triceps-Extension_Upper-Arms_720.gif',
     'Sentadilla':                      'https://fitcron.com/wp-content/uploads/2021/04/00431301-Barbell-Full-Squat_Thighs_720.gif',
     'Cuádriceps en máquina':           'https://fitcron.com/wp-content/uploads/2021/04/05851301-Lever-Leg-Extension_Thighs_720.gif',

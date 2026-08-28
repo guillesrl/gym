@@ -77,7 +77,7 @@ Ambos programas siguen una progresión de 4 semanas: series y repeticiones suben
 
 ### Hombre — 3 días (Lun/Mié/Vie)
 
-- **Lunes · Pecho y Bíceps 💪** — Press de banca, Press inclinado mancuernas, Pecho en máquina, Curl con barra, Bíceps en polea, Curl de muñeca
+- **Lunes · Pecho y Bíceps 💪** — Press de banca, Press inclinado mancuernas, Pecho en máquina, Curl con barra, Bíceps en polea, Bíceps con mancuernas
 - **Miércoles · Espalda y Tríceps 🔙** — Jalón al pecho, Remo, Pullover en polea, Tríceps en polea
 - **Viernes · Pierna, Hombro y ABS 🦵** — Sentadilla, Prensa de piernas, Gemelos, Press de hombro, Vuelos laterales, Vuelos frontales, Plancha
 

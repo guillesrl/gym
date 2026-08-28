@@ -179,7 +179,7 @@
         { "name": "Pecho en máquina",           "detail": "3x12" },
         { "name": "Curl con barra",             "detail": "3x12" },
         { "name": "Bíceps en polea",            "detail": "3x12" },
-        { "name": "Curl de muñeca",             "detail": "3x15" }
+        { "name": "Bíceps con mancuernas",      "detail": "3x15" }
       ],
       "Día 2": [
         { "name": "Jalón al pecho",           "detail": "3x10" },
@@ -206,7 +206,7 @@
         { "name": "Pecho en máquina",           "detail": "3x15" },
         { "name": "Curl con barra",             "detail": "3x15" },
         { "name": "Bíceps en polea",            "detail": "3x15" },
-        { "name": "Curl de muñeca",             "detail": "3x20" }
+        { "name": "Bíceps con mancuernas",             "detail": "3x20" }
       ],
       "Día 2": [
         { "name": "Jalón al pecho",           "detail": "3x12" },
@@ -233,7 +233,7 @@
         { "name": "Pecho en máquina",           "detail": "3x12" },
         { "name": "Curl con barra",             "detail": "3x12" },
         { "name": "Bíceps en polea",            "detail": "3x12" },
-        { "name": "Curl de muñeca",             "detail": "3x15" }
+        { "name": "Bíceps con mancuernas",             "detail": "3x15" }
       ],
       "Día 2": [
         { "name": "Jalón al pecho",           "detail": "3x10" },
@@ -260,7 +260,7 @@
         { "name": "Pecho en máquina",           "detail": "3x15" },
         { "name": "Curl con barra",             "detail": "3x15" },
         { "name": "Bíceps en polea",            "detail": "3x15" },
-        { "name": "Curl de muñeca",             "detail": "3x20" }
+        { "name": "Bíceps con mancuernas",             "detail": "3x20" }
       ],
       "Día 2": [
         { "name": "Jalón al pecho",           "detail": "3x12" },
