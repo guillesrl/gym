@@ -923,19 +923,21 @@ function getProgressLightStatus(exerciseName) {
     const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     const fourWeeksAgo = new Date(now.getTime() - 28 * 24 * 60 * 60 * 1000);
     
-    const recentSessions = history.filter(h => new Date(h.date) >= oneWeekAgo);
-    const fourWeekSessions = history.filter(h => new Date(h.date) >= fourWeeksAgo);
+    const currentSession = history[history.length - 1];
+    const previousHistory = history.slice(0, -1);
+    const recentSessions = previousHistory.filter(h => new Date(h.date) >= oneWeekAgo);
+    const fourWeekSessions = previousHistory.filter(h => new Date(h.date) >= fourWeeksAgo);
     
     if (fourWeekSessions.length === 0) return 'orange';
     
     const fourWeeksAgoWeight = fourWeekSessions.reduce((max, h) => h.weight > max ? h.weight : max, 0);
-    const currentWeight = history[history.length - 1].weight;
+    const currentWeight = currentSession.weight;
     
     if (currentWeight > fourWeeksAgoWeight) return 'green';
     
     const oneWeekAgoWeight = recentSessions.length > 0 
         ? recentSessions.reduce((max, h) => h.weight > max ? h.weight : max, 0)
-        : history[history.length - 2].weight;
+        : previousHistory[previousHistory.length - 1].weight;
     
     if (currentWeight === oneWeekAgoWeight) return 'orange';
     
