@@ -113,6 +113,8 @@ const exerciseDirectImageMap = {
 };
 
 function getExerciseImageUrl(name) {
+    const customImage = getExerciseMeta(name).image;
+    if (customImage) return customImage;
     const direct = exerciseDirectImageMap[name];
     if (direct) return direct;
     const hash = exerciseImageMap[name];
@@ -539,6 +541,7 @@ function getAllExerciseNames() {
             Object.values(week).forEach(exs => exs.forEach(ex => names.add(ex.name)))
         );
     });
+    Object.keys(exerciseMeta).forEach(name => names.add(name));
     return [...names];
 }
 
@@ -753,10 +756,29 @@ document.querySelectorAll('.gender-btn').forEach(btn => {
 
 // --- Routines Data ---
 let routines = {};
+const CUSTOM_ROUTINES_KEY = "entreno-brutal-routines-v1";
+const EXERCISE_META_KEY = "entreno-brutal-exercise-meta-v1";
+let baseRoutines = {};
+let customRoutines = {};
+let exerciseMeta = {};
+function readLocalJson(key, fallback) { try { const value = JSON.parse(localStorage.getItem(key) || "null"); return value && typeof value === "object" ? value : fallback; } catch { return fallback; } }
+function mergeCustomRoutines(base, overrides) {
+    const merged = JSON.parse(JSON.stringify(base || {}));
+    ["tonificar", "hombre"].forEach(program => Object.entries(overrides[program] || {}).forEach(([week, days]) => {
+        if (!merged[program]) merged[program] = {}; if (!merged[program][week]) merged[program][week] = {};
+        Object.entries(days || {}).forEach(([day, exercises]) => { if (Array.isArray(exercises)) merged[program][week][day] = exercises.filter(e => e && String(e.name || "").trim()).map(e => ({ name: String(e.name).trim(), detail: String(e.detail || "") })); });
+    }));
+    return merged;
+}
+function saveCustomization() { localStorage.setItem(CUSTOM_ROUTINES_KEY, JSON.stringify(customRoutines)); localStorage.setItem(EXERCISE_META_KEY, JSON.stringify(exerciseMeta)); }
+function getExerciseMeta(name) { return exerciseMeta[name] || {}; }
 async function loadRoutines() {
     try {
-        const res = await fetch('./data/routines.json?v=49', { cache: 'no-store' });
-        routines = await res.json();
+        const res = await fetch('./data/routines.json?v=50', { cache: 'no-store' });
+        baseRoutines = await res.json();
+        customRoutines = readLocalJson(CUSTOM_ROUTINES_KEY, {});
+        exerciseMeta = readLocalJson(EXERCISE_META_KEY, {});
+        routines = mergeCustomRoutines(baseRoutines, customRoutines);
     } catch (e) {
         console.warn('No se pudo cargar routines.json', e);
     }
@@ -894,7 +916,7 @@ document.getElementById('routine-body').addEventListener('click', (e) => {
                 localStorage.setItem('peso-history:' + name, JSON.stringify(history));
             }
         });
-        state.workouts.push({ date: today, type: currentTab, duration, intensity: 'media', notes: day });
+        state.workouts.push({ date: today, type: currentTab, duration, intensity: "media", notes: day, exercises: (getRoutines()[day] || []).map(e => ({ name: e.name, detail: e.detail || "" })) });
         state.total = state.workouts.length;
         state.weekCount = getCurrentWeekCount();
         saveState();
@@ -1123,7 +1145,9 @@ function buildBackup() {
         pesoCurrent: {},
         setsReps: {},
         programStartDate: localStorage.getItem('program-start-date'),
-        darkMode: localStorage.getItem('dark-mode')
+        darkMode: localStorage.getItem('dark-mode'),
+        customRoutines: customRoutines,
+        exerciseMeta: exerciseMeta
     };
     getAllExerciseNames().forEach(name => {
         const pr = localStorage.getItem('pr:' + name);
@@ -1206,6 +1230,9 @@ function applyBackup(backup) {
     updateUI();
     if (backup.programStartDate) localStorage.setItem('program-start-date', backup.programStartDate);
     if (backup.darkMode !== null) localStorage.setItem('dark-mode', backup.darkMode);
+    if (backup.customRoutines) customRoutines = backup.customRoutines;
+    if (backup.exerciseMeta) exerciseMeta = backup.exerciseMeta;
+    saveCustomization();
     Object.entries(backup.prs || {}).forEach(([name, val]) => localStorage.setItem('pr:' + name, val));
     Object.entries(backup.prDates || {}).forEach(([name, val]) => localStorage.setItem('pr-date:' + name, val));
     Object.entries(backup.pesoHistory || {}).forEach(([name, val]) => localStorage.setItem('peso-history:' + name, val));
@@ -1289,3 +1316,47 @@ updateUI();
         });
     }
 })();
+
+// --- Routine and exercise editor ---
+let editorProgram = currentTab;
+let editorWeek = String(currentWeek);
+let editorDay = "Día 1";
+function editorWeeks() { return Object.keys(routines[editorProgram] || {}).filter(k => k !== "labels").sort((a, b) => Number(a) - Number(b)); }
+function editorDays() { return Object.keys(routines[editorProgram]?.[editorWeek] || {}); }
+function getExerciseCatalogNames() { return [...new Set([...getAllExerciseNames(), ...Object.keys(exerciseMeta)])].sort((a, b) => a.localeCompare(b)); }
+function editorRowHtml(exercise, index) {
+    const meta = getExerciseMeta(exercise.name);
+    return `<div class="routine-editor-item" data-index="${index}"><div class="routine-editor-item-head"><strong>Ejercicio ${index + 1}</strong><span><button type="button" class="editor-move" data-direction="up" aria-label="Subir ejercicio">↑</button><button type="button" class="editor-move" data-direction="down" aria-label="Bajar ejercicio">↓</button><button type="button" class="editor-remove" aria-label="Quitar ejercicio">Quitar</button></span></div><div class="routine-editor-item-grid"><label>Nombre<input class="editor-name" value="${escapeHtml(exercise.name || "")}" required></label><label>Series x repeticiones<input class="editor-detail" value="${escapeHtml(exercise.detail || "")}" placeholder="3x12"></label><label class="full">Instrucciones<textarea class="editor-instructions" rows="2">${escapeHtml(meta.instructions || "")}</textarea></label><label>Grupos/músculos<input class="editor-muscles" value="${escapeHtml(meta.muscles || "")}" placeholder="Pecho, tríceps"></label><label>Imagen URL<input class="editor-image" type="url" value="${escapeHtml(meta.image || "")}" placeholder="https://..."></label></div></div>`;
+}
+function renderRoutineEditor() {
+    const program = document.getElementById("editor-program"), week = document.getElementById("editor-week"), day = document.getElementById("editor-day"), body = document.getElementById("routine-editor-body");
+    if (!program || !body) return;
+    program.innerHTML = ["hombre", "tonificar"].map(p => `<option value="${p}"${p === editorProgram ? " selected" : ""}>${programLabel(p)}</option>`).join("");
+    const weeks = editorWeeks(); if (!weeks.includes(editorWeek)) editorWeek = weeks[0] || "1";
+    week.innerHTML = weeks.map(w => `<option value="${w}"${w === editorWeek ? " selected" : ""}>Semana ${w}</option>`).join("");
+    const days = editorDays(); if (!days.includes(editorDay)) editorDay = days[0] || "Día 1";
+    day.innerHTML = days.map(d => `<option value="${escapeHtml(d)}"${d === editorDay ? " selected" : ""}>${escapeHtml(getDayLabelFor(editorProgram, d))}</option>`).join("");
+    const exercises = routines[editorProgram]?.[editorWeek]?.[editorDay] || [];
+    body.innerHTML = `<div class="routine-editor-list">${exercises.map(editorRowHtml).join("")}</div><div class="routine-editor-add"><strong>Añadir ejercicio</strong><select id="editor-catalog"><option value="">Ejercicio existente...</option>${getExerciseCatalogNames().map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join("")}</select><input id="editor-new-name" placeholder="Nombre de ejercicio nuevo"><button type="button" id="editor-add">+ Añadir</button></div>`;
+}
+function openRoutineEditor() { editorProgram = currentTab; editorWeek = String(currentWeek); editorDay = getSelectedDayKey(); renderRoutineEditor(); openModal("modal-routine-editor"); }
+function renumberEditorRows() { document.querySelectorAll(".routine-editor-item").forEach((row, i) => { row.dataset.index = i; row.querySelector("strong").textContent = `Ejercicio ${i + 1}`; }); }
+document.getElementById("btn-edit-routines")?.addEventListener("click", openRoutineEditor);
+document.getElementById("editor-program")?.addEventListener("change", e => { editorProgram = e.target.value; editorWeek = "1"; editorDay = "Día 1"; renderRoutineEditor(); });
+document.getElementById("editor-week")?.addEventListener("change", e => { editorWeek = e.target.value; editorDay = "Día 1"; renderRoutineEditor(); });
+document.getElementById("editor-day")?.addEventListener("change", e => { editorDay = e.target.value; renderRoutineEditor(); });
+document.getElementById("routine-editor-body")?.addEventListener("click", e => {
+    const row = e.target.closest(".routine-editor-item");
+    if (e.target.id === "editor-add") { const select = document.getElementById("editor-catalog"), input = document.getElementById("editor-new-name"), name = (select.value || input.value).trim(); if (!name) { (select.value ? input : select).focus(); return; } const list = document.querySelector(".routine-editor-list"); list.insertAdjacentHTML("beforeend", editorRowHtml({ name, detail: "3x12" }, list.children.length)); select.value = ""; input.value = ""; renumberEditorRows(); return; }
+    if (!row) return;
+    if (e.target.closest(".editor-remove")) { row.remove(); renumberEditorRows(); return; }
+    const move = e.target.closest(".editor-move"); if (!move) return;
+    const sibling = move.dataset.direction === "up" ? row.previousElementSibling : row.nextElementSibling; if (sibling) { move.dataset.direction === "up" ? row.parentNode.insertBefore(row, sibling) : row.parentNode.insertBefore(sibling, row); renumberEditorRows(); }
+});
+document.getElementById("editor-save")?.addEventListener("click", () => {
+    const rows = [...document.querySelectorAll(".routine-editor-item")];
+    const exercises = rows.map(row => ({ name: row.querySelector(".editor-name").value.trim(), detail: row.querySelector(".editor-detail").value.trim() })).filter(e => e.name);
+    const nextMeta = { ...exerciseMeta };
+    rows.forEach(row => { const name = row.querySelector(".editor-name").value.trim(); if (!name) return; const meta = { instructions: row.querySelector(".editor-instructions").value.trim(), muscles: row.querySelector(".editor-muscles").value.trim(), image: row.querySelector(".editor-image").value.trim() }; if (meta.instructions || meta.muscles || meta.image) nextMeta[name] = meta; else delete nextMeta[name]; });
+    if (!customRoutines[editorProgram]) customRoutines[editorProgram] = {}; if (!customRoutines[editorProgram][editorWeek]) customRoutines[editorProgram][editorWeek] = {}; customRoutines[editorProgram][editorWeek][editorDay] = exercises; exerciseMeta = nextMeta; saveCustomization(); routines = mergeCustomRoutines(baseRoutines, customRoutines); closeModal("modal-routine-editor"); updateUI(); showToast("Rutina guardada en este dispositivo");
+});

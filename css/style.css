@@ -734,3 +734,19 @@ body.dark .dark-toggle .icon-moon { display: none; }
     opacity: 1;
     transform: translate(-50%, 0);
 }
+
+/* --- Routine editor --- */
+.routine-editor-selectors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+.routine-editor-selectors label, .routine-editor-item label { display: flex; flex-direction: column; gap: 4px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+.routine-editor-selectors select, .routine-editor-item input, .routine-editor-item textarea, .routine-editor-add select, .routine-editor-add input { width: 100%; box-sizing: border-box; padding: 9px 10px; border: 2px solid var(--border); background: var(--background); color: var(--foreground); font: inherit; }
+.routine-editor-list { display: flex; flex-direction: column; gap: 12px; }
+.routine-editor-item { padding: 12px; border: 2px solid var(--border); background: var(--card); box-shadow: var(--shadow-small); }
+.routine-editor-item-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; }
+.routine-editor-item-head button, .routine-editor-add button { border: 2px solid var(--border); background: var(--accent); color: var(--foreground); padding: 7px 9px; font: inherit; font-weight: 800; cursor: pointer; }
+.routine-editor-item-head .editor-remove { background: var(--destructive); color: #fff; }
+.routine-editor-item-grid { display: grid; grid-template-columns: 1fr 150px; gap: 9px; }
+.routine-editor-item-grid .full { grid-column: 1 / -1; }
+.routine-editor-item textarea { min-height: 58px; resize: vertical; }
+.routine-editor-add { display: grid; grid-template-columns: auto 1fr 1fr auto; align-items: center; gap: 8px; margin-top: 16px; padding: 12px; border: 2px dashed var(--border); }
+.routine-editor-add strong { font-size: 11px; text-transform: uppercase; }
+@media (max-width: 480px) { .routine-editor-selectors, .routine-editor-item-grid, .routine-editor-add { grid-template-columns: 1fr; } .routine-editor-item-grid .full { grid-column: auto; } .routine-editor-add strong { margin-bottom: 2px; } }
