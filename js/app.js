@@ -805,32 +805,9 @@ function getRoutines() {
 // --- Modal helpers ---
 function openModal(id) { document.getElementById(id).classList.add('active'); }
 function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+function getExerciseImageCandidates(name) { const candidates = []; const custom = getExerciseMeta(name).image; const direct = exerciseDirectImageMap[name]; const hash = exerciseImageMap[name]; const slug = exerciseFallbackImageMap[name]; [custom, direct, hash ? GIF_CDN + hash + ".gif" : null, slug ? JPG_CDN + slug + "/0.jpg" : null].forEach(url => { if (url && !candidates.includes(url)) candidates.push(url); }); return candidates; }
+function openExercisePreview(name) { const candidates = getExerciseImageCandidates(name); const anim = document.getElementById("exercise-anim"); document.getElementById("exercise-modal-title").textContent = name; let index = 0; anim.onerror = () => { index += 1; if (index < candidates.length) { anim.src = candidates[index]; return; } anim.onerror = null; anim.removeAttribute("src"); anim.style.display = "none"; }; anim.alt = `Animación de ${name}`; if (candidates.length) { anim.src = candidates[0]; anim.style.display = ""; } else { anim.removeAttribute("src"); anim.style.display = "none"; } openModal("modal-exercise"); }
 
-function openExercisePreview(name) {
-    const url = getExerciseImageUrl(name);
-    const anim = document.getElementById('exercise-anim');
-    document.getElementById('exercise-modal-title').textContent = name;
-    anim.onerror = () => {
-        const fallbackSlug = exerciseFallbackImageMap[name];
-        const fallbackUrl = fallbackSlug ? JPG_CDN + fallbackSlug + "/0.jpg" : null;
-        if (fallbackUrl && anim.src !== fallbackUrl) {
-            anim.src = fallbackUrl;
-            return;
-        }
-        anim.onerror = null;
-        anim.removeAttribute('src');
-        anim.style.display = 'none';
-    };
-    if (url) {
-        anim.src = url;
-        anim.style.display = '';
-    } else {
-        anim.src = '';
-        anim.style.display = 'none';
-    }
-    anim.alt = `Animación de ${name}`;
-    openModal('modal-exercise');
-}
 
 document.querySelectorAll('.modal-close').forEach(btn => {
     btn.addEventListener('click', () => closeModal(btn.dataset.close));
