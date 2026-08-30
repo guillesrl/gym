@@ -69,6 +69,8 @@ const exerciseImageMap = {
     'Press inclinado mancuernas':'ns0SIbU',
     'Curl con barra':            '25GPyDY',
     'Bíceps con mancuernas':     'NbVPDMW',
+    'Jalón cerrado':            '4c9BhzB',
+    'Tríceps con mancuerna':    'PdmaD0N',
     'Gemelos':                   'bOOdeyc',
     'Cardio':                    'oLrKqDH',
     'Prensa de piernas':         '10Z2DXU',
