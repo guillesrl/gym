@@ -910,3 +910,9 @@ body.dark .week-dot.filled {
   background: #dfff29;
   border-color: #dfff29;
 }
+
+/* El encabezado conserva una silueta nítida sobre el fondo nocturno. */
+body.dark .header h1 {
+  color: #dfff29;
+  text-shadow: 3px 3px 0 #060706;
+}
