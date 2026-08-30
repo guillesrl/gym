@@ -723,7 +723,7 @@ function updateWeek() {
 function applyGenderTheme() {
     document.body.classList.toggle('hombre', currentTab === 'hombre');
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', document.body.classList.contains('dark') ? '#131411' : '#e9ff2f');
+    if (meta) meta.setAttribute('content', '#000000');
 }
 function updateGenderUI() {
     document.querySelectorAll('.gender-btn').forEach(btn => {
