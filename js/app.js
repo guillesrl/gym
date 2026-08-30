@@ -86,12 +86,15 @@ const exerciseFallbackImageMap = {
     'Cuádriceps en máquina':           'Leg_Extensions',
     'Pájaros con mancuernas':          'Dumbbell_Rear_Lateral_Raise',
     'Bíceps con mancuernas':            'Dumbbell_Bicep_Curl',
+    'Jalón cerrado':                  'Close-Grip_Front_Lat_Pulldown',
+    'Tríceps con mancuerna':           'Standing_Dumbbell_Triceps_Extension',
 };
 
 // URLs directas a GIFs externos en alta resolución (720p)
 const exerciseDirectImageMap = {
     'Remo':                            'https://fitcron.com/wp-content/uploads/2021/04/08611301-Cable-seated-row_Back_720.gif',
     'Jalón al pecho':                  'https://fitcron.com/wp-content/uploads/2021/04/01981301-Cable-Pulldown_Back_720.gif',
+    'Jalón cerrado':                  'https://fitcron.com/wp-content/uploads/2021/04/01981301-Cable-Pulldown_Back_720.gif',
     'Pullover en polea':               'https://fitcron.com/wp-content/uploads/2021/03/01841301-Cable-Lying-Extension-Pullover-with-rope-attachment_Back_720.gif',
     'Face pull':                       'https://burnfit.io/en/wp-content/uploads/sites/3/2026/01/FACE_PULL-1.gif',
     'Extensiones de columna en banco': 'https://fitcron.com/wp-content/uploads/2021/04/04891301-Hyperextension_Waist_720.gif',
@@ -108,6 +111,7 @@ const exerciseDirectImageMap = {
     'Press de hombro':                 'https://fitcron.com/wp-content/uploads/2021/04/11651301-Barbell-Standing-Military-Press-without-rack_Shoulders_720.gif',
     'Bíceps en polea':                 'https://fitcron.com/wp-content/uploads/2021/04/01951301-Cable-Preacher-Curl_Upper-Arms_720.gif',
     'Tríceps en polea':                'https://fitcron.com/wp-content/uploads/2021/04/37191301-Cable-Standing-High-Cross-Triceps-Extension_Upper-Arms_720.gif',
+    'Tríceps con mancuerna':           'https://fitcron.com/wp-content/uploads/2021/04/37191301-Cable-Standing-High-Cross-Triceps-Extension_Upper-Arms_720.gif',
     'Sentadilla':                      'https://fitcron.com/wp-content/uploads/2021/04/00431301-Barbell-Full-Squat_Thighs_720.gif',
     'Cuádriceps en máquina':           'https://fitcron.com/wp-content/uploads/2021/04/05851301-Lever-Leg-Extension_Thighs_720.gif',
 };
