@@ -3,7 +3,11 @@
   "nodes": [
     {
       "parameters": {
-        "httpMethod": ["POST", "GET", "OPTIONS"],
+        "httpMethod": [
+          "POST",
+          "GET",
+          "OPTIONS"
+        ],
         "path": "entreno-brutal-backup",
         "responseMode": "responseNode",
         "options": {
@@ -14,7 +18,11 @@
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [-400, 0]
+      "position": [
+        -400,
+        0
+      ],
+      "webhookId": "9f0e2f9f-2926-4a31-b63f-c4f85e69ea15"
     },
     {
       "parameters": {
@@ -43,7 +51,10 @@
       "name": "Es preflight OPTIONS",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [-160, 0]
+      "position": [
+        -160,
+        0
+      ]
     },
     {
       "parameters": {
@@ -52,9 +63,18 @@
           "responseCode": 204,
           "responseHeaders": {
             "entries": [
-              { "name": "Access-Control-Allow-Origin", "value": "https://guillesrl.github.io" },
-              { "name": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" },
-              { "name": "Access-Control-Allow-Headers", "value": "Content-Type" }
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "https://guillesrl.github.io"
+              },
+              {
+                "name": "Access-Control-Allow-Methods",
+                "value": "GET, POST, OPTIONS"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type"
+              }
             ]
           }
         }
@@ -63,7 +83,10 @@
       "name": "Responder OPTIONS",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
-      "position": [80, -160]
+      "position": [
+        80,
+        -160
+      ]
     },
     {
       "parameters": {
@@ -77,10 +100,19 @@
             {
               "id": "cond-token",
               "leftValue": "={{ $json.query.token }}",
-              "rightValue": "f9f6ec0a924a28a4497df6d789dd6f53",
+              "rightValue": "={{ $env.ENTRENO_BRUTAL_BACKUP_TOKEN }}",
               "operator": {
                 "type": "string",
                 "operation": "equals"
+              }
+            },
+            {
+              "id": "cond-user",
+              "leftValue": "={{ (($json.body && $json.body.user) || $json.query.user || '').toString() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
               }
             }
           ],
@@ -89,64 +121,36 @@
         "options": {}
       },
       "id": "if-token",
-      "name": "Token válido",
+      "name": "Token válido y user presente",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [80, 160]
+      "position": [
+        80,
+        160
+      ]
     },
     {
       "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict"
-          },
-          "conditions": [
-            {
-              "id": "cond-get",
-              "leftValue": "={{ $json.headers.method || $request.method }}",
-              "rightValue": "GET",
-              "operator": {
-                "type": "string",
-                "operation": "equals"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "id": "if-get",
-      "name": "Es GET",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [340, 160]
-    },
-    {
-      "parameters": {
-        "operation": "toJson",
+        "operation": "executeQuery",
+        "query": "INSERT INTO entreno_brutal_backups (user_id, backup_date, payload) VALUES ($1, $2, $3::jsonb) ON CONFLICT (user_id, backup_date) DO UPDATE SET payload = EXCLUDED.payload, updated_at = now();",
         "options": {
-          "fileName": "=backup-{{ ((($('Webhook').item.json.body && $('Webhook').item.json.body.user) || $('Webhook').item.json.query.user || 'anonimo')).toString().trim().replace(/[^a-zA-Z0-9 _-]/g, '').slice(0, 50) || 'anonimo' }}.json"
+          "queryReplacement": "={{ $json.body.user }},={{ $now.format('yyyy-MM-dd') }},={{ JSON.stringify($json.body) }}"
         }
       },
-      "id": "convert-to-file",
-      "name": "Convertir a archivo",
-      "type": "n8n-nodes-base.convertToFile",
-      "typeVersion": 1.1,
-      "position": [560, 320]
-    },
-    {
-      "parameters": {
-        "operation": "write",
-        "fileName": "=/home/node/.n8n/backups/entreno-brutal/backup-{{ ((($('Webhook').item.json.body && $('Webhook').item.json.body.user) || $('Webhook').item.json.query.user || 'anonimo')).toString().trim().replace(/[^a-zA-Z0-9 _-]/g, '').slice(0, 50) || 'anonimo' }}.json",
-        "options": {}
-      },
-      "id": "write-file",
-      "name": "Guardar en disco",
-      "type": "n8n-nodes-base.readWriteFile",
-      "typeVersion": 1,
-      "position": [780, 320]
+      "id": "postgres-save",
+      "name": "Guardar en Postgres",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        340,
+        60
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "7qyjUFMhMyXOL7ym",
+          "name": "n8n Postgres (interno)"
+        }
+      }
     },
     {
       "parameters": {
@@ -156,7 +160,10 @@
           "responseCode": 200,
           "responseHeaders": {
             "entries": [
-              { "name": "Access-Control-Allow-Origin", "value": "https://guillesrl.github.io" }
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "https://guillesrl.github.io"
+              }
             ]
           }
         }
@@ -165,17 +172,23 @@
       "name": "Responder OK",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
-      "position": [1000, 320]
+      "position": [
+        560,
+        60
+      ]
     },
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ { ok: false, error: 'invalid token' } }}",
+        "responseBody": "={{ { ok: false, error: 'invalid token or missing user' } }}",
         "options": {
           "responseCode": 401,
           "responseHeaders": {
             "entries": [
-              { "name": "Access-Control-Allow-Origin", "value": "https://guillesrl.github.io" }
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "https://guillesrl.github.io"
+              }
             ]
           }
         }
@@ -184,41 +197,141 @@
       "name": "Responder 401",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
-      "position": [340, 420]
+      "position": [
+        340,
+        260
+      ]
     },
     {
+      "id": "96ac10ab-81cc-4449-a58d-7a952e171dd3",
+      "name": "Token válido para restaurar",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -140,
+        360
+      ],
       "parameters": {
-        "operation": "read",
-        "fileSelector": "=/home/node/.n8n/backups/entreno-brutal/backup-{{ (($json.query.user) || 'anonimo').toString().trim().replace(/[^a-zA-Z0-9 _-]/g, '').slice(0, 50) || 'anonimo' }}.json",
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "restore-token",
+              "leftValue": "={{ $json.query.token }}",
+              "rightValue": "={{ $env.ENTRENO_BRUTAL_BACKUP_TOKEN }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "restore-user",
+              "leftValue": "={{ $json.query.user || '' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
         "options": {}
-      },
-      "id": "read-file",
-      "name": "Leer de disco",
-      "type": "n8n-nodes-base.readWriteFile",
-      "typeVersion": 1,
-      "onError": "continueErrorOutput",
-      "position": [560, 0]
+      }
     },
     {
+      "id": "ab1ce139-e6e6-483e-b4e2-05b6c27afbef",
+      "name": "Leer último backup",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        100,
+        300
+      ],
       "parameters": {
-        "respondWith": "binary",
+        "operation": "executeQuery",
+        "query": "SELECT payload FROM (SELECT payload, 1 AS priority, backup_date, updated_at FROM entreno_brutal_backups WHERE user_id = $1 UNION ALL SELECT NULL::jsonb AS payload, 2 AS priority, NULL::date AS backup_date, NULL::timestamp AS updated_at) candidates ORDER BY priority, backup_date DESC NULLS LAST, updated_at DESC NULLS LAST LIMIT 1;",
+        "options": {
+          "queryReplacement": "={{ $json.query.user }}"
+        }
+      },
+      "credentials": {
+        "postgres": {
+          "id": "7qyjUFMhMyXOL7ym",
+          "name": "n8n Postgres (interno)"
+        }
+      }
+    },
+    {
+      "id": "b60ba3d4-38a0-4a9d-b5f3-9bc54219ec8b",
+      "name": "Hay backup",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        340,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "has-backup",
+              "leftValue": "={{ $json.payload !== null }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "15bfa996-0798-4896-a678-b6b7ee2cc06a",
+      "name": "Responder Backup",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        580,
+        240
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json.payload }}",
         "options": {
           "responseCode": 200,
           "responseHeaders": {
             "entries": [
-              { "name": "Access-Control-Allow-Origin", "value": "https://guillesrl.github.io" },
-              { "name": "Content-Type", "value": "application/json" }
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "https://guillesrl.github.io"
+              }
             ]
           }
         }
-      },
-      "id": "respond-backup",
-      "name": "Responder Backup",
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.4,
-      "position": [780, 0]
+      }
     },
     {
+      "id": "07e353a8-c921-4946-8e91-fc19ef6b101c",
+      "name": "Responder 404",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        580,
+        360
+      ],
       "parameters": {
         "respondWith": "json",
         "responseBody": "={{ { ok: false, error: 'no hay backup guardado para este usuario' } }}",
@@ -226,51 +339,188 @@
           "responseCode": 404,
           "responseHeaders": {
             "entries": [
-              { "name": "Access-Control-Allow-Origin", "value": "https://guillesrl.github.io" }
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "https://guillesrl.github.io"
+              }
             ]
           }
         }
-      },
-      "id": "respond-not-found",
-      "name": "Responder 404",
+      }
+    },
+    {
+      "id": "8dfedb6c-2332-49bf-9f06-fece36087e20",
+      "name": "Responder 401 restauración",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
-      "position": [780, 140]
+      "position": [
+        100,
+        460
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: false, error: 'invalid token or missing user' } }}",
+        "options": {
+          "responseCode": 401,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "https://guillesrl.github.io"
+              }
+            ]
+          }
+        }
+      }
     }
   ],
   "connections": {
     "Webhook": {
-      "main": [[{ "node": "Es preflight OPTIONS", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Es preflight OPTIONS",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Token válido para restaurar",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder OPTIONS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Es preflight OPTIONS": {
       "main": [
-        [{ "node": "Responder OPTIONS", "type": "main", "index": 0 }],
-        [{ "node": "Token válido", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Responder OPTIONS",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Token válido y user presente",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
-    "Token válido": {
+    "Token válido y user presente": {
       "main": [
-        [{ "node": "Es GET", "type": "main", "index": 0 }],
-        [{ "node": "Responder 401", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Guardar en Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder 401",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
-    "Es GET": {
+    "Guardar en Postgres": {
       "main": [
-        [{ "node": "Leer de disco", "type": "main", "index": 0 }],
-        [{ "node": "Convertir a archivo", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Responder OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
-    "Leer de disco": {
+    "Token válido para restaurar": {
       "main": [
-        [{ "node": "Responder Backup", "type": "main", "index": 0 }],
-        [{ "node": "Responder 404", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Leer último backup",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder 401 restauración",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
-    "Convertir a archivo": {
-      "main": [[{ "node": "Guardar en disco", "type": "main", "index": 0 }]]
+    "Leer último backup": {
+      "main": [
+        [
+          {
+            "node": "Hay backup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
-    "Guardar en disco": {
-      "main": [[{ "node": "Responder OK", "type": "main", "index": 0 }]]
+    "Hay backup": {
+      "main": [
+        [
+          {
+            "node": "Responder Backup",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder 404",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-08-20T18:51:39.245Z",
+      "createdAt": "2026-08-20T18:51:39.245Z",
+      "role": "workflow:owner",
+      "workflowId": "z336lyYrQIftdrof",
+      "projectId": "giVK5y5mDvUkZim8",
+      "project": {
+        "updatedAt": "2025-08-09T20:29:30.682Z",
+        "createdAt": "2025-08-09T20:25:40.742Z",
+        "id": "giVK5y5mDvUkZim8",
+        "name": "Guillermo Rodriguez <guillesrl@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "3e442321-4a25-4e37-b8fa-451eee3549a6"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
   }
 }

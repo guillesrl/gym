@@ -37,7 +37,7 @@ GitHub Pages cachea con `max-age=600`; el Service Worker es network-first así q
 
 ## Workflow de backup en n8n
 
-`n8n/backup-workflow.json` es la definición versionada del workflow activo. El webhook usa métodos `POST`, `GET` y `OPTIONS`: POST guarda en PostgreSQL, GET lee el último backup y OPTIONS responde el preflight CORS. Tras modificarlo, importar o actualizar el workflow existente, activarlo y comprobar las tres respuestas: éxito, 404 sin backup y preflight CORS. No crear un workflow duplicado.
+`n8n/backup-workflow.json` es la definición versionada del workflow activo. El valor del token se obtiene en n8n desde `ENTRENO_BRUTAL_BACKUP_TOKEN`; no incluir su valor en el JSON ni en el repositorio. El webhook usa métodos `POST`, `GET` y `OPTIONS`: POST guarda en PostgreSQL, GET lee el último backup y OPTIONS responde el preflight CORS. Tras modificarlo, importar o actualizar el workflow existente, activarlo y comprobar las tres respuestas: éxito, 404 sin backup y preflight CORS. No crear un workflow duplicado.
 
 ## Ayudas visuales de ejercicios
 
