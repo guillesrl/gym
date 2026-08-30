@@ -433,16 +433,6 @@ function getExplosionRoot() {
 }
 
 // --- Haptics & Explosion ---
-window.toggleCheck = function(el) {
-    el.classList.toggle('done');
-    if (el.classList.contains('done')) {
-        el.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-    } else {
-        el.innerHTML = '';
-    }
-    if (navigator.vibrate) navigator.vibrate([50]);
-};
-
 function triggerWorkoutExplosion(originEl) {
     if (navigator.vibrate) navigator.vibrate([80, 40, 120, 40, 80]);
 
@@ -845,7 +835,6 @@ document.getElementById('btn-routine').addEventListener('click', () => {
             <div class="routine-day-content${isToday ? ' open' : ''}">
                 ${exercises.map(ex => `
                     <div class="exercise-item${completionByExercise.get(ex.name) === false ? ' exercise-incomplete' : ''}">
-                        <div class="exercise-check" onclick="toggleCheck(this)"></div>
                         <span class="exercise-name">${ex.name}</span>
                         ${renderDetailInputs(ex.name, ex.detail)}
                         <div class="exercise-weight">
