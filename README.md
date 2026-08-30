@@ -14,13 +14,14 @@ App web brutalista para registrar rutinas de gimnasio, hacer seguimiento de prog
 - **Selector de fecha con calendario** — tira de días navegable por mes (reemplaza al antiguo selector "Semana N"); arranca en hoy y permite registrar entrenos en cualquier fecha pasada, el futuro queda bloqueado
 - **Progresión en 4 semanas** — series y repeticiones suben progresivamente; la semana del programa (1-4) se deduce internamente de la fecha seleccionada, aunque en pantalla ya no se numera
 - **Series y reps editables** — cada ejercicio tiene inputs `series x reps` con el valor sugerido como placeholder; tu personalización se guarda por ejercicio + semana
-- **GIFs 720p de referencia** — animación HD del movimiento para cada ejercicio (fitcron.com + fallbacks)
+- **Ayudas visuales con fallback** — GIFs de ExerciseDB y fuentes externas verificadas; si fallan, se muestra una imagen de respaldo del mismo movimiento
+- **Editor de rutinas y ejercicios** — añade, quita, reordena o sustituye ejercicios y personaliza nombre, instrucciones, músculos e imagen; los cambios se guardan offline y no alteran entrenos ya registrados
 - **Registro de entrenos por día** — guarda duración por día directamente desde la rutina; el bloqueo de re-registro es por día (no global)
 - **Modificar entrenos registrados** — edita fecha, duración y día de cualquier entreno del historial
 - **Records personales** — detecta automáticamente cada vez que superas tu peso máximo en un ejercicio
 - **Semáforo de progreso** — indicador 🟢/🟠/🔴 en la misma fila que cada récord (🟢 superaste tu marca; 🟠 sin cambios; 🔴 4 semanas estancado), ordenado igual que la lista de récords
 - **Estadísticas en tiempo real** — racha de días consecutivos, entrenos de la semana y total histórico
-- **Backup automático a n8n, por usuario** — al abrir la app (si pasaron 7+ días desde el último envío) y también justo al registrar un entreno, se manda un POST con `keepalive` al webhook de n8n (`n8n/backup-workflow.json`), que guarda un archivo JSON en disco por usuario (nombre saneado); el nombre se pide una sola vez y se recuerda
+- **Backup automático a n8n, por usuario** — al abrir la app (si pasaron 7+ días desde el último envío) y también al registrar un entreno, se manda un POST con `keepalive` al webhook de n8n; el workflow guarda el payload en PostgreSQL y el nombre se pide una sola vez y se recuerda
 - **Restaurar desde servidor** — botón que trae de vuelta el último backup automático guardado en el servidor para ese usuario (GET al mismo webhook), sin depender de tener un JSON exportado a mano
 - **Copia espejo del historial** — el estado principal se duplica en otra clave de `localStorage`; si la principal aparece vacía (visto en algunos móviles/navegadores), se restaura sola desde la copia
 - **Backup manual completo** — exporta/importa JSON con state, PRs, históricos, series/reps y preferencias
@@ -39,7 +40,7 @@ App web brutalista para registrar rutinas de gimnasio, hacer seguimiento de prog
 | Frontend | HTML + CSS + JS vanilla (sin frameworks) |
 | Fuente | Inter via Google Fonts |
 | Persistencia | `localStorage` |
-| GIFs ejercicios | `fitcron.com` (720p) + `static.exercisedb.dev` + `raw.githubusercontent.com/yuhonas/free-exercise-db` (fallback JPG) |
+| Ayudas visuales | `static.exercisedb.dev` + URLs externas verificadas + `raw.githubusercontent.com/yuhonas/free-exercise-db` (fallback JPG) |
 | PWA | Service Worker + Web App Manifest |
 | Iconos | SVG inline (Lucide) |
 
@@ -56,7 +57,8 @@ gym/
 ├── icon.svg                # Icono PWA
 ├── manifest.webmanifest    # Configuración PWA
 ├── sw.js                   # Service Worker
-├── n8n/backup-workflow.json # Workflow n8n: recibe (POST) y sirve (GET) el backup por usuario, como archivo en disco
+├── n8n/backup-workflow.json # Workflow n8n: POST/GET/OPTIONS y backup por usuario en PostgreSQL
+├── skills/entreno-brutal/   # Guía operativa para mantener la PWA y n8n
 ├── MEMORY.md               # Notas internas
 └── README.md
 ```
@@ -78,7 +80,7 @@ Ambos programas siguen una progresión de 4 semanas: series y repeticiones suben
 ### Hombre — 3 días (Lun/Mié/Vie)
 
 - **Lunes · Pecho y Bíceps 💪** — Press de banca, Press inclinado mancuernas, Pecho en máquina, Curl con barra, Bíceps en polea, Bíceps con mancuernas
-- **Miércoles · Espalda y Tríceps 🔙** — Jalón al pecho, Remo, Pullover en polea, Tríceps en polea
+- **Miércoles · Espalda y Tríceps 🔙** — Jalón al pecho, Jalón cerrado, Remo, Pullover en polea, Tríceps en polea, Tríceps con mancuerna
 - **Viernes · Pierna, Hombro y ABS 🦵** — Sentadilla, Prensa de piernas, Gemelos, Press de hombro, Vuelos laterales, Vuelos frontales, Plancha
 
 ---
@@ -122,6 +124,8 @@ Todo se guarda en `localStorage`:
 | `program-start-date` | Fecha de inicio (para calcular la semana 1-4 del programa) |
 | `rutina-genero` | Programa activo (`tonificar` = Mujer / `hombre`) |
 | `dark-mode` | Preferencia de tema |
+| `entreno-brutal-routines-v1` | Personalizaciones offline de la composición de rutinas |
+| `entreno-brutal-exercise-meta-v1` | Instrucciones, músculos e imagen personalizados por ejercicio |
 | `backup-user-name` | Nombre con el que se identifica el backup automático en el servidor |
 | `auto-backup-last` | Fecha del último backup automático enviado (controla el intervalo de 7 días) |
 
@@ -129,12 +133,20 @@ Usá los botones **Exportar / Importar backup** para sincronizar entre dispositi
 
 ---
 
+## Backup en n8n
+
+El workflow versionado en `n8n/backup-workflow.json` atiende `POST`, `GET` y `OPTIONS`. Guarda los backups en PostgreSQL y devuelve el último backup de cada usuario.
+
+En n8n debe existir la variable de entorno `ENTRENO_BRUTAL_BACKUP_TOKEN` con el valor que usa la PWA. El JSON del workflow no debe contener ese valor. Tras modificar el workflow, actualizá el existente desde la interfaz de n8n, publicalo y comprobá restauración, respuesta `404` y CORS.
+
+---
+
 ## Actualizar la versión
 
 Al cambiar HTML/CSS/JS conviene bumpear:
-- `?v=N` en `index.html` para los assets (actualmente `style.css?v=38`, `app.js?v=68`)
+- `?v=N` en `index.html` para los assets (actualmente `style.css?v=39`, `app.js?v=75`)
 - `?v=N` en la llamada a `fetch('./data/routines.json?v=N', ...)` dentro de `js/app.js` si cambia `routines.json`
-- `CACHE_NAME` en `sw.js` para forzar la activación del nuevo Service Worker (actualmente `entreno-brutal-v64`)
+- `CACHE_NAME` en `sw.js` para forzar la activación del nuevo Service Worker (actualmente `entreno-brutal-v75`)
 
 > La app se sirve en GitHub Pages (`https://guillesrl.github.io/gym/`), que cachea con `max-age=600`. El Service Worker network-first con `cache: no-store` evita ese retardo y sirve siempre la última versión.
 
