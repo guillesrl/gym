@@ -896,7 +896,7 @@ document.getElementById('routine-body').addEventListener('click', (e) => {
         state.total = state.workouts.length;
         state.weekCount = getCurrentWeekCount();
         saveState();
-        sendBackup();
+        void sendBackup({ notify: true });
         updateUI();
         regBtn.closest('.routine-day').querySelectorAll('.exercise-item').forEach((row, index) => row.classList.toggle('exercise-incomplete', !registeredExercises[index].completed));
         triggerWorkoutExplosion(regBtn);
@@ -1145,32 +1145,48 @@ function buildBackup() {
     return backup;
 }
 
-// Backup automático. No bloquea la UI ni avisa al usuario; si falla (sin red,
-// servidor caído), no pasa nada grave porque se reintenta en la próxima ocasión.
-// El servidor guarda un archivo por usuario (nombre saneado), así que el mismo
-// nombre que se manda al hacer backup es el que hay que usar para recuperarlo.
+// Backup automático. El registro local siempre termina primero; el envío remoto
+// queda marcado como pendiente si no hay red y se reintenta en el próximo arranque.
 const AUTO_BACKUP_BASE_URL = 'https://n8n.guillers.es/webhook/entreno-brutal-backup';
 const AUTO_BACKUP_TOKEN = 'f9f6ec0a924a28a4497df6d789dd6f53';
 const AUTO_BACKUP_INTERVAL_DAYS = 7;
+const AUTO_BACKUP_PENDING_KEY = 'auto-backup-pending';
 
-// keepalive: true evita que el navegador cancele el POST si la app pasa a
-// segundo plano justo después de registrar (muy común en PWA en móvil).
-function sendBackup() {
+// keepalive evita que el navegador cancele el POST si la PWA pasa a segundo plano
+// justo después de registrar. Nunca se espera esta promesa para guardar el entreno.
+async function sendBackup({ notify = false } = {}) {
     const user = getBackupUserName();
-    if (!user) return;
-    fetch(`${AUTO_BACKUP_BASE_URL}?token=${AUTO_BACKUP_TOKEN}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(buildBackup()),
-        keepalive: true
-    }).then(res => {
-        if (res.ok) localStorage.setItem('auto-backup-last', getLocalDateKey());
-    }).catch(() => {});
+    if (!user) return false;
+
+    localStorage.setItem(AUTO_BACKUP_PENDING_KEY, '1');
+    try {
+        const res = await fetch(`${AUTO_BACKUP_BASE_URL}?token=${AUTO_BACKUP_TOKEN}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(buildBackup()),
+            keepalive: true
+        });
+        if (!res.ok) throw new Error('El servidor no aceptó la copia.');
+        localStorage.setItem('auto-backup-last', getLocalDateKey());
+        localStorage.removeItem(AUTO_BACKUP_PENDING_KEY);
+        if (notify) showToast('Entreno guardado y copia en servidor actualizada.');
+        return true;
+    } catch {
+        // El estado ya está en localStorage y en su espejo. Esta marca hace que
+        // la próxima apertura priorice una nueva copia con el estado más reciente.
+        if (notify) showToast('Entreno guardado. Copia en servidor pendiente de conexión.');
+        return false;
+    }
 }
 
-// Al abrir la app: backup semanal (7+ días desde el último), para no golpear
-// el servidor en cada apertura si no hay nada nuevo.
+// Al abrir la app se reintenta una copia pendiente o la copia semanal. No se
+// pide el nombre en segundo plano: se solicitará al registrar el primer entreno.
 function autoBackupIfNeeded() {
+    if (!localStorage.getItem('backup-user-name')) return;
+    if (localStorage.getItem(AUTO_BACKUP_PENDING_KEY) === '1') {
+        sendBackup();
+        return;
+    }
     const lastRaw = localStorage.getItem('auto-backup-last');
     if (lastRaw) {
         const daysSince = (dateFromKey(getLocalDateKey()) - dateFromKey(lastRaw)) / 86400000;
