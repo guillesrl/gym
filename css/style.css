@@ -799,7 +799,7 @@ body {
 .date-month-label { font-family: 'DM Mono', monospace; font-size: 11px; }
 .date-cell { width: 48px; min-height: 58px; border-color: var(--border); }
 .date-cell.selected { box-shadow: 3px 3px 0 var(--border); }
-.date-context { justify-content: flex-start; }
+.date-context { justify-content: center; }
 .date-context-day { padding: 7px 10px; font-family: 'DM Mono', monospace; font-size: 10px; box-shadow: none; }
 .stats-grid { margin-bottom: 16px; box-shadow: 5px 5px 0 var(--border); }
 .stat-card { padding: 16px 7px; }
@@ -882,9 +882,12 @@ body.dark .action-card:first-child .action-link {
   color: #dfff29;
 }
 
+body.dark .action-icon {
+  color: #151612;
+}
+
 body.dark .action-card:first-child .action-icon {
   background: #dfff29;
-  color: #151612;
   border-color: #dfff29;
 }
 
