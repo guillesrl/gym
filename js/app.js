@@ -709,6 +709,7 @@ function updateWeek() {
     const dayKey = getSelectedDayKey();
     const dayLabel = document.getElementById('date-day-label');
     if (dayLabel) dayLabel.textContent = dayKey ? getDayLabel(dayKey) : 'Descanso';
+    dayLabel?.parentElement?.classList.toggle('is-rest-day', !dayKey);
 
     const todayBtn = document.getElementById('date-today');
     if (todayBtn) todayBtn.style.display = isSelectedToday() ? 'none' : '';

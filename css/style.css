@@ -843,3 +843,67 @@ body {
     .routine-day-header { padding: 12px; }
     .exercise-item { padding: 11px 10px; }
 }
+
+/* Mantiene el aviso de descanso centrado sin alterar los dias de entrenamiento. */
+.date-context.is-rest-day {
+  justify-content: center;
+}
+
+.date-context.is-rest-day .date-context-day {
+  min-width: 132px;
+  text-align: center;
+}
+
+.action-card:first-child .action-desc {
+  color: var(--background);
+  opacity: .78;
+}
+
+/* En oscuro evitamos superficies claras invertidas y conservamos texto legible. */
+body.dark .daily-motivation,
+body.dark .tab.active,
+body.dark .day-register-btn {
+  color: #151612;
+}
+
+body.dark .action-card:first-child,
+body.dark .routine-day-header,
+body.dark .btn-export {
+  background: #24261f;
+  color: #f7f3e8;
+}
+
+body.dark .action-card:first-child .action-desc {
+  color: #c8c7b9;
+  opacity: 1;
+}
+
+body.dark .action-card:first-child .action-link {
+  color: #dfff29;
+}
+
+body.dark .action-card:first-child .action-icon {
+  background: #dfff29;
+  color: #151612;
+  border-color: #dfff29;
+}
+
+body.dark .date-cell.today {
+  background: #34382b;
+  color: #f7f3e8;
+}
+
+body.dark .date-context-day {
+  background: #24261f;
+  color: #f7f3e8;
+  border-color: #f7f3e8;
+}
+
+body.dark .exercise-preview-images {
+  background: #0b0c09;
+}
+
+body.dark .week-dot.filled {
+  background: #dfff29;
+  border-color: #dfff29;
+}
