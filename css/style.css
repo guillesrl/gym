@@ -364,6 +364,9 @@ body.dark .dark-toggle .icon-moon { display: none; }
     padding: 10px 16px; border-bottom: 1px solid var(--muted);
 }
 .exercise-item:last-child { border-bottom: none; }
+.exercise-item.exercise-incomplete { opacity: 0.58; position: relative; }
+.exercise-item.exercise-incomplete::after { content: ''; position: absolute; left: 16px; right: 16px; top: 50%; height: 2px; background: var(--foreground); pointer-events: none; }
+.exercise-item.exercise-incomplete .exercise-name { text-decoration: line-through; }
 .exercise-check {
     width: 20px; height: 20px; border: 2px solid var(--border);
     cursor: pointer; display: flex; align-items: center; justify-content: center;

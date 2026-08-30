@@ -834,6 +834,8 @@ document.getElementById('btn-routine').addEventListener('click', () => {
     body.innerHTML = Object.entries(days).map(([day, exercises]) => {
         const isToday = day === todayName;
         const alreadyDone = isDayRegisteredToday(day);
+        const registeredWorkout = state.workouts.find(w => w.date === selectedDate && w.notes === day && w.type === currentTab);
+        const completionByExercise = new Map((registeredWorkout?.exercises || []).map(exercise => [exercise.name, exercise.completed]));
         return `
         <div class="routine-day">
             <div class="routine-day-header${isToday ? ' open' : ''}" onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('open')">
@@ -842,7 +844,7 @@ document.getElementById('btn-routine').addEventListener('click', () => {
             </div>
             <div class="routine-day-content${isToday ? ' open' : ''}">
                 ${exercises.map(ex => `
-                    <div class="exercise-item">
+                    <div class="exercise-item${completionByExercise.get(ex.name) === false ? ' exercise-incomplete' : ''}">
                         <div class="exercise-check" onclick="toggleCheck(this)"></div>
                         <span class="exercise-name">${ex.name}</span>
                         ${renderDetailInputs(ex.name, ex.detail)}
@@ -897,12 +899,21 @@ document.getElementById('routine-body').addEventListener('click', (e) => {
                 localStorage.setItem('peso-history:' + name, JSON.stringify(history));
             }
         });
-        state.workouts.push({ date: today, type: currentTab, duration, intensity: "media", notes: day, exercises: (getRoutines()[day] || []).map(e => ({ name: e.name, detail: e.detail || "" })) });
+        const registeredExercises = [...regBtn.closest('.routine-day').querySelectorAll('.exercise-item')].map(row => {
+            const series = row.querySelector('[data-field="series"]')?.value.trim() || '';
+            const reps = row.querySelector('[data-field="reps"]')?.value.trim() || '';
+            return { name: row.querySelector('.exercise-name').textContent, detail: row.querySelector('.exercise-detail')?.textContent.trim() || '', completed: Boolean(series && reps) };
+        });
+        registeredExercises.forEach((exercise, index) => {
+            exercise.detail = getRoutines()[day]?.[index]?.detail || exercise.detail;
+        });
+        state.workouts.push({ date: today, type: currentTab, duration, intensity: "media", notes: day, exercises: registeredExercises });
         state.total = state.workouts.length;
         state.weekCount = getCurrentWeekCount();
         saveState();
         sendBackup();
         updateUI();
+        regBtn.closest('.routine-day').querySelectorAll('.exercise-item').forEach((row, index) => row.classList.toggle('exercise-incomplete', !registeredExercises[index].completed));
         triggerWorkoutExplosion(regBtn);
 
         regBtn.textContent = '✓ Registrado!';
