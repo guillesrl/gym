@@ -94,7 +94,6 @@ const exerciseFallbackImageMap = {
 const exerciseDirectImageMap = {
     'Remo':                            'https://fitcron.com/wp-content/uploads/2021/04/08611301-Cable-seated-row_Back_720.gif',
     'Jalón al pecho':                  'https://fitcron.com/wp-content/uploads/2021/04/01981301-Cable-Pulldown_Back_720.gif',
-    'Jalón cerrado':                  'https://fitcron.com/wp-content/uploads/2021/04/01981301-Cable-Pulldown_Back_720.gif',
     'Pullover en polea':               'https://fitcron.com/wp-content/uploads/2021/03/01841301-Cable-Lying-Extension-Pullover-with-rope-attachment_Back_720.gif',
     'Face pull':                       'https://burnfit.io/en/wp-content/uploads/sites/3/2026/01/FACE_PULL-1.gif',
     'Extensiones de columna en banco': 'https://fitcron.com/wp-content/uploads/2021/04/04891301-Hyperextension_Waist_720.gif',
