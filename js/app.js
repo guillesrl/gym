@@ -717,17 +717,12 @@ function updateWeek() {
 }
 
 // --- Género (Mujer / Hombre) ---
-// La paleta depende del programa: mujer mantiene la original, hombre pasa a
-// azul sobre blanco (claro) y verde sobre negro (oscuro). Ver css/style.css.
+// Ambos programas comparten la dirección brutal refinada; la selección sigue
+// controlando las rutinas y el color del navegador acompaña el tema activo.
 function applyGenderTheme() {
     document.body.classList.toggle('hombre', currentTab === 'hombre');
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) {
-        const dark = document.body.classList.contains('dark');
-        meta.setAttribute('content',
-            currentTab === 'hombre' ? (dark ? '#060a07' : '#f2f6fd')
-                                    : (dark ? '#14101c' : '#fdf3f7'));
-    }
+    if (meta) meta.setAttribute('content', document.body.classList.contains('dark') ? '#131411' : '#e9ff2f');
 }
 function updateGenderUI() {
     document.querySelectorAll('.gender-btn').forEach(btn => {
