@@ -1,7 +1,6 @@
 ---
 name: entreno-brutal
 description: "PWA de rutinas de gimnasio (repo guillesrl/gym, servida en GitHub Pages). Usar cuando se toque js/app.js, index.html, sw.js o el workflow n8n de backup, o cuando algo falle: historial vacío al cargar, backup que no llega, Service Worker que no actualiza."
-trigger: /entreno-brutal
 ---
 
 # /entreno-brutal
@@ -14,17 +13,13 @@ Playbook de "Entreno Brutal" (`/opt/proyectos/entreno-brutal`, repo `guillesrl/g
 - Dos programas (Mujer 5 días / Hombre 3 días) definidos en `data/routines.json`, con progresión de 4 semanas que se deduce de `selectedDate`, no se elige a mano.
 - Backup en dos capas, ninguna bloquea la UI:
   - Copia espejo local: `entreno-brutal` (principal) se duplica en `entreno-brutal-mirror`; si la principal aparece vacía, `loadState()` restaura desde el espejo.
-  - Backup remoto a n8n: `sendBackup()` hace POST con `keepalive: true` a `AUTO_BACKUP_BASE_URL` (webhook en `n8n.guillers.es`, definido en `n8n/backup-workflow.json`). El servidor guarda un archivo JSON en disco por usuario (`backup-<usuario-saneado>.json`). Se dispara al registrar un entreno y, si pasaron 7+ días, al abrir la app (`autoBackupIfNeeded()`). Si falla (sin red, servidor caído), se traga el error y se reintenta la próxima vez — nunca debe interrumpir el registro del entreno.
+  - Backup remoto a n8n: `sendBackup()` hace POST con `keepalive: true` al webhook definido en `n8n/backup-workflow.json`. El workflow activo persiste un payload JSON por usuario y fecha en PostgreSQL; se dispara al registrar un entreno y, si pasaron 7+ días, al abrir la app (`autoBackupIfNeeded()`). Un fallo de red nunca debe interrumpir el registro del entreno.
   - Restauración: el botón "Restaurar desde servidor" hace GET al mismo webhook con `?user=<nombre>` y aplica el JSON recibido con `applyBackup()` (compartida con la importación manual de archivo).
 - PWA con Service Worker network-first (`sw.js`, `cache: no-store` para HTML/CSS/JS/JSON) para esquivar el `max-age=600` de GitHub Pages; cache-first solo para imágenes/GIFs.
 
-## El nombre de usuario NO se sanea en el cliente — solo en n8n
+## Identidad y acceso al backup
 
-`getBackupUserName()` solo hace `.trim()` sobre lo que el usuario escribe en el prompt; no quita tildes, símbolos ni nada raro. El que sanea (a alfanumérico/espacio/guion, máx. 50 chars) es siempre el workflow de n8n, tanto al guardar como al leer — por eso el POST y el GET siguen encontrando el mismo archivo aunque el nombre crudo tenga caracteres especiales. **Si se cambia la lógica de saneo, solo hay que tocarla en `n8n/backup-workflow.json`, en los dos nodos (guardar y leer) a la vez** — no hace falta ni conviene replicarla en `app.js`.
-
-## El webhook de backup pide un token hardcodeado, visible para cualquiera
-
-`AUTO_BACKUP_TOKEN` (`f9f6ec0a924a28a4497df6d789dd6f53` en `js/app.js`) se manda como `?token=...` en cada POST/GET, y el workflow de n8n lo valida antes de tocar el archivo (nodo `Token válido`, si no coincide responde 401). Como el sitio es una PWA estática en GitHub Pages, **ese token es público** — cualquiera puede verlo con "ver código fuente" y llamar al webhook directamente. No es una medida de seguridad real, es solo un filtro contra bots/escaneos automáticos que prueban URLs al azar. No tratar este token como secreto ni asumir que protege los backups de otra persona: cualquiera que lo tenga puede leer o sobrescribir el backup de cualquier nombre de usuario.
+`getBackupUserName()` conserva el nombre introducido salvo `.trim()`. El POST y el GET deben usar la misma identidad sin normalizaciones divergentes, porque PostgreSQL la usa como `user_id`. El token que viaja en la PWA es público por diseño; no debe tratarse como una barrera de seguridad ni imprimirse en informes.
 
 ## Orden de inicialización de app.js
 
@@ -40,9 +35,13 @@ GitHub Pages cachea con `max-age=600`; el Service Worker es network-first así q
 - Si cambia `data/routines.json`, el `?v=N` de su `fetch(...)` dentro de `js/app.js`
 - `CACHE_NAME` en `sw.js` (formato `entreno-brutal-vNN`) — si no se sube, el Service Worker no se reactiva y algunos clientes quedan pegados a la versión anterior
 
-## Desplegar cambios en n8n/backup-workflow.json
+## Workflow de backup en n8n
 
-Ese archivo es solo la definición versionada; el workflow real corre en `n8n.guillers.es` y hay que reimportarlo ahí a mano tras cada cambio (el MCP de n8n de este entorno no autentica contra esa instancia — `n8n_list_workflows` devuelve `AUTHENTICATION_ERROR` aunque el health check diga `connected: true`). Verificar tras importar que el nombre del workflow coincide (para no duplicarlo) y que sigue activo.
+`n8n/backup-workflow.json` es la definición versionada del workflow activo. El webhook usa métodos `POST`, `GET` y `OPTIONS`: POST guarda en PostgreSQL, GET lee el último backup y OPTIONS responde el preflight CORS. Tras modificarlo, importar o actualizar el workflow existente, activarlo y comprobar las tres respuestas: éxito, 404 sin backup y preflight CORS. No crear un workflow duplicado.
+
+## Ayudas visuales de ejercicios
+
+`exerciseImageMap` contiene los GIFs principales de ExerciseDB; `exerciseDirectImageMap` tiene prioridad y solo debe usarse si el movimiento coincide exactamente. `getExerciseImageCandidates()` prueba imagen personalizada, GIF directo, GIF de ExerciseDB y JPG de respaldo. Antes de cambiar un mapeo, verificar la URL y que el gesto, el agarre y el equipamiento sean correctos; añadir una foto solo como fallback cuando no exista un GIF fiable.
 
 ## No registrar el Service Worker más de una vez
 
