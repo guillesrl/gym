@@ -764,7 +764,7 @@ function saveCustomization() { localStorage.setItem(CUSTOM_ROUTINES_KEY, JSON.st
 function getExerciseMeta(name) { return exerciseMeta[name] || {}; }
 async function loadRoutines() {
     try {
-        const res = await fetch('./data/routines.json?v=50', { cache: 'no-store' });
+        const res = await fetch('./data/routines.json?v=51', { cache: 'no-store' });
         baseRoutines = await res.json();
         customRoutines = readLocalJson(CUSTOM_ROUTINES_KEY, {});
         exerciseMeta = readLocalJson(EXERCISE_META_KEY, {});

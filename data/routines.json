@@ -196,7 +196,7 @@
         { "name": "Press de hombro",     "detail": "3x12" },
         { "name": "Vuelos laterales",    "detail": "3x15" },
         { "name": "Vuelos frontales",    "detail": "3x15" },
-        { "name": "Plancha",             "detail": "3x60 seg" }
+        { "name": "Abs en banco inclinado", "detail": "3x15" }
       ]
     },
     "2": {
@@ -223,7 +223,7 @@
         { "name": "Press de hombro",     "detail": "3x15" },
         { "name": "Vuelos laterales",    "detail": "3x20" },
         { "name": "Vuelos frontales",    "detail": "3x20" },
-        { "name": "Plancha",             "detail": "3x60 seg" }
+        { "name": "Abs en banco inclinado", "detail": "3x15" }
       ]
     },
     "3": {
@@ -250,7 +250,7 @@
         { "name": "Press de hombro",     "detail": "3x12" },
         { "name": "Vuelos laterales",    "detail": "3x15" },
         { "name": "Vuelos frontales",    "detail": "3x15" },
-        { "name": "Plancha",             "detail": "3x60 seg" }
+        { "name": "Abs en banco inclinado", "detail": "3x15" }
       ]
     },
     "4": {
@@ -277,7 +277,7 @@
         { "name": "Press de hombro",     "detail": "3x15" },
         { "name": "Vuelos laterales",    "detail": "3x20" },
         { "name": "Vuelos frontales",    "detail": "3x20" },
-        { "name": "Plancha",             "detail": "3x60 seg" }
+        { "name": "Abs en banco inclinado", "detail": "3x15" }
       ]
     }
   }
