@@ -74,6 +74,11 @@ const exerciseImageMap = {
     'Gemelos':                   'bOOdeyc',
     'Cardio':                    'oLrKqDH',
     'Prensa de piernas':         '10Z2DXU',
+    'Extensiones de columna en banco': 'zkgRrbK',
+    'Zancadas':                  'SSsBDwB',
+    'Aducciones':                'oHsrypV',
+    'Abs en banco inclinado':    'QLL2gdc',
+    'Vuelos frontales':          '3eGE2JC',
 };
 
 // Fallback estático (JPG) cuando no hay GIF en exercisedb.
@@ -92,7 +97,7 @@ const exerciseFallbackImageMap = {
     'Tríceps con mancuerna':           'Standing_Dumbbell_Triceps_Extension',
 };
 
-// URLs directas a GIFs externos en alta resolución (720p)
+// GIFs alternativos para cuando ExerciseDB no tenga una referencia equivalente.
 const exerciseDirectImageMap = {
     'Remo':                            'https://fitcron.com/wp-content/uploads/2021/04/08611301-Cable-seated-row_Back_720.gif',
     'Jalón al pecho':                  'https://fitcron.com/wp-content/uploads/2021/04/01981301-Cable-Pulldown_Back_720.gif',
@@ -106,7 +111,6 @@ const exerciseDirectImageMap = {
     'Sentadilla rumana':               'https://fitcron.com/wp-content/uploads/2021/04/14591301-Dumbbell-Romanian-Deadlift_Hips_720.gif',
     'Abducciones':                     'https://fitcron.com/wp-content/uploads/2021/04/05971301-Lever-Seated-Hip-Abduction_Hips-FIX_720.gif',
     'Aducciones':                      'https://fitcron.com/wp-content/uploads/2021/04/05981301-Lever-Seated-Hip-Adduction_Thighs_720.gif',
-    'Abs en banco inclinado':         'https://www.evolutionfit.it/wp-content/uploads/addominali-crunch-panca-reclinata-ag.png',
     'Isquios en máquina':              'https://fitcron.com/wp-content/uploads/2021/04/05861301-Lever-Lying-Leg-Curl_Thighs_720.gif',
     'Vuelos frontales':                'https://fitcron.com/wp-content/uploads/2021/04/03101301-Dumbbell-Front-Raise_Shoulders_720.gif',
     'Vuelos laterales':                'https://fitcron.com/wp-content/uploads/2021/04/33431301-Lever-Lateral-Raise-VERSION-2_Shoulders_720.gif',
@@ -120,10 +124,10 @@ const exerciseDirectImageMap = {
 function getExerciseImageUrl(name) {
     const customImage = getExerciseMeta(name).image;
     if (customImage) return customImage;
-    const direct = exerciseDirectImageMap[name];
-    if (direct) return direct;
     const hash = exerciseImageMap[name];
     if (hash) return `${GIF_CDN}${hash}.gif`;
+    const direct = exerciseDirectImageMap[name];
+    if (direct) return direct;
     const slug = exerciseFallbackImageMap[name];
     if (slug) return `${JPG_CDN}${slug}/0.jpg`;
     return null;
@@ -796,7 +800,7 @@ function getRoutines() {
 // --- Modal helpers ---
 function openModal(id) { document.getElementById(id).classList.add('active'); }
 function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-function getExerciseImageCandidates(name) { const candidates = []; const custom = getExerciseMeta(name).image; const direct = exerciseDirectImageMap[name]; const hash = exerciseImageMap[name]; const slug = exerciseFallbackImageMap[name]; [custom, direct, hash ? GIF_CDN + hash + ".gif" : null, slug ? JPG_CDN + slug + "/0.jpg" : null].forEach(url => { if (url && !candidates.includes(url)) candidates.push(url); }); return candidates; }
+function getExerciseImageCandidates(name) { const candidates = []; const custom = getExerciseMeta(name).image; const hash = exerciseImageMap[name]; const direct = exerciseDirectImageMap[name]; const slug = exerciseFallbackImageMap[name]; [custom, hash ? GIF_CDN + hash + ".gif" : null, direct, slug ? JPG_CDN + slug + "/0.jpg" : null].forEach(url => { if (url && !candidates.includes(url)) candidates.push(url); }); return candidates; }
 function openExercisePreview(name) { const candidates = getExerciseImageCandidates(name); const anim = document.getElementById("exercise-anim"); document.getElementById("exercise-modal-title").textContent = name; let index = 0; anim.onerror = () => { index += 1; if (index < candidates.length) { anim.src = candidates[index]; return; } anim.onerror = null; anim.removeAttribute("src"); anim.style.display = "none"; }; anim.alt = `Animación de ${name}`; if (candidates.length) { anim.src = candidates[0]; anim.style.display = ""; } else { anim.removeAttribute("src"); anim.style.display = "none"; } openModal("modal-exercise"); }
 
 
