@@ -880,7 +880,8 @@ document.getElementById('routine-body').addEventListener('click', (e) => {
             state.streak = (state.lastDate === getPrevDayKey(today)) ? state.streak + 1 : 1;
             state.lastDate = today;
         }
-        document.querySelectorAll('.exercise-weight input').forEach(inp => {
+        // Solo se registran pesos de los ejercicios del dia que se completa.
+        regBtn.closest('.routine-day').querySelectorAll('.exercise-weight input').forEach(inp => {
             const name = inp.dataset.exercise;
             const weight = parseFloat(inp.value);
             if (weight && weight > 0) {
@@ -919,32 +920,47 @@ document.getElementById('routine-body').addEventListener('click', (e) => {
 
 // --- Action: Progreso ---
 
+function getExerciseWeightHistory(exerciseName) {
+    const rawHistory = JSON.parse(localStorage.getItem('peso-history:' + exerciseName) || '[]')
+        .filter(entry => entry && typeof entry.date === 'string' && Number.isFinite(Number(entry.weight)))
+        .map(entry => ({ date: entry.date, weight: Number(entry.weight) }));
+
+    // Las versiones anteriores anotaban pesos de todos los dias al registrar uno.
+    // Solo conservamos referencias de fechas donde el ejercicio figura en un entreno real.
+    const workoutDates = new Set(state.workouts
+        .filter(workout => (workout.exercises || []).some(exercise => exercise.name === exerciseName))
+        .map(workout => workout.date));
+    const history = workoutDates.size > 0
+        ? rawHistory.filter(entry => workoutDates.has(entry.date))
+        : rawHistory;
+
+    return history.sort((a, b) => a.date.localeCompare(b.date));
+}
+
 function getProgressLightStatus(exerciseName) {
-    const history = JSON.parse(localStorage.getItem('peso-history:' + exerciseName) || '[]');
+    const history = getExerciseWeightHistory(exerciseName);
     if (history.length < 2) return 'orange';
-    
-    const now = new Date();
-    const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const fourWeeksAgo = new Date(now.getTime() - 28 * 24 * 60 * 60 * 1000);
-    
+
     const currentSession = history[history.length - 1];
-    const previousHistory = history.slice(0, -1);
-    const recentSessions = previousHistory.filter(h => new Date(h.date) >= oneWeekAgo);
-    const fourWeekSessions = previousHistory.filter(h => new Date(h.date) >= fourWeeksAgo);
-    
+    // No se compara la sesion actual consigo misma ni con duplicados del mismo dia.
+    const previousHistory = history.filter(entry => entry.date < currentSession.date);
+    if (previousHistory.length === 0) return 'orange';
+
+    const currentDate = dateFromKey(currentSession.date);
+    const oneWeekAgo = new Date(currentDate.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const fourWeeksAgo = new Date(currentDate.getTime() - 28 * 24 * 60 * 60 * 1000);
+    const recentSessions = previousHistory.filter(entry => dateFromKey(entry.date) >= oneWeekAgo);
+    const fourWeekSessions = previousHistory.filter(entry => dateFromKey(entry.date) >= fourWeeksAgo);
     if (fourWeekSessions.length === 0) return 'orange';
-    
-    const fourWeeksAgoWeight = fourWeekSessions.reduce((max, h) => h.weight > max ? h.weight : max, 0);
-    const currentWeight = currentSession.weight;
-    
-    if (currentWeight > fourWeeksAgoWeight) return 'green';
-    
-    const oneWeekAgoWeight = recentSessions.length > 0 
-        ? recentSessions.reduce((max, h) => h.weight > max ? h.weight : max, 0)
+
+    const fourWeekMax = fourWeekSessions.reduce((max, entry) => Math.max(max, entry.weight), 0);
+    if (currentSession.weight > fourWeekMax) return 'green';
+
+    const recentMax = recentSessions.length > 0
+        ? recentSessions.reduce((max, entry) => Math.max(max, entry.weight), 0)
         : previousHistory[previousHistory.length - 1].weight;
-    
-    if (currentWeight === oneWeekAgoWeight) return 'orange';
-    
+    if (currentSession.weight === recentMax) return 'orange';
+
     return 'red';
 }
 
@@ -975,7 +991,7 @@ function renderProgress() {
         let hasLights = false;
         prs.forEach(pr => {
             // Semáforo en la misma fila que el récord (solo si hay historial de peso)
-            const history = JSON.parse(localStorage.getItem('peso-history:' + pr.name) || '[]');
+            const history = getExerciseWeightHistory(pr.name);
             let lightHtml = '';
             if (history.length > 0) {
                 hasLights = true;
