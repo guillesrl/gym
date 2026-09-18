@@ -114,6 +114,24 @@
                 "type": "string",
                 "operation": "notEmpty"
               }
+            },
+            {
+              "id": "cond-user-length",
+              "leftValue": "={{ (($json.body && $json.body.user) || $json.query.user || '').toString().length }}",
+              "rightValue": 100,
+              "operator": {
+                "type": "number",
+                "operation": "lte"
+              }
+            },
+            {
+              "id": "cond-payload-size",
+              "leftValue": "={{ JSON.stringify($json.body || {}).length }}",
+              "rightValue": 1048576,
+              "operator": {
+                "type": "number",
+                "operation": "lte"
+              }
             }
           ],
           "combinator": "and"
@@ -235,6 +253,15 @@
               "operator": {
                 "type": "string",
                 "operation": "notEmpty"
+              }
+            },
+            {
+              "id": "restore-user-length",
+              "leftValue": "={{ ($json.query.user || '').toString().length }}",
+              "rightValue": 100,
+              "operator": {
+                "type": "number",
+                "operation": "lte"
               }
             }
           ],

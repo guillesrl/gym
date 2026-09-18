@@ -836,7 +836,7 @@ document.getElementById('btn-routine').addEventListener('click', () => {
             <div class="routine-day-content${isToday ? ' open' : ''}">
                 ${exercises.map(ex => `
                     <div class="exercise-item${completionByExercise.get(ex.name) === false ? ' exercise-incomplete' : ''}">
-                        <span class="exercise-name">${ex.name}</span>
+                        <span class="exercise-name">${escapeHtml(ex.name)}</span>
                         ${renderDetailInputs(ex.name, ex.detail)}
                         <div class="exercise-weight">
                             <input type="number" min="0" step="0.5" placeholder="0" title="Peso en kg"
@@ -1168,20 +1168,23 @@ function buildBackup() {
 
 // Backup automático. El registro local siempre termina primero; el envío remoto
 // queda marcado como pendiente si no hay red y se reintenta en el próximo arranque.
+// Backup remoto deshabilitado hasta configurar autenticación por usuario en n8n.
+// Un token incluido en una PWA pública no puede proteger datos privados.
+const AUTO_BACKUP_ENABLED = false;
 const AUTO_BACKUP_BASE_URL = 'https://n8n.guillers.es/webhook/entreno-brutal-backup';
-const AUTO_BACKUP_TOKEN = 'f9f6ec0a924a28a4497df6d789dd6f53';
 const AUTO_BACKUP_INTERVAL_DAYS = 7;
 const AUTO_BACKUP_PENDING_KEY = 'auto-backup-pending';
 
 // keepalive evita que el navegador cancele el POST si la PWA pasa a segundo plano
 // justo después de registrar. Nunca se espera esta promesa para guardar el entreno.
 async function sendBackup({ notify = false } = {}) {
+    if (!AUTO_BACKUP_ENABLED) return false;
     const user = getBackupUserName();
     if (!user) return false;
 
     localStorage.setItem(AUTO_BACKUP_PENDING_KEY, '1');
     try {
-        const res = await fetch(`${AUTO_BACKUP_BASE_URL}?token=${AUTO_BACKUP_TOKEN}`, {
+        const res = await fetch(AUTO_BACKUP_BASE_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(buildBackup()),
@@ -1203,6 +1206,7 @@ async function sendBackup({ notify = false } = {}) {
 // Al abrir la app se reintenta una copia pendiente o la copia semanal. No se
 // pide el nombre en segundo plano: se solicitará al registrar el primer entreno.
 function autoBackupIfNeeded() {
+    if (!AUTO_BACKUP_ENABLED) return;
     if (!localStorage.getItem('backup-user-name')) return;
     if (localStorage.getItem(AUTO_BACKUP_PENDING_KEY) === '1') {
         sendBackup();
@@ -1267,17 +1271,7 @@ function applyBackup(backup) {
 }
 
 document.getElementById('btn-backup-restore').addEventListener('click', () => {
-    const user = getBackupUserName();
-    if (!user) return;
-    if (!confirm(`Esto reemplazara todos tus datos actuales con el ultimo backup guardado en el servidor para "${user}". ¿Continuar?`)) return;
-    fetch(`${AUTO_BACKUP_BASE_URL}?token=${AUTO_BACKUP_TOKEN}&user=${encodeURIComponent(user)}`)
-        .then(res => {
-            if (res.status === 404) throw new Error('No hay ningun backup guardado en el servidor para este usuario.');
-            if (!res.ok) throw new Error('El servidor no respondio correctamente.');
-            return res.json();
-        })
-        .then(backup => applyBackup(backup))
-        .catch(err => alert('Error: ' + err.message));
+    alert('La restauración desde servidor está temporalmente deshabilitada hasta configurar autenticación segura. Usá Importar backup para restaurar un archivo local.');
 });
 
 document.getElementById('backup-file-input').addEventListener('change', (e) => {

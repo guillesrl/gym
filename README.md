@@ -21,10 +21,7 @@ App web brutalista para registrar rutinas de gimnasio, hacer seguimiento de prog
 - **Records personales** — detecta automáticamente cada vez que superas tu peso máximo en un ejercicio
 - **Semáforo de progreso** — indicador 🟢/🟠/🔴 en la misma fila que cada récord (🟢 superaste tu marca; 🟠 sin cambios; 🔴 4 semanas estancado), ordenado igual que la lista de récords
 - **Estadísticas en tiempo real** — racha de días consecutivos, entrenos de la semana y total histórico
-- **Backup automático a n8n, por usuario** — cada entreno registrado se guarda primero en local y después se envía al webhook con `keepalive`; si falta red, queda marcado como pendiente y se reintenta al abrir la app. También hay una copia semanal. El workflow guarda el payload en PostgreSQL y el nombre se pide una sola vez y se recuerda
-- **Restaurar desde servidor** — botón que trae de vuelta el último backup automático guardado en el servidor para ese usuario (GET al mismo webhook), sin depender de tener un JSON exportado a mano
-- **Copia espejo del historial** — el estado principal se duplica en otra clave de `localStorage`; si la principal aparece vacía (visto en algunos móviles/navegadores), se restaura sola desde la copia
-- **Backup manual completo** — exporta/importa JSON con state, PRs, históricos, series/reps y preferencias
+- **Backup local seguro** — exporta/importa JSON con state, PRs, históricos, series/reps y preferencias. El backup remoto automático y la restauración desde servidor están deshabilitados temporalmente hasta implementar autenticación por usuario; no se envían datos ni tokens desde la PWA pública
 - **Exportar historial** — descarga un `.html` con tabla completa y resumen de stats
 - **Frase motivacional diaria** — pool de 49 frases (7 por día) que rotan por semana del año
 - **Modo oscuro** — toggle persistente con detección automática de preferencia del sistema
