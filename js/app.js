@@ -964,6 +964,65 @@ function getProgressLightStatus(exerciseName) {
     return 'red';
 }
 
+function getWorkoutGroupLabel(workout) {
+    return routines.labels?.[workout.type]?.[workout.notes]
+        || getDayLabelFor(workout.type, workout.notes)
+        || 'Otros ejercicios';
+}
+
+function getExerciseGroupLabel(exerciseName) {
+    const latestWorkout = [...state.workouts].reverse().find(workout =>
+        getWorkoutExercises(workout).some(exercise => exercise.name === exerciseName)
+    );
+    return latestWorkout ? getWorkoutGroupLabel(latestWorkout) : 'Otros ejercicios';
+}
+
+function getSetsAndReps(detail) {
+    const match = String(detail || '').match(/(\d+)\s*[x×]\s*(\d+)/i);
+    return match ? { sets: Number(match[1]), reps: Number(match[2]) } : null;
+}
+
+function getWorkoutVolume(workout) {
+    return getWorkoutExercises(workout).reduce((total, exercise) => {
+        const prescription = getSetsAndReps(exercise.detail);
+        if (!prescription) return total;
+        const weight = getExerciseWeightHistory(exercise.name)
+            .filter(entry => entry.date === workout.date)
+            .at(-1)?.weight;
+        return weight ? total + weight * prescription.sets * prescription.reps : total;
+    }, 0);
+}
+
+function getVolumeHistory() {
+    return state.workouts
+        .map(workout => ({ date: workout.date, volume: getWorkoutVolume(workout) }))
+        .filter(entry => entry.volume > 0)
+        .sort((a, b) => a.date.localeCompare(b.date));
+}
+
+function renderVolumeChart(entries) {
+    if (entries.length < 2) return '';
+    const width = 480, height = 150, padding = 20;
+    const max = Math.max(...entries.map(entry => entry.volume));
+    const min = Math.min(...entries.map(entry => entry.volume));
+    const range = max - min || max || 1;
+    const x = index => padding + (index * (width - padding * 2)) / (entries.length - 1);
+    const y = entry => height - padding - ((entry.volume - min) / range) * (height - padding * 2);
+    const points = entries.map((entry, index) => `${x(index).toFixed(1)},${y(entry).toFixed(1)}`).join(' ');
+    const last = entries[entries.length - 1];
+    return `<section class="volume-chart-section" aria-labelledby="volume-chart-title">
+        <div class="section-label" id="volume-chart-title">Volumen levantado</div>
+        <p class="volume-chart-summary">${last.volume.toLocaleString('es-ES')} kg en tu última sesión con pesos registrados</p>
+        <svg class="volume-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="Evolución del volumen total levantado por sesión">
+            <line class="volume-chart-axis" x1="${padding}" y1="${height - padding}" x2="${width - padding}" y2="${height - padding}"></line>
+            <polyline class="volume-chart-line" points="${points}"></polyline>
+            ${entries.map((entry, index) => `<circle class="volume-chart-point" cx="${x(index).toFixed(1)}" cy="${y(entry).toFixed(1)}" r="4"><title>${entry.date}: ${entry.volume.toLocaleString('es-ES')} kg</title></circle>`).join('')}
+        </svg>
+        <div class="volume-chart-labels"><span>${entries[0].date}</span><span>${last.date}</span></div>
+        <p class="volume-chart-note">Peso × series × repeticiones. Solo se incluyen ejercicios con carga y una pauta como 3x12.</p>
+    </section>`;
+}
+
 function renderProgress() {
     const body = document.getElementById('progress-body');
     const weekGoal = getProgramDays();
@@ -986,10 +1045,21 @@ function renderProgress() {
         </div>
     `;
 
+    const volumeHistory = getVolumeHistory();
+    html += renderVolumeChart(volumeHistory);
+
     if (prs.length > 0) {
-        html += `<div class="section-label" style="margin-top:20px">Records Personales</div><div style="margin-bottom:20px">`;
+        html += `<div class="section-label" style="margin-top:20px">Records Personales</div>`;
         let hasLights = false;
+        const groups = new Map();
         prs.forEach(pr => {
+            const group = getExerciseGroupLabel(pr.name);
+            if (!groups.has(group)) groups.set(group, []);
+            groups.get(group).push(pr);
+        });
+        groups.forEach((groupPrs, group) => {
+            html += `<section class="progress-group"><h3>${escapeHtml(group)}</h3>`;
+            groupPrs.forEach(pr => {
             // Semáforo en la misma fila que el récord (solo si hay historial de peso)
             const history = getExerciseWeightHistory(pr.name);
             let lightHtml = '';
@@ -1002,8 +1072,9 @@ function renderProgress() {
                 lightHtml = `<span class="pr-item-light ${lightClass}" title="${lightText}">${lightEmoji}</span>`;
             }
             html += `<div class="pr-item"><span class="pr-item-name">${escapeHtml(pr.name)}</span><span class="pr-item-weight">${pr.weight} kg</span><span class="pr-item-date">${pr.date}</span>${lightHtml}</div>`;
+            });
+            html += '</section>';
         });
-        html += '</div>';
 
         if (hasLights) {
             html += `<div class="pr-legend">🟢 Superado esta semana · 🟠 Sin cambios · 🔴 4 semanas estancado</div>`;

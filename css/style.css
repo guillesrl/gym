@@ -664,6 +664,18 @@ body.dark .dark-toggle .icon-moon { display: none; }
 .pr-item-date { font-size: 11px; color: var(--muted-foreground); font-weight: 600; }
 .pr-item-light { font-size: 15px; min-width: 18px; text-align: center; line-height: 1; }
 .pr-legend { font-size: 11px; color: var(--muted-foreground); font-weight: 600; text-align: center; margin: -8px 0 20px; }
+.progress-group { margin-bottom: 18px; }
+.progress-group h3 { margin: 0; padding: 9px 12px; background: var(--card); border: 2px solid var(--border); font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; }
+.progress-group .pr-item { padding-left: 12px; padding-right: 12px; border-left: 2px solid var(--border); border-right: 2px solid var(--border); }
+.progress-group .pr-item:last-child { border-bottom: 2px solid var(--border); }
+.volume-chart-section { margin: 24px 0 20px; }
+.volume-chart-summary { margin: -4px 0 12px; color: var(--muted-foreground); font-size: 12px; font-weight: 600; }
+.volume-chart { display: block; width: 100%; height: auto; min-height: 120px; background: var(--card); border: 2px solid var(--border); }
+.volume-chart-axis { stroke: var(--muted); stroke-width: 2; }
+.volume-chart-line { fill: none; stroke: var(--primary); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.volume-chart-point { fill: var(--background); stroke: var(--primary); stroke-width: 3; }
+.volume-chart-labels { display: flex; justify-content: space-between; color: var(--muted-foreground); font-family: 'DM Mono', monospace; font-size: 10px; margin-top: 6px; }
+.volume-chart-note { margin: 10px 0 0; color: var(--muted-foreground); font-size: 11px; line-height: 1.45; }
 
 /* --- Progress Lights (Semáforo) --- */
 .progress-lights-section {
