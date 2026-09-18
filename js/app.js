@@ -1270,10 +1270,6 @@ function applyBackup(backup) {
     Promise.all([clearCaches, unregisterSW]).catch(() => {}).then(hardReload);
 }
 
-document.getElementById('btn-backup-restore').addEventListener('click', () => {
-    alert('La restauración desde servidor está temporalmente deshabilitada hasta configurar autenticación segura. Usá Importar backup para restaurar un archivo local.');
-});
-
 document.getElementById('backup-file-input').addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (!file) return;

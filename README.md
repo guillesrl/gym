@@ -126,7 +126,7 @@ Todo se guarda en `localStorage`:
 | `backup-user-name` | Nombre con el que se identifica el backup automático en el servidor |
 | `auto-backup-last` | Fecha del último backup automático enviado (controla el intervalo de 7 días) |
 
-Usá los botones **Exportar / Importar backup** para sincronizar entre dispositivos con un JSON, o **Restaurar desde servidor** para traer el último backup automático guardado con tu nombre.
+Usá los botones **Exportar / Importar backup** para guardar una copia local o sincronizar entre dispositivos mediante un archivo JSON.
 
 ---
 
